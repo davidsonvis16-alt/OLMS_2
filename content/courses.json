@@ -1,0 +1,2121 @@
+[
+ {
+  "slug": "food-hygiene-safety-food-handlers",
+  "deck": "Basic_Foundation_Food_Hygiene_Course",
+  "title": "Food Hygiene & Safety for Food Handlers",
+  "category": "food-safety",
+  "categories": [
+   "food-safety",
+   "hospitality"
+  ],
+  "summary": "The essentials for anyone who prepares, serves or stores food: how food becomes unsafe, and the daily habits that keep customers well.",
+  "topics": [
+   "Food poisoning, bacteria and the temperature danger zone",
+   "Personal hygiene, hand washing and reporting illness",
+   "Preventing cross-contamination and safe food storage"
+  ],
+  "assignment": "A customer recently ate at your restaurant and complained of food contamination. You have been asked to design a training programme for your team. Write down the key areas your training programme should focus on in relation to the complaint.",
+  "modules": [
+   {
+    "title": "Introduction to food safety",
+    "pages": [
+     1,
+     63
+    ],
+    "quiz": [
+     {
+      "prompt": "Bacteria, viruses and parasites are among the ________ hazards that can be present in food.",
+      "options": [
+       "Physical",
+       "Biological",
+       "Chemical"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Different types of chemical hazards associated with food include pesticides and ________.",
+      "options": [
+       "Nails",
+       "Hair",
+       "Cleaning soap"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Food safety in a food business is important to the consumer and to ________ in relation to their work.",
+      "options": [
+       "Staff",
+       "Pests",
+       "Children"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Direct, dripping and indirect are examples of which of the following?",
+      "options": [
+       "Cooking methods",
+       "Cross contamination",
+       "Food production methods"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Which of the following conditions are necessary for bacteria to multiply?",
+      "options": [
+       "Food, warmth, soap and time",
+       "Food, acid, warmth and moisture",
+       "Food, moisture, time and warmth",
+       "Food, temperature, dust and moisture"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Which temperature range is known as the danger zone?",
+      "options": [
+       "0°C to 10°C",
+       "10°C to 20°C",
+       "5°C to 63°C",
+       "20°C to 50°C"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "inferred"
+     }
+    ]
+   },
+   {
+    "title": "Personal health & hygiene",
+    "pages": [
+     69,
+     82
+    ],
+    "quiz": [
+     {
+      "prompt": "Which of the following should be worn to reduce food contamination from hair?",
+      "options": [
+       "Hair gel",
+       "Hair nets and hats",
+       "Jackets with hoods"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Which practice best promotes good personal hygiene and significantly reduces the risk of product contamination?",
+      "options": [
+       "Frequent showering",
+       "Frequent hand washing",
+       "Frequent use of body perfume"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "To avoid contamination, food being prepared should not be handled by anyone who is:",
+      "options": [
+       "Smiling a lot",
+       "Returning from vacation",
+       "Suffering from an illness"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Which of the following does NOT need to be reported to the manager before starting work?",
+      "options": [
+       "A cold or flu",
+       "A discharge from the ear",
+       "A bruised leg",
+       "Eating food known to have caused food poisoning"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Food handlers may be prosecuted if they break the law relating to personal hygiene.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Hands are widely recognised as a potential source of ________ and chemical contamination.",
+      "options": [
+       "Microbiological",
+       "Spoilage",
+       "Nails"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "inferred"
+     }
+    ]
+   },
+   {
+    "title": "General hygiene: cleaning & disinfection",
+    "pages": [
+     88,
+     102
+    ],
+    "quiz": [
+     {
+      "prompt": "We should always clean and disinfect food contact areas in the food room, except the ________.",
+      "options": [
+       "Chopping boards",
+       "Mincers and knives",
+       "Food preparation sink",
+       "Hand washing sink"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "To remove a stubborn stain you should mix cleaning chemicals together.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Which of these places needs different cleaning equipment from the rest?",
+      "options": [
+       "Kitchen area",
+       "Toilet room",
+       "Butchery room"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Which one is NOT a food contact area?",
+      "options": [
+       "Chopping board",
+       "Kitchen door",
+       "Mincers",
+       "Food preparation sink"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Which of the following is important to ensure effective disinfection?",
+      "options": [
+       "Always use stainless steel buckets",
+       "Mix cleaning chemicals together",
+       "Use the disinfectant at the correct concentration",
+       "Rinse disinfected surfaces immediately"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "inferred"
+     }
+    ]
+   },
+   {
+    "title": "Pest awareness, safe handling & storage",
+    "pages": [
+     108,
+     127
+    ],
+    "quiz": [
+     {
+      "prompt": "The two primary means of pest control in a food business are physical and ________.",
+      "options": [
+       "Biological",
+       "Chemical",
+       "Cats"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Effective proofing of premises, clean preparation areas and proper food storage help avoid what?",
+      "options": [
+       "Leaky ceilings",
+       "Pest infestations",
+       "Mould"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Pests are obnoxious and ________ animals that need ________ and shelter from us.",
+      "options": [
+       "Friendly ... food",
+       "Destructive ... care",
+       "Destructive ... food",
+       "Innocent ... care"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "We should NOT throw away out-of-date food items because it affects our food cost.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "inferred"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "personal-health-hygiene",
+  "deck": "Personal_health__Hygiene_course",
+  "title": "Personal Health & Hygiene",
+  "category": "food-safety",
+  "categories": [
+   "food-safety",
+   "hospitality"
+  ],
+  "summary": "An induction course on the personal hygiene every food handler must practise, from hand washing to reporting illness.",
+  "topics": [
+   "How bacteria on hair, face and hands reach food",
+   "Correct hand washing and protective clothing",
+   "When to report illness and stay away from food"
+  ],
+  "assignment": null,
+  "modules": [
+   {
+    "title": "Personal health & hygiene",
+    "pages": [
+     1,
+     20
+    ],
+    "quiz": [
+     {
+      "prompt": "Which of the following should be worn to reduce food contamination from hair?",
+      "options": [
+       "Hair gel",
+       "Hair nets and hats",
+       "Jackets with hoods"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Which practice best promotes good personal hygiene and significantly reduces the risk of product contamination?",
+      "options": [
+       "Frequent showering",
+       "Frequent hand washing",
+       "Frequent use of body perfume"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "To avoid contamination, food being prepared should not be handled by anyone who is:",
+      "options": [
+       "Smiling a lot",
+       "Returning from vacation",
+       "Suffering from an illness"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Which of the following does NOT need to be reported to the manager before starting work?",
+      "options": [
+       "A cold or flu",
+       "A discharge from the ear",
+       "A bruised leg",
+       "Eating food known to have caused food poisoning"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Food handlers may be prosecuted if they break the law relating to personal hygiene.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Hands are widely recognised as a potential source of ________ and chemical contamination.",
+      "options": [
+       "Microbiological",
+       "Spoilage",
+       "Nails"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "inferred"
+     },
+     {
+      "prompt": "Is hair a physical or biological contaminant in food? Choose the best answer.",
+      "options": [
+       "Physical",
+       "Biological",
+       "Both physical and biological",
+       "Not a food contaminant"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "After handling raw food, what should we clean our hands with before handling cooked food?",
+      "options": [
+       "Hand sanitiser",
+       "Hand soap",
+       "Wipe hands with dry paper",
+       "Nothing, just continue working"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "As food handlers, are we supposed to wear our work PPE at home?",
+      "options": [
+       "Yes",
+       "No",
+       "It doesn't matter"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "As food handlers we can prevent bacteria from getting into food at our workplace.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "haccp-principles",
+  "deck": "HACCP-_Food_safety_management_course_final",
+  "title": "HACCP Principles",
+  "category": "food-safety",
+  "categories": [
+   "food-safety"
+  ],
+  "summary": "How to identify the hazards in your process and control them at the points that matter, following the seven HACCP principles and twelve Codex steps.",
+  "topics": [
+   "Building the HACCP team, product data and flow diagrams",
+   "Hazard analysis, critical control points and critical limits",
+   "Monitoring, corrective action, verification and records"
+  ],
+  "assignment": "Using a HACCP control chart, complete a HACCP control plan for cooked beef: list each process step, the hazards, control measures, critical limits, monitoring, corrective action and records.",
+  "modules": [
+   {
+    "title": "Food safety fundamentals",
+    "pages": [
+     1,
+     20
+    ],
+    "quiz": [
+     {
+      "prompt": "In recent years, the potential for food contamination has been increased by:",
+      "options": [
+       "Multiple handling of food along the supply chain, from production to the final customer",
+       "Customers wanting to experiment with thoroughly cooked foods",
+       "A decrease in the overall quality of food in the world",
+       "A lack of government regulation of food products"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "The micro-organisms of greatest concern to food service managers are:",
+      "options": [
+       "Parasites",
+       "Moulds",
+       "Fungi",
+       "Bacteria"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which of the following is NOT an example of a food poisoning disease-causing agent?",
+      "options": [
+       "Campylobacter jejuni",
+       "Salmonella enteritidis",
+       "Clostridium perfringens",
+       "Giardia lamblia"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Food that contains moulds that are not a natural part of the item should be:",
+      "options": [
+       "Frozen",
+       "Discarded",
+       "Saved, since it is fine once the mould is scraped off",
+       "Cooked to 75°C for 10 minutes"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Introduction to HACCP",
+    "pages": [
+     22,
+     30
+    ],
+    "quiz": [
+     {
+      "prompt": "In maintaining good personal hygiene, management's most important responsibility is to:",
+      "options": [
+       "Provide hand soap at all sinks",
+       "Set an example for all employees to follow",
+       "Shout at employees who do not follow the rules",
+       "Provide a designated break area"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck",
+      "review": "Deck marks 'Provide hand soap'. Standard food-safety answer is 'Set an example for all employees to follow'. Please confirm."
+     },
+     {
+      "prompt": "What is the proper way to dry hands after washing?",
+      "options": [
+       "Thoroughly, with a hot-air dryer or a single-use towel",
+       "Wipe them on an apron or handkerchief",
+       "Use a cloth towel kept in the restroom",
+       "Wave them briskly in the air"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "HACCP stands for:",
+      "options": [
+       "Hazard Assessment Critical Control Procedures",
+       "Hazard Assessment Crisis Control Point",
+       "Hazard Analysis Critical Control Point",
+       "Hazard Analysis Critical Control Procedures"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "For which of these foods is it most important to design a flowchart?",
+      "options": [
+       "Fruit salad with raspberry vinaigrette",
+       "Hot cheese puffs",
+       "Cream of broccoli soup",
+       "Peppermints"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Prerequisites & the HACCP team",
+    "pages": [
+     32,
+     50
+    ],
+    "quiz": [
+     {
+      "prompt": "The HACCP sponsor is:",
+      "options": [
+       "Always the chair of the HACCP team",
+       "The originator of the HACCP scheme",
+       "A company that funds the HACCP scheme"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which of the following is NOT a good example of GHP (good hygiene practice)?",
+      "options": [
+       "A written personal hygiene standard",
+       "Structural maintenance procedures",
+       "Cooking and cooling logs",
+       "Cleaning policy and schedule"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which of the following is true?",
+      "options": [
+       "HACCP documentation is a legal requirement for all premises in Europe",
+       "HACCP is the same as quality assurance",
+       "HACCP is about controls at all stages of a process",
+       "HACCP is a type of food safety management"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "HACCP originated from:",
+      "options": [
+       "The NASA space programme",
+       "The European Commission",
+       "Codex Alimentarius",
+       "A response to a botulism outbreak in canned food"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Product data, flow diagrams & hazard analysis",
+    "pages": [
+     52,
+     77
+    ],
+    "quiz": [
+     {
+      "prompt": "Which of the following is the most important core HACCP team skill?",
+      "options": [
+       "Product awareness",
+       "Microbiological sampling methods",
+       "Cleaning schedules",
+       "A degree in food technology"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "A process flow diagram is:",
+      "options": [
+       "A chart showing responsibilities in the HACCP team",
+       "A diagrammatic representation of a process",
+       "A computer program",
+       "A chart summarising hazards and controls"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "When identifying hazards at a process step, HACCP team members should:",
+      "options": [
+       "Always follow suggestions from the HACCP coordinator",
+       "Concentrate on microbial hazards",
+       "List a full variety of hazards from a variety of sources"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck",
+      "review": "Deck marks 'Concentrate on microbial hazards'. Standard answer is 'List a full variety of hazards from a variety of sources'. Please confirm."
+     },
+     {
+      "prompt": "Which of the following is NOT part of principle one?",
+      "options": [
+       "A process flow diagram",
+       "Establishing verification procedures",
+       "Assembling the HACCP team",
+       "Identifying hazards"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Critical control points & critical limits",
+    "pages": [
+     79,
+     94
+    ],
+    "quiz": [
+     {
+      "prompt": "A critical control point is an operation by which:",
+      "options": [
+       "Monitoring is considered unnecessary",
+       "Hazards can be eliminated, minimised or prevented",
+       "Contamination becomes certain",
+       "All risks can be completely eliminated"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which of the following is a step used in setting up a HACCP system?",
+      "options": [
+       "Developing control procedures for critical control points",
+       "Taking disciplinary action when procedures are broken",
+       "Developing a flowchart for all foods in the operation",
+       "Completely eliminating contamination during preparation"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "What is the first step in implementing the FIFO rule?",
+      "options": [
+       "Date food as it is received",
+       "Place new deliveries in front of older ones",
+       "Do not keep food past its use-by date",
+       "Keep all foods in their original packages"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which is an important guideline for freezer storage?",
+      "options": [
+       "Food should be packed tightly in the freezer",
+       "Freezers should be kept at 0°C",
+       "Freezers should be kept at -18°C",
+       "Frozen stock does not need a date of entry"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Monitoring, corrective action, verification & records",
+    "pages": [
+     96,
+     121
+    ],
+    "quiz": [
+     {
+      "prompt": "Which situation should always result in a review of the HACCP system?",
+      "options": [
+       "An inspection by an enforcement officer",
+       "A customer complaint",
+       "An alteration to a process",
+       "Poor raw product sample results"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which of the following is true about documentation?",
+      "options": [
+       "It is a legal requirement in all premises",
+       "It is an unnecessary waste of time",
+       "It should always conform to ISO 9000",
+       "It serves as a good training tool"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which of the following does NOT play a part in verification?",
+      "options": [
+       "External validation",
+       "Routine sampling",
+       "Calibration of monitoring equipment",
+       "Regular HACCP team meetings"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which of the following is always true about a critical control point?",
+      "options": [
+       "Cooking is always a CCP",
+       "Control after a CCP is less important",
+       "If you already monitor a step, it is a CCP",
+       "CCPs must be monitored"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "deck"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "food-allergen-awareness",
+  "deck": "Food_Allergens_management_Course",
+  "title": "Food Allergen Awareness",
+  "category": "food-safety",
+  "categories": [
+   "food-safety",
+   "hospitality"
+  ],
+  "summary": "How to protect customers with food allergies and intolerances, from the kitchen and the menu to the moment a dish reaches the table.",
+  "topics": [
+   "The 14 major allergens, and allergy vs intolerance",
+   "Preventing cross-contact and labelling allergens clearly",
+   "Communicating with customers and responding to a reaction"
+  ],
+  "assignment": "A food business has contacted you about food allergen complaints in its operation. To stop these cases and comply with the law, what control measures should it put in place? Write a plan covering the areas to address (300 to 500 words).",
+  "modules": [
+   {
+    "title": "Introduction to food allergens",
+    "pages": [
+     1,
+     29
+    ],
+    "quiz": [
+     {
+      "prompt": "What is a food allergy?",
+      "options": [
+       "A stomach reaction after eating food",
+       "A rapid and potentially serious response to a food by your immune system",
+       "Feeling sleepy and sad after eating",
+       "None of the above"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which of the following are NOT common food allergens? Select all that apply.",
+      "options": [
+       "Milk",
+       "Egg",
+       "Lettuce",
+       "Wheat",
+       "Peanuts",
+       "Soybeans",
+       "Berries",
+       "Tree nuts",
+       "Fish & crustacean shellfish"
+      ],
+      "answer": [
+       2,
+       6
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Can doctors cure an allergy?",
+      "options": [
+       "They can give you medicine to stop the allergy",
+       "There is no cure; the only way is to avoid the allergen",
+       "They can operate on the patient"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Food allergy and food intolerance are the same.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "What is gluten?",
+      "options": [
+       "The protein found in wheat, rye, barley and some oats",
+       "The sugar found in all mammals' milk",
+       "The starch from grains",
+       "None of the above"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Allergen management in catering & schools",
+    "pages": [
+     32,
+     57
+    ],
+    "quiz": [
+     {
+      "prompt": "What is coeliac disease?",
+      "options": [
+       "A nerve reaction after eating food",
+       "A skin and stomach reaction to maize and beans",
+       "An autoimmune disease where eating gluten makes the immune system attack the body"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Allergens must be declared if they are present as:",
+      "options": [
+       "An ingredient",
+       "An ingredient of a compound ingredient",
+       "A food additive or part of one",
+       "All of the above"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "The allergy labelling law is also known as:",
+      "options": [
+       "The Nebraska law",
+       "Natasha's law",
+       "The food hygiene law",
+       "The gluten law"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Can cross-contamination contribute to an allergic reaction?",
+      "options": [
+       "Yes",
+       "No"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Can hand washing be used to prevent cross-contamination?",
+      "options": [
+       "Yes",
+       "No",
+       "It doesn't matter",
+       "Maybe sometimes"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Training, communication & control measures",
+    "pages": [
+     60,
+     82
+    ],
+    "quiz": [
+     {
+      "prompt": "The law requires food handlers to provide information on allergens.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Training food handlers can prevent allergen cases in your operation.",
+      "options": [
+       "True",
+       "False",
+       "It doesn't matter"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which of the following is NOT a critical procedure to prevent allergen incidents at work?",
+      "options": [
+       "Managing allergen cross-contamination situations",
+       "Hand washing",
+       "Wearing a face mask",
+       "Clothing requirements"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Rework is material left over from production, often reused to make the same or a similar product.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck",
+      "review": "Deck marks 'False', but the statement matches the deck's own definition of rework, so 'True' looks correct. Please confirm."
+     },
+     {
+      "prompt": "How many major allergens are there?",
+      "options": [
+       "4",
+       "9",
+       "14",
+       "20"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Allergen labelling & emergencies",
+    "pages": [
+     85,
+     110
+    ],
+    "quiz": [
+     {
+      "prompt": "Cross-contact is:",
+      "options": [
+       "The transfer of a pathogen from one food to another",
+       "When an allergen is accidentally transferred from a food containing it to a food that does not",
+       "Mislabelling a product that contains an allergen",
+       "Touching food with bare hands"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "How should allergens be shown on a food label?",
+      "options": [
+       "They should not be listed at all",
+       "Emphasised, e.g. in bold, highlighted, underlined or in italics",
+       "Just like the rest of the ingredients",
+       "None of the above"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "A customer is having an allergic reaction. What should you do?",
+      "options": [
+       "Move away from the customer",
+       "Call the police",
+       "Call for emergency medical attention",
+       "Give the customer milk"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Does cooking reduce or eliminate the chance of a person reacting to an allergen?",
+      "options": [
+       "Yes",
+       "No",
+       "It depends"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "What is the best way to prevent allergen incidents in a catering operation?",
+      "options": [
+       "Smiling while working",
+       "Communication and training",
+       "Wearing a clean uniform",
+       "Being a first aider"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "fire-safety-fire-marshal",
+  "deck": "Fire_Safety_in_Catering_and_Hospitalty_Industry",
+  "title": "Fire Safety & Fire Marshal",
+  "category": "health-safety",
+  "categories": [
+   "health-safety",
+   "hospitality"
+  ],
+  "summary": "Fire prevention and response for catering and hospitality premises, including the extra responsibilities of a fire marshal.",
+  "topics": [
+   "The fire triangle and common causes of fire in kitchens",
+   "Choosing and using the right fire extinguisher",
+   "Raising the alarm, evacuation and keeping escape routes clear"
+  ],
+  "assignment": "Top Chef Kitchen is a young, growing catering company that has had several fire accidents. You have been hired to put fire safety measures in place. Carry out a risk assessment, design a fire safety plan and write a report recommending fire prevention methods (at least 300 words).",
+  "modules": [
+   {
+    "title": "What is fire?",
+    "pages": [
+     1,
+     19
+    ],
+    "quiz": [
+     {
+      "prompt": "Fire in our workplace is both helpful and dangerous.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which of these is NOT one of the factors that complete the fire triangle?",
+      "options": [
+       "Oxygen",
+       "Wood",
+       "Heat",
+       "Fuel"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "All fires produce combustion as a result of burning.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which is the MAIN gas required for combustion?",
+      "options": [
+       "Petrol",
+       "Nitrogen",
+       "Oxygen",
+       "Methane"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Causes of fire",
+    "pages": [
+     21,
+     48
+    ],
+    "quiz": [
+     {
+      "prompt": "There are four ways a fire can spread or start in the kitchen. Which one is NOT one of them?",
+      "options": [
+       "Radiation",
+       "Convection",
+       "Conduction",
+       "Cooking"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which of these is NOT a fire consumable likely to be found in a kitchen?",
+      "options": [
+       "Cooking oil",
+       "Fuel",
+       "Packaging paper",
+       "Hair"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which of these is NOT a method of avoiding fire in the kitchen?",
+      "options": [
+       "Fire drills",
+       "Training",
+       "Safety shoes",
+       "Refresher training"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Fires in buildings threaten safety for all these reasons EXCEPT:",
+      "options": [
+       "Burning",
+       "Smoke",
+       "Sparks",
+       "Toxic fumes"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Fire extinguishers & what to do in a fire",
+    "pages": [
+     50,
+     80
+    ],
+    "quiz": [
+     {
+      "prompt": "In case of fire, how many steps must you follow at your workplace?",
+      "options": [
+       "2 steps",
+       "5 steps",
+       "7 steps",
+       "6 steps"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which of these is NOT a method of extinguishing fire?",
+      "options": [
+       "Cooling",
+       "Starving",
+       "The fire brigade",
+       "Smothering"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "How many types of fire extinguisher are found in the kitchen?",
+      "options": [
+       "3",
+       "4",
+       "5",
+       "1"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Fire blankets can be used to put out fires on electrical equipment.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Fire hazards & prevention",
+    "pages": [
+     82,
+     99
+    ],
+    "quiz": [
+     {
+      "prompt": "What are the THREE ways to fight a fire? Select three.",
+      "options": [
+       "Starve it by removing its fuel",
+       "Cool it by removing heat",
+       "Add more fuel so it burns itself out",
+       "Smother it by removing its oxygen"
+      ],
+      "answer": [
+       0,
+       1,
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "What are the legal requirements for escape routes and fire exits?",
+      "options": [
+       "Always kept free of obstruction",
+       "Well maintained",
+       "Clearly signposted",
+       "Suitably lit",
+       "All of the above"
+      ],
+      "answer": [
+       4
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "You should only tackle a fire if:",
+      "options": [
+       "You have been trained to use the fire-fighting equipment",
+       "There is a reasonable chance of extinguishing or containing it",
+       "There is no danger to yourself or anyone else",
+       "All of the above"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Once a fire has started, what THREE things does it need to keep burning? Select three.",
+      "options": [
+       "Heat",
+       "Oxygen",
+       "Carbon dioxide",
+       "Fuel"
+      ],
+      "answer": [
+       0,
+       1,
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "What THREE things does a fire need to start? Select three.",
+      "options": [
+       "Carbon dioxide",
+       "Oxygen",
+       "Heat",
+       "Fuel",
+       "Ash"
+      ],
+      "answer": [
+       1,
+       2,
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which FOUR of the following are common causes of fire? Select four.",
+      "options": [
+       "Overheated equipment",
+       "Water leaks",
+       "Electrical problems",
+       "Arson",
+       "Careless disposal of matches and cigarettes"
+      ],
+      "answer": [
+       0,
+       2,
+       3,
+       4
+      ],
+      "source": "deck"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "occupational-safety-health",
+  "deck": "Health_and_Safety_slips__trips_course",
+  "title": "Occupational Safety & Health",
+  "category": "health-safety",
+  "categories": [
+   "health-safety",
+   "hospitality"
+  ],
+  "summary": "Practical workplace safety for kitchens, hotels and food plants, focused on the hazards behind most injuries at work.",
+  "topics": [
+   "Risk assessment and spotting hazards",
+   "Slips, trips and falls, and safe lifting and carrying",
+   "PPE, plus recording and reporting accidents"
+  ],
+  "assignment": "You have just been appointed as the supervisor in charge of health and safety at your workplace. The company has been having problems with work-related injuries. Design a training programme to address the problem.",
+  "modules": [
+   {
+    "title": "Health & safety and slips, trips & falls",
+    "pages": [
+     1,
+     40
+    ],
+    "quiz": [
+     {
+      "prompt": "In the catering and hospitality industry, what are the most common types of accident?",
+      "options": [
+       "Explosions",
+       "Slips, trips and falls",
+       "Accidents with moving vehicles",
+       "Falling from a height"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which of the following best defines the term risk?",
+      "options": [
+       "A safety guard",
+       "A procedure put in place to control a hazard",
+       "A near miss",
+       "The likelihood that harm will occur"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Before any potentially hazardous activity, you should know which THREE of the following? Select three.",
+      "options": [
+       "What the safety procedures are",
+       "What the shortcuts are",
+       "What the hazards are",
+       "What protective clothing is required"
+      ],
+      "answer": [
+       0,
+       2,
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which one of the following can help avoid an accident?",
+      "options": [
+       "Not using the right equipment for the job",
+       "Taking shortcuts",
+       "Being distracted",
+       "Concentrating on the task in hand"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Accidents can lead to:",
+      "options": [
+       "Major injuries",
+       "Minor injuries",
+       "Financial loss",
+       "All of these"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Handling, lifting & carrying",
+    "pages": [
+     42,
+     81
+    ],
+    "quiz": [
+     {
+      "prompt": "Which TWO of the following are examples of hazards? Select two.",
+      "options": [
+       "Cleaning up spillages immediately",
+       "Using guards where provided",
+       "Overflowing waste bins",
+       "Leaving the petty cash tin on view"
+      ],
+      "answer": [
+       2,
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which TWO of the following are safe storage principles? Select two.",
+      "options": [
+       "Storage areas should be kept clean and tidy",
+       "Heavy items should be stored above head height",
+       "Items should be arranged neatly and clearly labelled",
+       "Boxes should be stacked as high as possible"
+      ],
+      "answer": [
+       0,
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "What are your responsibilities for maintaining your work area? Select two.",
+      "options": [
+       "To repair all faulty equipment on the premises",
+       "To promptly report any defect that could be a hazard",
+       "To keep your work area clean, tidy and free of obstruction"
+      ],
+      "answer": [
+       1,
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "In what ways is an overflowing bin a danger to health and safety?",
+      "options": [
+       "People can slip or trip on loose waste",
+       "Loose rubbish is a fire hazard",
+       "Excess waste attracts pests",
+       "All of the above"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which THREE of the following are safe working practices? Select three.",
+      "options": [
+       "Keeping changing areas tidy and free from hazards",
+       "Leaving belongings where colleagues can trip over them",
+       "Only drinking from the labelled drinking water supply",
+       "Only smoking in designated areas"
+      ],
+      "answer": [
+       0,
+       2,
+       3
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Reporting accidents & PPE",
+    "pages": [
+     83,
+     89
+    ],
+    "quiz": [
+     {
+      "prompt": "Which THREE are safe working practices relating to PPE? Select three.",
+      "options": [
+       "Ensure your PPE fits and works correctly",
+       "Never misuse equipment or clothing provided for your safety",
+       "Return PPE after use, clean and in safe working order",
+       "Take shortcuts with your safety"
+      ],
+      "answer": [
+       0,
+       1,
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which THREE tasks would always require PPE? Select three.",
+      "options": [
+       "De-boning a meat joint",
+       "Cleaning an oven with a chemical spray",
+       "Working inside a freezer room at -20°C",
+       "Using a temperature probe"
+      ],
+      "answer": [
+       0,
+       1,
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which THREE of the following are examples of PPE? Select three.",
+      "options": [
+       "Safety goggles",
+       "Chain mail apron",
+       "Falling from a height",
+       "Gloves"
+      ],
+      "answer": [
+       0,
+       1,
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "If you see a colleague doing a hazardous task without the correct PPE, you should:",
+      "options": [
+       "Let them learn from their mistakes",
+       "Wait until a manager notices",
+       "Remind them about PPE and their safety",
+       "Turn a blind eye"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which THREE of the following are your responsibilities? Select three.",
+      "options": [
+       "Wearing the PPE provided",
+       "Providing the necessary PPE",
+       "Reporting any defects or problems with the PPE",
+       "Keeping the PPE clean and in good order"
+      ],
+      "answer": [
+       0,
+       2,
+       3
+      ],
+      "source": "deck"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "kitchen-hygiene-sanitation",
+  "deck": "Detegency_Effective_cleaning__disinfection_course",
+  "title": "Kitchen Hygiene & Sanitation",
+  "category": "hospitality",
+  "categories": [
+   "hospitality",
+   "food-safety"
+  ],
+  "summary": "Effective cleaning and disinfection for kitchens, service areas and equipment, so surfaces are truly clean and not just clean-looking.",
+  "topics": [
+   "Detergents vs disinfectants, and two-stage cleaning",
+   "The six stages of cleaning, plus manual and machine dishwashing",
+   "Cleaning schedules and safe chemical handling (COSHH)"
+  ],
+  "assignment": null,
+  "modules": [
+   {
+    "title": "Detergency",
+    "pages": [
+     1,
+     31
+    ],
+    "quiz": [
+     {
+      "prompt": "What is a detergent?",
+      "options": [
+       "A chemical that helps water remove dirt, grease and food particles",
+       "A chemical that kills all bacteria",
+       "A disinfectant tablet",
+       "A fragrance added to water"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "drafted",
+      "review": "Drafted from the deck because its quiz slide is empty. Please confirm."
+     },
+     {
+      "prompt": "Which family of detergents is very good on oils and fats and usually low foaming?",
+      "options": [
+       "Anionic",
+       "Non-ionic",
+       "Cationic"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "drafted",
+      "review": "Drafted from the deck. Please confirm."
+     },
+     {
+      "prompt": "Why must soiling be removed before disinfecting?",
+      "options": [
+       "Soiling stops the disinfectant reaching the bacteria",
+       "Disinfectant makes the soil harder",
+       "It is only for appearance",
+       "It isn't necessary"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "drafted",
+      "review": "Drafted from the deck. Please confirm."
+     },
+     {
+      "prompt": "Two-stage cleaning (detergent pre-clean, then disinfectant) should be used in:",
+      "options": [
+       "Raw meat plants, slaughterhouses and poultry factories",
+       "Offices",
+       "Car parks",
+       "Nowhere; one stage is always enough"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "drafted",
+      "review": "Drafted from the deck. Please confirm."
+     }
+    ]
+   },
+   {
+    "title": "Cleaning, schedules & manual dishwashing",
+    "pages": [
+     33,
+     52
+    ],
+    "quiz": [
+     {
+      "prompt": "Disinfection means:",
+      "options": [
+       "Reducing micro-organisms to a safe level",
+       "Removing all visible dirt",
+       "Making surfaces shine",
+       "Killing pests"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "drafted",
+      "review": "Drafted from the deck. Please confirm."
+     },
+     {
+      "prompt": "A sanitiser is:",
+      "options": [
+       "A detergent and disinfectant combined",
+       "A type of rinse aid",
+       "Hot water only",
+       "A hand cream"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "drafted",
+      "review": "Drafted from the deck. Please confirm."
+     },
+     {
+      "prompt": "Which area should be cleaned first to avoid cross-contamination?",
+      "options": [
+       "The high-risk food preparation area",
+       "The raw food preparation area",
+       "The toilets",
+       "The bin area"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "drafted",
+      "review": "Drafted from the deck. Please confirm."
+     },
+     {
+      "prompt": "For manual dishwashing, how hot should the rinse water be to allow air drying?",
+      "options": [
+       "At least 30°C",
+       "At least 45°C",
+       "At least 55°C",
+       "At least 70°C"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "drafted",
+      "review": "Drafted from the deck. Please confirm."
+     },
+     {
+      "prompt": "Which of these does NOT belong on a cleaning schedule?",
+      "options": [
+       "What is to be cleaned",
+       "Who cleans it",
+       "How it is cleaned",
+       "The cleaner's home address"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "drafted",
+      "review": "Drafted from the deck. Please confirm."
+     }
+    ]
+   },
+   {
+    "title": "Machine dishwashing, waste & COSHH",
+    "pages": [
+     54,
+     71
+    ],
+    "extra_pages": [
+     73
+    ],
+    "quiz": [
+     {
+      "prompt": "How does a dishwashing machine sanitise utensils?",
+      "options": [
+       "With heat: a final rinse above 82°C",
+       "With cold water",
+       "With rinse aid alone",
+       "By air drying"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "drafted",
+      "review": "Drafted from the deck. Please confirm."
+     },
+     {
+      "prompt": "Which of these is a rule of cleaning?",
+      "options": [
+       "Never mix chemicals",
+       "Store chemicals in food containers",
+       "Use the same equipment for toilets and food rooms",
+       "Wash equipment in hand wash basins"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "drafted",
+      "review": "Drafted from the deck. Please confirm."
+     },
+     {
+      "prompt": "COSHH stands for:",
+      "options": [
+       "Control of Substances Hazardous to Health",
+       "Cleaning of Surfaces in Hotels and Hostels",
+       "Code of Safe Hygiene Habits",
+       "Control of Spills and Hot Hazards"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "drafted",
+      "review": "Drafted from the deck. Please confirm."
+     },
+     {
+      "prompt": "External refuse bins should have:",
+      "options": [
+       "Tight-fitting lids, replaced if broken",
+       "No lids, for easy access",
+       "Lids only in the rainy season",
+       "Food stored next to them"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "drafted",
+      "review": "Drafted from the deck. Please confirm."
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "slug": "integrated-pest-control",
+  "deck": "integrated_pest_control_management_course1",
+  "title": "Integrated Pest Control Management",
+  "category": "food-safety",
+  "categories": [
+   "food-safety",
+   "hospitality"
+  ],
+  "summary": "How to recognise, prevent and control pests in a food business before they contaminate food or close the doors.",
+  "topics": [
+   "Common food pests and the signs of infestation",
+   "Environmental, physical and chemical control methods",
+   "Working with a competent pest contractor"
+  ],
+  "assignment": "A public health officer has just visited your food business and issued a closure notice because of pest infestation. Write a report on the areas you would address to meet the requirements and get the business allowed to reopen.",
+  "modules": [
+   {
+    "title": "Introduction to food pests",
+    "pages": [
+     1,
+     17
+    ],
+    "quiz": [
+     {
+      "prompt": "Food pests are wild animals that love our food and are good to keep around in our environment.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Pests are obnoxious and destructive.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Pest control is a prerequisite for successful food safety management in which business?",
+      "options": [
+       "Restaurant",
+       "Hotel and lodge",
+       "All of the above",
+       "None of the above"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Mosquitoes and bees are common types of food pest.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Types of pests & signs of infestation",
+    "pages": [
+     19,
+     43
+    ],
+    "quiz": [
+     {
+      "prompt": "Pest infestation can damage a business's reputation and affect its profits.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Pests can be eliminated by pouring hot water on them.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which damage can pests cause when they get into a business?",
+      "options": [
+       "Damage to the property",
+       "Damage to food and drinks",
+       "All of the above",
+       "None of the above"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Food handlers should ignore signs of pests until asked by an enforcement officer.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Pest prevention & control methods",
+    "pages": [
+     45,
+     76
+    ],
+    "quiz": [
+     {
+      "prompt": "What is the first line of defence in preventing pest infestation?",
+      "options": [
+       "Physical methods",
+       "Chemical methods",
+       "Environmental control"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Is a competent pest contractor necessary to eradicate pests in your business?",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Which of the following is NOT a good housekeeping control?",
+      "options": [
+       "FIFO",
+       "Clean as you go",
+       "Temperature recording",
+       "Pest-proof containers"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Some pests and insects can be useful in food production.",
+      "options": [
+       "True",
+       "False"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     }
+    ]
+   }
+  ]
+ }
+]
