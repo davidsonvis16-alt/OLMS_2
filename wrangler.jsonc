@@ -1,11 +1,21 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "aspire-lms",
+  // Must match the Worker's name in the Cloudflare dashboard.
+  "name": "aspirelms",
   "main": "./workers/app.ts",
   "compatibility_date": "2026-09-01",
   "compatibility_flags": ["nodejs_compat"],
   // Files in /public; the Worker also reads certificate fonts and images through this binding.
   "assets": { "binding": "ASSETS" },
-  "observability": { "enabled": true }
-  // Secrets (SUPABASE_SERVICE_ROLE_KEY, PAYSTACK_SECRET_KEY) are set with `wrangler secret put`, never in this file.
+  "observability": { "enabled": true },
+  // Public settings only: browsers receive these anyway. They are built into the pages and also given to the Worker,
+  // so nothing needs adding to Cloudflare's build settings. On your computer, .env.local overrides them.
+  // (Full-line comments only in this file: vite.config.ts reads it.)
+  "vars": {
+    "NEXT_PUBLIC_SUPABASE_URL": "https://dcuqwervhantugbrgafh.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_S-LUPBTSDku15a9-Gn0HrQ_CIRPPZli",
+    "NEXT_PUBLIC_SITE_URL": "https://aspirelms.davidson-vis-16.workers.dev",
+    "USD_TO_KES": "129.84"
+  }
+  // Secrets (SUPABASE_SERVICE_ROLE_KEY, PAYSTACK_SECRET_KEY) are added in Cloudflare as type "Secret", never in this file.
 }
