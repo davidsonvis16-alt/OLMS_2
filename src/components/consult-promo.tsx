@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Icon } from "./icons";
 
 /** Points learners and visitors from free training to paid consultancy (the client's funnel). */
-export function ConsultPromo({ title = "Running a kitchen, hotel or food business?", text = "Aspire can audit your premises, help with your HACCP plan and train your whole team on site." }: { title?: string; text?: string }) {
+export function ConsultPromo({ title = "Running a kitchen, hotel or food business?", text = "Aspire can ready your kitchen, set up food safety systems that pass audits and improve how your operation runs." }: { title?: string; text?: string }) {
   return (
     <aside className="consult-promo" aria-label="Consultancy">
       <div>

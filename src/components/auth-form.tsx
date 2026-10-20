@@ -8,15 +8,20 @@ import { safeNext } from "@/lib/safe-next";
 import { checkPassword } from "@/lib/password";
 import { PasswordField } from "./password-field";
 import { PasskeySignIn } from "./passkey-signin";
+import { PhoneField, readPhone } from "./phone-field";
 
 type Mode = "login" | "signup" | "forgot" | "reset";
 
-export function AuthForm({ mode }: { mode: Mode }) {
+const SUSPENDED = "This account has been suspended. If you think this is a mistake, contact Aspire.";
+
+export function AuthForm({ mode, country }: { mode: Mode; country?: string | null }) {
   const r = useRouter();
   const params = useSearchParams();
   const next = safeNext(params.get("next"));
   const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState<string | null>(params.get("error") === "link" ? "That link has expired or was already used. Sign in, or use “Forgot password?” to get a new one." : null);
+  const [err, setErr] = useState<string | null>(
+    params.get("error") === "link" ? "That link has expired or was already used. Sign in, or use “Forgot password?” to get a new one."
+    : params.get("error") === "suspended" ? SUSPENDED : null);
   const [msg, setMsg] = useState<string | null>(null);
   const [who, setWho] = useState<{ email?: string; name?: string }>({});
 
@@ -31,14 +36,23 @@ export function AuthForm({ mode }: { mode: Mode }) {
     try {
       if (mode === "login") {
         const { error } = await sb.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        r.replace(next); r.refresh();
+        if (error) throw new Error(/invalid login/i.test(error.message)
+          ? "Email or password is wrong. Passwords are case-sensitive: check capital letters, dots and symbols, or use “Forgot password?”."
+          : /not confirmed/i.test(error.message) ? "Please confirm your email first: tap the link we emailed you."
+          : /banned/i.test(error.message) ? SUSPENDED : error.message);
+        // A full page load, so the new sign-in is carried on the very next request.
+        setMsg("Signed in. Opening your account…");
+        window.location.assign(next);
+        return;
       } else if (mode === "signup") {
         const full_name = String(f.get("full_name") ?? "").trim();
-        const phone = String(f.get("phone") ?? "").trim();
+        const { phone, country } = readPhone(f);
         newPassword(f, { email, name: full_name });
-        const { data, error } = await sb.auth.signUp({ email, password, options: { data: { full_name, phone }, emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}` } });
-        if (error) throw error;
+        if (f.get("terms") !== "yes") throw new Error("Please agree to the Terms and Conditions and the Privacy Policy to create an account.");
+        const { data, error } = await sb.auth.signUp({ email, password, options: { data: { full_name, phone, country, terms: "yes" }, emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}` } });
+        if (error) throw new Error(/database error saving new user/i.test(error.message)
+          ? "That phone number is already linked to another account. Each person can have one account: sign in instead, or use “Forgot password?”."
+          : error.message);
         if (data.session) { r.replace(next); r.refresh(); }
         else setMsg("Check your email and tap the confirmation link to activate your account.");
       } else if (mode === "forgot") {
@@ -76,7 +90,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
       <span className="micro" style={{ marginBottom: 16 }}>{mode === "login" ? "Sign in" : mode === "signup" ? "New account" : "Password"}</span>
       <h1>{titles[mode][0]}</h1>
       <p>{titles[mode][1]}</p>
-      <form onSubmit={submit} className="auth-form" onChange={(e) => {
+      <form onSubmit={submit} method="post" className="auth-form" onChange={(e) => {
         if (!(e.target instanceof HTMLInputElement)) return
         const t = e.target;
         if (t.name === "email") setWho((w) => ({ ...w, email: t.value }));
@@ -85,12 +99,18 @@ export function AuthForm({ mode }: { mode: Mode }) {
         {mode === "signup" && (
           <>
             <div className="field"><label htmlFor="full_name">Full name</label><input id="full_name" name="full_name" autoComplete="name" required placeholder="As it should appear on your certificate" /></div>
-            <div className="field"><label htmlFor="phone">Phone (optional)</label><input id="phone" name="phone" type="tel" autoComplete="tel" placeholder="+254…" /></div>
+            <PhoneField detected={country} />
           </>
         )}
         {mode !== "reset" && <div className="field"><label htmlFor="email">Email</label><input id="email" name="email" type="email" autoComplete="email" required /></div>}
         {mode === "login" && <PasswordField kind="current" />}
         {(mode === "signup" || mode === "reset") && <PasswordField kind="new" context={who} label={mode === "reset" ? "New password" : "Password"} />}
+        {mode === "signup" && (
+          <label className="agree">
+            <input type="checkbox" name="terms" value="yes" required />
+            <span>I agree to the <Link href="/terms" target="_blank">Terms and Conditions</Link> and the <Link href="/privacy" target="_blank">Privacy Policy</Link>, and I&apos;m creating one account for myself.</span>
+          </label>
+        )}
         {err && <p className="alert alert--error" role="alert">{err}</p>}
         {msg && <p className="alert alert--ok" role="status">{msg}</p>}
         <button className="btn btn--go btn--lg btn--block" disabled={busy}>

@@ -20,11 +20,15 @@ function shuffle<T>(a: T[], seed: number) {
 const TF = (o: string[]) => o.length === 2 && o.every((x) => /^(true|false|yes|no)$/i.test(x.trim()));
 
 export function Quiz({
-  questions, mode, endpointBody, onDone, passMark = 80,
+  questions, mode, endpointBody, startBody, started: openAtLoad = false, onStart, onDone, passMark = 80,
 }: {
   questions: PublicQuestion[];
   mode: "module" | "exam";
   endpointBody: Record<string, string>;
+  /** Opens the test on the server; the course's slides stay closed until it is submitted. */
+  startBody: Record<string, string>;
+  started?: boolean;
+  onStart?: () => void;
   onDone?: (r: ModuleResult | ExamResult) => void;
   passMark?: number;
 }) {
@@ -38,6 +42,19 @@ export function Quiz({
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [result, setResult] = useState<ModuleResult | ExamResult | null>(null);
+  const [started, setStarted] = useState(openAtLoad);
+
+  async function begin() {
+    setBusy(true); setErr(null);
+    try {
+      const res = await fetch("/api/learn", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(startBody) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Could not start");
+      setAnswers({}); setResult(null); setStarted(true); onStart?.();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (e) { setErr(e instanceof Error ? e.message : "Could not start"); }
+    finally { setBusy(false); }
+  }
 
   const answered = order.filter(({ q }) => (answers[q.id]?.length ?? 0) > 0).length;
 
@@ -56,19 +73,37 @@ export function Quiz({
     try {
       const res = await fetch("/api/learn", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...endpointBody, answers }) });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Could not submit");
-      setResult(data); onDone?.(data);
+      if (!res.ok) {
+        if (data.notStarted) setStarted(false);
+        throw new Error(data.error || "Could not submit");
+      }
+      setResult(data); setStarted(false); onDone?.(data);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (e) { setErr(e instanceof Error ? e.message : "Could not submit"); }
     finally { setBusy(false); }
   }
 
-  function retry() { setAnswers({}); setResult(null); setSeed(seed + 13); window.scrollTo({ top: 0, behavior: "smooth" }); }
+  function retry() { setSeed(seed + 13); begin(); }
 
   const mres = mode === "module" ? (result as ModuleResult | null) : null;
   const eres = mode === "exam" ? (result as ExamResult | null) : null;
 
   if (questions.length === 0) return <p className="alert alert--info">No questions have been added here yet.</p>;
+
+  if (!started && !result) {
+    const what = mode === "exam" ? "assessment" : "knowledge check";
+    return (
+      <div className="test-start">
+        <Icon name="clipboard" />
+        <div>
+          <b>Ready? {order.length} question{order.length === 1 ? "" : "s"}.</b>
+          <p>Once you start, <strong>the slides are closed until you submit</strong>. Leaving this page or refreshing won&apos;t reopen them, so make sure you&apos;ve finished studying first. After you submit, the slides open again for revision{mode === "exam" ? " and you can retake the assessment as often as you need" : ""}.</p>
+          {err && <p className="alert alert--error" role="alert">{err}</p>}
+          <button className="btn btn--go btn--lg" onClick={begin} disabled={busy}>{busy ? "Starting…" : `Start the ${what}`}<Icon name="arrow" /></button>
+        </div>
+      </div>
+    );
+  }
 
   const verdict = mode === "exam" ? (eres?.passed ? "is-pass" : "is-fail") : result && result.score >= passMark ? "is-pass" : "is-mid";
   return (

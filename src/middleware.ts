@@ -75,7 +75,10 @@ export async function middleware(request: NextRequest) {
   });
   // getUser() checks the token with Supabase Auth (not just the cookie), and refreshes it when needed.
   const { data: { user } } = await sb.auth.getUser();
-  if (GATED.some((x) => p === x || p.startsWith(x + "/")) && !user) {
+  // Form saves (server actions) check the user themselves and send them to sign in properly. Answering one with the
+  // sign-in page instead would crash the screen ("An unexpected response was received from the server").
+  const isAction = request.method === "POST" && request.headers.has("next-action");
+  if (GATED.some((x) => p === x || p.startsWith(x + "/")) && !user && !isAction) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.search = `?next=${encodeURIComponent(p + request.nextUrl.search)}`;

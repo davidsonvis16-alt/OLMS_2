@@ -1,8 +1,14 @@
 import type { NextConfig } from "next";
+import { networkInterfaces } from "node:os";
 
 const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname : "*.supabase.co";
 
+// Dev server only: also allow opening the site as 127.0.0.1 or from this computer's network address (e.g. a phone on
+// the same Wi-Fi). Without this, Next blocks the page scripts and sign-in silently does nothing.
+const lanHosts = Object.values(networkInterfaces()).flat().filter((i) => i && i.family === "IPv4" && !i.internal).map((i) => i!.address);
+
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["127.0.0.1", ...lanHosts],
   images: { remotePatterns: [{ protocol: "https", hostname: supabaseHost }] },
   serverExternalPackages: ["pdf-lib", "qrcode", "@pdf-lib/fontkit"],
   // Pin the project root (a lockfile higher up the disk would otherwise be picked).

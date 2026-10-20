@@ -1,10 +1,11 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
+import { getSession } from "@/lib/auth";
 import { limit } from "@/lib/rate-limit";
 import { PDFDocument, degrees, rgb, setCharacterSpacing } from "pdf-lib";
 import QRCode from "qrcode";
-import { supabaseAdmin, supabaseServer } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase";
 import { SITE } from "@/lib/site";
 import { embedCertFonts } from "@/lib/cert-fonts";
 import { C, LIGA, PAGE, layoutCertificate } from "@/lib/cert-layout";
@@ -14,14 +15,12 @@ const hex = (h: string) => rgb(parseInt(h.slice(1, 3), 16) / 255, parseInt(h.sli
 
 export async function GET(req: Request, { params }: { params: Promise<{ serial: string }> }) {
   const { serial } = await params;
-  const sb = await supabaseServer();
-  const { data: { user } } = await sb.auth.getUser();
+  const { user, profile: me } = await getSession(); // also treats suspended accounts as signed out
   if (!user) return NextResponse.redirect(new URL(`/login?next=/certificates`, req.url));
   const db = supabaseAdmin();
   if (!/^[A-Z0-9-]{6,40}$/.test(serial)) return new NextResponse("Not found", { status: 404 });
   const { data: c } = await db.from("certificates").select("*").eq("serial", serial).maybeSingle();
   if (!c || c.revoked) return new NextResponse("Not found", { status: 404 });
-  const { data: me } = await db.from("profiles").select("role").eq("id", user.id).single();
   if (c.user_id !== user.id && me?.role !== "admin") return new NextResponse("Not found", { status: 404 });
 
   if (!(await limit("pdf", user.id))) return new NextResponse("Too many requests", { status: 429 });

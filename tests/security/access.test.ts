@@ -12,7 +12,17 @@ import { coveredByCompany } from "@/lib/certs";
 const HACCP = stableId("haccp-principles");
 const JANE_CERT = "ASH-2026-JWK001";
 const pdf = (serial: string) => certificatePdf(new Request(`https://aspire.test/api/certificate/${serial}`), { params: Promise.resolve({ serial }) });
-const post = (body: unknown) => learn(new Request("https://aspire.test/api/learn", { method: "POST", body: JSON.stringify(body), headers: { "content-type": "application/json" } }));
+/** Sends a request; quiz and exam answers are preceded by starting that test, as the page does. */
+const send = (body: unknown, raw?: string) => learn(new Request("https://aspire.test/api/learn", { method: "POST", body: raw ?? JSON.stringify(body), headers: { "content-type": "application/json" } }));
+async function withStart(body: unknown, raw?: string) {
+  const b = (body ?? {}) as { type?: string; moduleId?: string; courseId?: string };
+  if (!raw && (b.type === "quiz" || b.type === "exam")) {
+    const courseId = b.type === "exam" ? b.courseId : (fakeDb().modules.find((m) => m.id === b.moduleId)?.course_id as string | undefined);
+    if (courseId) await send({ type: "start", courseId, ...(b.type === "quiz" ? { moduleId: b.moduleId } : {}) });
+  }
+  return send(body, raw);
+}
+const post = (body: unknown) => withStart(body);
 const profile = (id: string) => fakeDb().profiles.find((p) => p.id === id)!;
 const snapshot = () => JSON.stringify(fakeDb());
 

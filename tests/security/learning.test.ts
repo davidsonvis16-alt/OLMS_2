@@ -7,7 +7,17 @@ import { loadQuestions, toPublic } from "@/lib/grading";
 const PH = stableId("personal-health-hygiene");
 const HACCP = stableId("haccp-principles");
 const m = (slug: string, n: number) => stableId(`${slug}#${n}`);
-const call = (body: unknown, raw?: string) => learn(new Request("https://aspire.test/api/learn", { method: "POST", body: raw ?? JSON.stringify(body), headers: { "content-type": "application/json" } }));
+/** Sends a request; quiz and exam answers are preceded by starting that test, as the page does. */
+const send = (body: unknown, raw?: string) => learn(new Request("https://aspire.test/api/learn", { method: "POST", body: raw ?? JSON.stringify(body), headers: { "content-type": "application/json" } }));
+async function withStart(body: unknown, raw?: string) {
+  const b = (body ?? {}) as { type?: string; moduleId?: string; courseId?: string };
+  if (!raw && (b.type === "quiz" || b.type === "exam")) {
+    const courseId = b.type === "exam" ? b.courseId : (fakeDb().modules.find((m) => m.id === b.moduleId)?.course_id as string | undefined);
+    if (courseId) await send({ type: "start", courseId, ...(b.type === "quiz" ? { moduleId: b.moduleId } : {}) });
+  }
+  return send(body, raw);
+}
+const call = withStart;
 const deepKeys = (o: unknown): string[] => (o && typeof o === "object" ? Object.entries(o).flatMap(([k, v]) => [k, ...deepKeys(v)]) : []);
 
 describe("answer keys never leave the server", () => {
@@ -106,5 +116,77 @@ describe("rate limits", () => {
     expect(codes.slice(20)).toEqual([429, 429]);
     signIn(USERS.owner); // another person is unaffected
     expect((await call({ type: "exam", courseId: PH, answers: {} })).status).not.toBe(429);
+  });
+});
+
+describe("a test, once started, closes the slides until it is submitted", () => {
+  const start = (courseId: string, moduleId?: string) => send({ type: "start", courseId, ...(moduleId ? { moduleId } : {}) });
+  const locks = () => fakeDb().test_locks.filter((l) => l.user_id === USERS.learner);
+
+  it("answers are refused unless the test was started first", async () => {
+    signIn(USERS.learner);
+    const before = JSON.stringify(fakeDb());
+    const q = await send({ type: "quiz", moduleId: m("haccp-principles", 2), answers: {} });
+    expect(q.status).toBe(409);
+    expect((await q.json()).notStarted).toBe(true);
+    expect((await send({ type: "exam", courseId: PH, answers: {} })).status).toBe(409);
+    expect(JSON.stringify(fakeDb())).toBe(before);
+  });
+
+  it("while a knowledge check is open, no slide in that course can be opened, and no other test started", async () => {
+    signIn(USERS.learner);
+    expect((await start(HACCP, m("haccp-principles", 2))).status).toBe(200);
+    const viewed = () => fakeDb().module_progress.find((p) => p.user_id === USERS.learner && p.module_id === m("haccp-principles", 2))?.viewed_upto;
+    const was = viewed();
+    for (const mod of [m("haccp-principles", 1), m("haccp-principles", 2)]) {
+      const r = await send({ type: "progress", moduleId: mod, page: 5 });
+      expect(r.status).toBe(409);
+      expect((await r.json()).locked).toBe(true);
+    }
+    expect(viewed()).toBe(was);
+    expect((await start(HACCP, m("haccp-principles", 1))).status).toBe(409); // another check in the same course
+    expect((await start(HACCP, m("haccp-principles", 2))).status).toBe(200); // reopening the same one is fine
+    expect(locks()).toHaveLength(1);
+    // Other courses are unaffected.
+    expect((await send({ type: "progress", moduleId: m("personal-health-hygiene", 1), page: 2 })).status).toBe(200);
+
+    // Submitting closes the test and opens the slides again.
+    expect((await send({ type: "quiz", moduleId: m("haccp-principles", 2), answers: {} })).status).toBe(200);
+    expect(locks()).toHaveLength(0);
+    expect((await send({ type: "progress", moduleId: m("haccp-principles", 2), page: 5 })).status).toBe(200);
+    // A retake must be started again.
+    expect((await send({ type: "quiz", moduleId: m("haccp-principles", 2), answers: {} })).status).toBe(409);
+  });
+
+  it("the final assessment locks the course's slides the same way", async () => {
+    signIn(USERS.learner);
+    expect((await start(PH)).status).toBe(200);
+    expect((await send({ type: "progress", moduleId: m("personal-health-hygiene", 1), page: 1 })).status).toBe(409);
+    expect((await start(PH, m("personal-health-hygiene", 1))).status).toBe(409);
+    expect((await send({ type: "exam", courseId: PH, answers: {} })).status).toBe(200);
+    expect(locks()).toHaveLength(0);
+    expect((await send({ type: "progress", moduleId: m("personal-health-hygiene", 1), page: 1 })).status).toBe(200);
+  });
+
+  it("a test can only be started when it could be taken", async () => {
+    signIn(USERS.learner);
+    expect((await start(HACCP, m("haccp-principles", 3))).status).toBe(403); // module still locked
+    expect((await start(HACCP)).status).toBe(403); // modules not finished
+    expect((await start(PH, m("haccp-principles", 2))).status).toBe(400); // module from another course
+    signIn(USERS.outsider);
+    expect((await start(HACCP, m("haccp-principles", 1))).status).toBe(403); // not enrolled
+    expect(fakeDb().test_locks).toHaveLength(0);
+  });
+
+  it("the course and module pages send a learner with an open test back to it", async () => {
+    const { redirectOf } = await import("../support/setup");
+    const { default: ModulePage } = await import("@/app/learn/[slug]/m/[position]/page");
+    const { default: CoursePage } = await import("@/app/learn/[slug]/page");
+    signIn(USERS.learner);
+    await start(PH);
+    expect(await redirectOf(() => ModulePage({ params: Promise.resolve({ slug: "personal-health-hygiene", position: "1" }) }))).toBe("/learn/personal-health-hygiene/exam");
+    expect(await redirectOf(() => CoursePage({ params: Promise.resolve({ slug: "personal-health-hygiene" }), searchParams: Promise.resolve({}) }))).toBe("/learn/personal-health-hygiene/exam");
+    await send({ type: "exam", courseId: PH, answers: {} });
+    expect(await redirectOf(() => ModulePage({ params: Promise.resolve({ slug: "personal-health-hygiene", position: "1" }) }))).toBeNull();
   });
 });

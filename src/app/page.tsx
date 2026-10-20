@@ -4,7 +4,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { Icon } from "@/components/icons";
 import { CertificateView } from "@/components/certificate";
 import { EnquiryForm, Reveal, VerifyForm } from "@/components/forms";
-import { Thermo } from "@/components/home-client";
+import { HoverPics, Thermo } from "@/components/home-client";
 import { CONSULTANCY } from "@/lib/consultancy";
 import { supabaseAdmin } from "@/lib/supabase";
 import { SITE, catLabel, coursePhoto, wa } from "@/lib/site";
@@ -49,7 +49,7 @@ export default async function Home() {
           <div className="nh-hero-pic" aria-hidden="true"><img src="/photos/prep.jpg" alt="" /></div>
           <div className="wrap nh-hero-in">
             <span className="nh-eyebrow">Food safety, hygiene &amp; health and safety training · Kenya</span>
-            <h1 id="hero-title" className="nh-title">Safer people.<br />Stronger industries.</h1>
+            <h1 id="hero-title" className="nh-title"><span className="sr-only">Safer people. Stronger industries.</span><span aria-hidden="true">Safer <span className="nowrap">pe<span className="lens lens--dial"><img src="/photos/thermometer.jpg" alt="" /></span>ple.</span><br />Stronger industries.</span></h1>
             <p className="nh-lede"><b>{SITE.name}</b> trains food handlers, kitchen and service teams, supervisors and managers online and on site, and proves it with a certificate anyone can check. <span className="motto">Value, Quality &amp; Service.</span></p>
             <div className="row nh-actions">
               <Link className="btn btn--go btn--lg" href="/courses">Explore training</Link>
@@ -84,7 +84,7 @@ export default async function Home() {
                 <h2 className="h-l" id="consult-title">Expert help for your kitchen.</h2>
               </div>
               <div>
-                <p className="lede">Aspire audits your premises, helps you build your HACCP plan, reviews pest control and cleaning, and trains your team on site.</p>
+                <p className="lede">Aspire helps you plan and ready your kitchen, build food safety systems that pass audits and accreditation, improve day-to-day operations, and design food service for hospitals.</p>
                 <div className="row" style={{ marginTop: 22 }}>
                   <Link className="btn btn--go btn--lg" href="/consultancy#enquire">Book a consultation</Link>
                   <Link className="link" href="/consultancy">All consultancy services <Icon name="arrow" /></Link>
@@ -127,13 +127,14 @@ export default async function Home() {
             ) : (
               <div className="nh-tiles">
                 {courses.map((c) => (
-                  <Link key={c.slug} href={`/courses/${c.slug}`} className="nh-tile">
+                  <Link key={c.slug} href={`/courses/${c.slug}`} className="nh-tile" data-pic={coursePhoto(c.slug, c.category)}>
                     <span><b>{c.title}</b><small>{cats(c)} · {plural(n(c.modules), "module")}</small></span>
                     <i aria-hidden="true">↗</i>
                   </Link>
                 ))}
               </div>
             )}
+            <HoverPics />
             <Link className="link" href="/courses" style={{ marginTop: 32 }}>Full catalogue with details <Icon name="arrow" /></Link>
           </div>
         </section>

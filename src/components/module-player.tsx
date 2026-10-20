@@ -14,23 +14,32 @@ type Props = {
   completed: boolean;
   nextHref: string;
   nextLabel: string;
+  /** The knowledge check was already started (e.g. the page was refreshed mid-test). */
+  testOpen: boolean;
 };
 
-export function ModulePlayer({ course, module, slides, startAt, questions, completed, nextHref, nextLabel }: Props) {
+export function ModulePlayer({ course, module, slides, startAt, questions, completed, nextHref, nextLabel, testOpen }: Props) {
   const [i, setI] = useState(startAt);
-  const [stage, setStage] = useState<"slides" | "quiz">("slides");
+  // While the knowledge check is open the slides are closed (the server enforces this too).
+  const [testing, setTesting] = useState(testOpen);
+  const [blocked, setBlocked] = useState(false);
+  const [stage, setStage] = useState<"slides" | "quiz">(testOpen ? "quiz" : "slides");
   const [done, setDone] = useState(completed);
   const [loaded, setLoaded] = useState(false);
   const [left, setLeft] = useState(0);
-  const sent = useRef(startAt);
+  const sent = useRef(-1);
   const frame = useRef<HTMLDivElement>(null);
   const img = useRef<HTMLImageElement>(null);
   const last = slides.length - 1;
 
+  // Reports every slide shown: the server records the furthest one, and refuses (409) while a test is open, e.g.
+  // when the test was started in another tab, in which case this tab closes its slides too.
   const report = useCallback((page: number) => {
-    if (page <= sent.current) return;
+    if (page === sent.current) return;
     sent.current = page;
-    fetch("/api/learn", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "progress", moduleId: module.id, page }), keepalive: true }).catch(() => {});
+    fetch("/api/learn", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "progress", moduleId: module.id, page }), keepalive: true })
+      .then(async (r) => { if (r.status === 409 && (await r.json().catch(() => ({}))).locked) setBlocked(true); })
+      .catch(() => {});
   }, [module.id]);
 
   useEffect(() => {
@@ -75,18 +84,26 @@ export function ModulePlayer({ course, module, slides, startAt, questions, compl
   return (
     <div className="player">
       <header className="player-top">
-        <Link href={`/learn/${course.slug}`} className="player-back" aria-label="Back to course"><Icon name="back" /></Link>
+        {testing ? <span className="player-back is-off" aria-hidden="true"><Icon name="lock" /></span> : <Link href={`/learn/${course.slug}`} className="player-back" aria-label="Back to course"><Icon name="back" /></Link>}
         <div className="player-titles">
           <small>Module {String(module.index).padStart(2, "0")} of {String(module.total).padStart(2, "0")} · {course.title}</small>
           <b>{module.title}</b>
         </div>
         <div className="player-steps" role="group" aria-label="Module sections">
-          <button aria-pressed={stage === "slides"} onClick={() => setStage("slides")}><Icon name="book" /><span>Slides</span></button>
+          <button aria-pressed={stage === "slides"} onClick={() => setStage("slides")} disabled={testing} title={testing ? "Closed until you submit the knowledge check" : undefined}><Icon name={testing ? "lock" : "book"} /><span>Slides</span></button>
           <button aria-pressed={stage === "quiz"} onClick={() => setStage("quiz")}><Icon name="clipboard" /><span>Knowledge check</span></button>
         </div>
       </header>
 
-      {stage === "slides" ? (
+      {blocked && stage === "slides" ? (
+        <main id="main" className="player-main">
+          <div className="slide-empty">
+            <Icon name="lock" />
+            <p>You have a test open in this course. The slides stay closed until you submit it.</p>
+            <a className="btn btn--go" href={`/learn/${course.slug}`}>Go to my test<Icon name="arrow" /></a>
+          </div>
+        </main>
+      ) : stage === "slides" ? (
         <main id="main" className="player-main">
           {module.video && (
             <div className="video-wrap">
@@ -138,7 +155,9 @@ export function ModulePlayer({ course, module, slides, startAt, questions, compl
             <h1>{module.title}</h1>
             <p className="muted">Check what you&apos;ve learned. View every slide and complete this check to finish the module. You&apos;ll see which of your answers were right.</p>
           </div>
-          <Quiz questions={questions} mode="module" endpointBody={{ type: "quiz", moduleId: module.id }} onDone={(r) => { if ("completed" in r) { setDone(r.completed); setLeft(r.slidesLeft); } }} />
+          <Quiz questions={questions} mode="module" endpointBody={{ type: "quiz", moduleId: module.id }} startBody={{ type: "start", courseId: course.id, moduleId: module.id }} started={testOpen}
+            onStart={() => setTesting(true)}
+            onDone={(r) => { setTesting(false); if ("completed" in r) { setDone(r.completed); setLeft(r.slidesLeft); } }} />
           {!done && left > 0 && <p className="alert alert--info" role="status">View the remaining {left} slide{left === 1 ? "" : "s"} of this module, then submit the check again to finish it.</p>}
           {done && (
             <div className="next-card">

@@ -31,11 +31,32 @@ create table if not exists public.profiles (
   created_at timestamptz not null default now()
 );
 
+-- Columns added after launch (safe to re-run).
+alter table public.profiles add column if not exists suspended_at timestamptz;
+alter table public.profiles add column if not exists terms_accepted_at timestamptz;
+
+-- Normalised forms used to spot one person on two accounts ("0712 345 678" and "+254712345678" differ, so compare digits;
+-- ID numbers ignore spaces, dashes and case).
+create or replace function public.norm_phone(t text) returns text language sql immutable as $$
+  select nullif(right(regexp_replace(coalesce(t, ''), '[^0-9]', '', 'g'), 9), '')
+$$;
+create or replace function public.norm_id(t text) returns text language sql immutable as $$
+  select nullif(upper(regexp_replace(coalesce(t, ''), '[^A-Za-z0-9]', '', 'g')), '')
+$$;
+
 create or replace function public.handle_new_user() returns trigger
 language plpgsql security definer set search_path = public as $$
 begin
-  insert into public.profiles (id, email, full_name, phone)
-  values (new.id, new.email, new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'phone')
+  -- One account per person: a phone number already on another account blocks the sign-up.
+  if public.norm_phone(new.raw_user_meta_data->>'phone') is not null and exists (
+    select 1 from public.profiles where public.norm_phone(phone) = public.norm_phone(new.raw_user_meta_data->>'phone')
+  ) then
+    raise exception 'phone_in_use';
+  end if;
+  insert into public.profiles (id, email, full_name, phone, country, terms_accepted_at)
+  values (new.id, new.email, left(new.raw_user_meta_data->>'full_name', 120), left(new.raw_user_meta_data->>'phone', 30),
+          coalesce(nullif(left(new.raw_user_meta_data->>'country', 60), ''), 'Kenya'),
+          case when new.raw_user_meta_data->>'terms' = 'yes' then now() end)
   on conflict (id) do nothing;
   return new;
 end $$;
@@ -150,7 +171,7 @@ create table if not exists public.payments (
 create table if not exists public.certificates (
   id uuid primary key default gen_random_uuid(),
   serial text unique not null,
-  user_id uuid not null references auth.users(id) on delete cascade,
+  user_id uuid references auth.users(id) on delete set null, -- kept (and still verifiable) if the account is deleted
   course_id uuid not null references public.courses(id) on delete restrict,
   full_name text not null,
   id_number text not null,
@@ -262,3 +283,45 @@ drop policy if exists "admin update slides" on storage.objects;
 create policy "admin update slides" on storage.objects for update to authenticated using (bucket_id = 'slides' and public.is_admin());
 drop policy if exists "admin delete slides" on storage.objects;
 create policy "admin delete slides" on storage.objects for delete to authenticated using (bucket_id = 'slides' and public.is_admin());
+
+-- ---------- One account per person ----------
+-- Which identity detail (if any) already belongs to another account. Server only.
+create or replace function public.identity_taken(p_user uuid, p_id_number text, p_phone text) returns text
+language sql stable security definer set search_path = public as $$
+  select case
+    when public.norm_id(p_id_number) is not null and exists (select 1 from public.profiles where id <> p_user and public.norm_id(id_number) = public.norm_id(p_id_number)) then 'id_number'
+    when public.norm_phone(p_phone) is not null and exists (select 1 from public.profiles where id <> p_user and public.norm_phone(phone) = public.norm_phone(p_phone)) then 'phone'
+  end
+$$;
+revoke all on function public.identity_taken(uuid, text, text) from public, anon, authenticated;
+grant execute on function public.identity_taken(uuid, text, text) to service_role;
+
+-- A database-level lock as well, switched on once no two accounts already share a detail.
+do $$ begin
+  if exists (select 1 from public.profiles where public.norm_id(id_number) is not null group by public.norm_id(id_number) having count(*) > 1) then
+    raise notice 'Two accounts share an ID number. Fix them in Admin > Learners (marked "Shared"), then run this file again.';
+  else
+    create unique index if not exists profiles_one_per_id on public.profiles (public.norm_id(id_number)) where public.norm_id(id_number) is not null;
+  end if;
+  if exists (select 1 from public.profiles where public.norm_phone(phone) is not null group by public.norm_phone(phone) having count(*) > 1) then
+    raise notice 'Two accounts share a phone number. Fix them in Admin > Learners (marked "Shared"), then run this file again.';
+  else
+    create unique index if not exists profiles_one_per_phone on public.profiles (public.norm_phone(phone)) where public.norm_phone(phone) is not null;
+  end if;
+end $$;
+
+-- ---------- Deleting an account keeps its issued certificates verifiable ----------
+alter table public.certificates alter column user_id drop not null;
+alter table public.certificates drop constraint if exists certificates_user_id_fkey;
+alter table public.certificates add constraint certificates_user_id_fkey foreign key (user_id) references auth.users(id) on delete set null;
+
+-- ---------- Open tests ----------
+-- While a learner has a test open in a course, that course's slides are closed to them until they submit it.
+create table if not exists public.test_locks (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  course_id uuid not null references public.courses(id) on delete cascade,
+  module_id uuid references public.modules(id) on delete cascade, -- null = the final assessment
+  started_at timestamptz not null default now(),
+  primary key (user_id, course_id)
+);
+alter table public.test_locks enable row level security; -- no policies: only the server can read or change it

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { ExamClient } from "@/components/exam-client";
@@ -6,6 +5,8 @@ import { Icon } from "@/components/icons";
 import { requireUser } from "@/lib/auth";
 import { courseState, PASS } from "@/lib/learning";
 import { loadQuestions, toPublic } from "@/lib/grading";
+import { supabaseAdmin } from "@/lib/supabase";
+import { openTest, testHref } from "@/lib/test-lock";
 
 // @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
 
@@ -17,11 +18,12 @@ export default async function ExamPage({ params }: Props) {
   const s = await courseState(user.id, slug);
   if (!s) notFound();
   if (!s.enrolled || !s.allDone) redirect(`/learn/${slug}`);
+  const lock = await openTest(supabaseAdmin(), user.id, s.course.id);
+  if (lock?.module_id) redirect(testHref(slug, lock, s.modules)); // a knowledge check is open: finish that first
   const qs = (await loadQuestions({ courseId: s.course.id, finalOnly: true })).map(toPublic);
   return (
     <AppShell active="dashboard">
       <div className="learn-head learn-head--exam">
-        <Link href={`/learn/${slug}`} className="crumb crumb--dark"><Icon name="back" />{s.course.title}</Link>
         <span className="eyebrow">Final assessment</span>
         <h1>{s.course.title}</h1>
         <ul className="facts">
@@ -30,7 +32,7 @@ export default async function ExamPage({ params }: Props) {
           <li><Icon name="check" />Unlimited retakes{s.bestScore != null ? ` · your best so far: ${s.bestScore}%` : ""}</li>
         </ul>
       </div>
-      <ExamClient courseId={s.course.id} slug={slug} questions={qs} passMark={PASS} />
+      <ExamClient courseId={s.course.id} slug={slug} questions={qs} passMark={PASS} started={!!lock} />
     </AppShell>
   );
 }

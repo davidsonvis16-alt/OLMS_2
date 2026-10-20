@@ -7,6 +7,7 @@ import { requireUser } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { catLabel, companyActive, coursePhoto } from "@/lib/site";
 import { ConsultPromo } from "@/components/consult-promo";
+import { canLearn } from "@/lib/config";
 
 // @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
 
@@ -19,7 +20,7 @@ function greeting() {
 
 export default async function Dashboard() {
   const { user, profile } = await requireUser();
-  if (profile.role === "admin") redirect("/admin");
+  if (!canLearn(profile)) redirect("/admin");
   const db = supabaseAdmin();
   const [enr, prog, passed, certs, all, company] = await Promise.all([
     db.from("enrollments").select("created_at, courses(id,slug,title,category, modules(id))").eq("user_id", user.id).order("created_at", { ascending: false }),
@@ -116,7 +117,7 @@ export default async function Dashboard() {
           </div>
         </>
       )}
-      <ConsultPromo title="Need this for your workplace?" text="Aspire can audit your workplace, help with your HACCP plan and train every member of staff." />
+      <ConsultPromo title="Need this for your workplace?" text="Aspire can ready your kitchen, set up food safety systems that pass audits and improve how your operation runs." />
     </AppShell>
   );
 }

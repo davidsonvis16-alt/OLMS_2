@@ -71,6 +71,18 @@ describe("middleware", () => {
     const again = (await run("/dashboard")).headers.get("content-security-policy")!;
     expect(again).not.toBe(csp); // a fresh nonce per request
   });
+
+  it("lets a signed-out form save reach the action's own check (which sends them to sign in) instead of crashing the page", async () => {
+    Object.assign(process.env, { NEXT_PUBLIC_SUPABASE_URL: "https://proj.supabase.co", NEXT_PUBLIC_SUPABASE_ANON_KEY: "anon", SUPABASE_SERVICE_ROLE_KEY: "service" });
+    signIn(null);
+    const { middleware } = await import("@/middleware");
+    const action = await middleware(new NextRequest("https://aspire.test/admin/courses/x", { method: "POST", headers: { "next-action": "abc" } }));
+    expect(action.status).toBe(200);
+    expect(action.headers.get("location")).toBeNull();
+    // Only real action posts are let through; a plain POST or page view is still redirected.
+    expect((await middleware(new NextRequest("https://aspire.test/admin/courses/x", { method: "POST" }))).status).toBe(307);
+    expect((await middleware(new NextRequest("https://aspire.test/admin/courses/x", { headers: { "next-action": "abc" } }))).status).toBe(307);
+  });
 });
 
 describe("static checks on the code and database policies", () => {

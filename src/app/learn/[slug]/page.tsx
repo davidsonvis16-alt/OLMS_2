@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { Icon } from "@/components/icons";
 import { requireUser } from "@/lib/auth";
@@ -7,6 +7,7 @@ import { courseState, moduleUnlocked, moduleSlides, PASS } from "@/lib/learning"
 import { supabaseAdmin } from "@/lib/supabase";
 import { catLabel } from "@/lib/site";
 import { saveAssignment } from "@/app/actions";
+import { openTest, testHref } from "@/lib/test-lock";
 
 // @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
 
@@ -22,6 +23,9 @@ export default async function LearnCourse({ params, searchParams }: Props) {
     await supabaseAdmin().from("enrollments").upsert({ user_id: user.id, course_id: s.course.id }, { onConflict: "user_id,course_id", ignoreDuplicates: true });
     s = (await courseState(user.id, slug))!;
   }
+  // A test is open in this course: go straight back to it (the slides stay closed until it is submitted).
+  const lock = await openTest(supabaseAdmin(), user.id, s.course.id);
+  if (lock) redirect(testHref(slug, lock, s.modules));
   const next = s.modules.find((m) => !s!.progress.get(m.id)?.completed_at);
 
   return (

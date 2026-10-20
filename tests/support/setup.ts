@@ -3,7 +3,7 @@
  * the Supabase client (by an in-memory double), Next's request cookies/headers, and Paystack's HTTP API.
  */
 import { vi, beforeEach } from "vitest";
-import { fakeClient, resetFakeDb, resetRateLimits, sessions } from "./fake-supabase";
+import { bans, fakeClient, resetFakeDb, resetRateLimits, sessions } from "./fake-supabase";
 
 process.env.PAYSTACK_SECRET_KEY = "sk_test_security_suite";
 process.env.USD_TO_KES = "130";
@@ -48,7 +48,7 @@ vi.stubGlobal("fetch", async (input: string | URL, init?: RequestInit) => {
 });
 
 beforeEach(() => {
-  resetFakeDb(); resetRateLimits(); sessions.clear();
+  resetFakeDb(); resetRateLimits(); sessions.clear(); bans.clear();
   ctx.uid = null; ctx.ip = "203.0.113.7";
   paystack.txs.clear(); paystack.calls.length = 0; paystack.initialized.length = 0;
 });

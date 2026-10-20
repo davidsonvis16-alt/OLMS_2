@@ -20,10 +20,6 @@ const mono = localFont({
   ],
   variable: "--f-mono", display: "swap",
 });
-const display = localFont({
-  src: "../assets/fonts/playfair-normal-400-900.woff2",
-  variable: "--f-display", weight: "400 900", display: "swap",
-});
 const serif = localFont({
   src: [
     { path: "../assets/fonts/ebgaramond-normal-400-700.woff2", weight: "400 700", style: "normal" },
@@ -46,7 +42,7 @@ export const viewport: Viewport = { themeColor: "#0b0b1f" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${mono.variable} ${serif.variable} ${display.variable}`}>
+    <html lang="en" className={`${sans.variable} ${mono.variable} ${serif.variable}`}>
       <body>{children}</body>
     </html>
   );

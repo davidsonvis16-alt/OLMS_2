@@ -113,7 +113,7 @@ export default async function CoursePage({ params }: Props) {
                 {start(true)}
                 <div className="foot"><Link className="text-link" href="/#certificates">See a sample certificate</Link></div>
               </div>
-              <ConsultPromo title="Training a whole team?" text="We also train on site, audit premises and help with HACCP plans." />
+              <ConsultPromo title="Training a whole team?" text="We also help with kitchen planning, food safety accreditation and operational improvement." />
             </aside>
           </div>
         </section>

@@ -2,13 +2,13 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { Icon } from "@/components/icons";
-import { CertificateView } from "@/components/certificate";
+import { ClaimDetails } from "@/components/claim-details";
+import { certificatePreview } from "@/app/cert-preview";
 import { requireUser } from "@/lib/auth";
 import { courseState } from "@/lib/learning";
 import { coveredByCompany } from "@/lib/certs";
 import { mpesaAvailable, quote } from "@/lib/paystack";
 import { usd, wa } from "@/lib/site";
-import { claimCertificate } from "@/app/pay-actions";
 
 // @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
 
@@ -27,6 +27,7 @@ export default async function ClaimPage({ params, searchParams }: Props) {
   const free = covered || (price != null && Number(price) === 0);
   let kes: number | null = null;
   if (!free && price != null && mpesaAvailable()) kes = quote(Number(price), "mpesa").amount;
+  const preview = await certificatePreview(slug, profile.full_name ?? "", profile.id_number ?? "");
 
   return (
     <AppShell active="dashboard" wide>
@@ -36,19 +37,7 @@ export default async function ClaimPage({ params, searchParams }: Props) {
         <h1>Claim your certificate</h1>
       </div>
 
-      <div className="claim">
-        <div className="claim-preview">
-          <CertificateView tilt={false} c={{ serial: "ASH-XXXX-XXXXXX", fullName: profile.full_name || "Your Full Name", idNumber: profile.id_number || "Your ID number", course: s.course.title, modules: s.modules.map((m) => m.title), score: s.bestScore ?? 0, issuedAt: new Date(), sample: true }} />
-          <p className="muted small center">Preview. Your real certificate gets its own serial number and QR code.</p>
-        </div>
-
-        <form action={claimCertificate} className="form-card claim-form">
-          <input type="hidden" name="slug" value={slug} />
-          <h3>Your details on the certificate</h3>
-          <p>These are printed exactly as you type them and can&apos;t be changed after the certificate is issued.</p>
-          <div className="field"><label htmlFor="full_name">Full name</label><input id="full_name" name="full_name" defaultValue={profile.full_name ?? ""} required minLength={3} autoComplete="name" /></div>
-          <div className="field"><label htmlFor="id_number">National ID or passport number</label><input id="id_number" name="id_number" defaultValue={profile.id_number ?? ""} required minLength={4} /></div>
-          <label className="check"><input type="checkbox" name="confirm" required /> <span>My name and ID number are correct.</span></label>
+      <ClaimDetails slug={slug} initial={preview} name={profile.full_name ?? ""} idNumber={profile.id_number ?? ""}>
 
           {error && <p className="alert alert--error" role="alert">{error}</p>}
 
@@ -75,8 +64,7 @@ export default async function ClaimPage({ params, searchParams }: Props) {
               <p className="muted small">Secure payment by Paystack. Your certificate is issued the moment payment is confirmed.</p>
             </>
           )}
-        </form>
-      </div>
+      </ClaimDetails>
     </AppShell>
   );
 }

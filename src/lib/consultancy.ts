@@ -1,40 +1,28 @@
-/** Aspire's own consultancy services (as already described on the Aspire site). Edit this list to change the site. */
+/** Consultancy services (services 1 to 4 of the Next Hospitality list, as the client asked). Edit this list to change the site. */
 export const CONSULTANCY = [
   {
-    id: "audits",
-    title: "Hygiene audits",
-    intro: "Independent checks of your premises, systems and records.",
-    points: ["Hygiene audits of kitchens and food premises", "Review of your records", "Findings you can act on"],
+    id: "hospital-food",
+    title: "Hospital food-service strategy",
+    intro: "Feeding models for hospitals: therapeutic diets, ward and room service, and the workflow from kitchen to ward.",
+    points: ["Service model and operating structure", "Menu and diet frameworks", "Better patient experience"],
   },
   {
-    id: "haccp",
-    title: "HACCP support",
-    intro: "HACCP plan development and support for hotels, restaurants and food premises.",
-    points: ["HACCP plan development", "Support on site at your premises"],
+    id: "kitchen-planning",
+    title: "Kitchen planning & readiness",
+    intro: "A review of every stage of the kitchen, from receiving to waste, so the facility is ready to open.",
+    points: ["Workflow and layout reviews", "Equipment and capacity briefs", "Pre-opening and commissioning readiness"],
   },
   {
-    id: "pest-cleaning",
-    title: "Pest control & cleaning reviews",
-    intro: "Reviews of how your premises are kept clean and free of pests.",
-    points: ["Pest control reviews", "Cleaning reviews"],
+    id: "food-safety",
+    title: "Food safety & accreditation",
+    intro: "Food safety systems that stand up to internal reviews, certification audits and accreditation.",
+    points: ["ISO 22000:2018 and HACCP", "JCI accreditation readiness", "OHS, EMS and QMS brought together"],
   },
   {
-    id: "onsite",
-    title: "On-site group training",
-    intro: "A trainer delivers at your kitchen or hotel, scheduled around your shifts.",
-    points: ["Food safety and hygiene", "Health and safety", "Scheduled around your shifts"],
-  },
-  {
-    id: "hospitality",
-    title: "Hospitality solutions",
-    intro: "Standards, induction programmes and staff development for hotels, lodges, restaurants and caterers.",
-    points: ["Standards", "Induction programmes", "Staff development"],
-  },
-  {
-    id: "award",
-    title: "Food Hygiene Training Standards award",
-    intro: "Businesses that train with Aspire can display the Aspire award for customers and inspectors.",
-    points: ["Train your team with Aspire", "Display the award at your premises"],
+    id: "operations",
+    title: "Operational improvement",
+    intro: "Stronger controls for catering, cafeterias, hotels, restaurants, school feeding and multi-site operations.",
+    points: ["Process redesign and SOPs", "Service flow and hospitality standards", "Performance dashboards and PDCA cycles"],
   },
 ] as const;
 

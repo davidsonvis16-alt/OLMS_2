@@ -155,3 +155,53 @@ export async function adjustCompany(f: FormData) {
   await supabaseAdmin().from("companies").update({ seats: Math.max(0, Number(str(f, "seats")) || 0), paid_until: until || null }).eq("id", str(f, "id"));
   revalidatePath("/admin/companies");
 }
+
+/**
+ * The learner an admin is about to suspend or delete. Admins can't act on themselves or on another admin (remove the
+ * admin role first), so one admin can't lock the others out.
+ */
+async function target(f: FormData) {
+  const { user } = await requireAdmin();
+  const id = str(f, "id", 64);
+  const back = (msg: string) => redirect(`/admin/learners?error=${encodeURIComponent(msg)}`);
+  if (!/^[0-9a-f-]{36}$/i.test(id)) back("Unknown account.");
+  if (id === user.id) back("You can't suspend or delete your own account.");
+  const { data: p } = await supabaseAdmin().from("profiles").select("id,email,role").eq("id", id).maybeSingle();
+  if (!p) back("That account no longer exists.");
+  if (p!.role === "admin") back("That account is an admin. Remove its admin role first.");
+  return p!;
+}
+
+/** Suspend: the person can't sign in, and any open session stops working at once. Reversible. */
+export async function suspendUser(f: FormData) {
+  const p = await target(f);
+  const db = supabaseAdmin();
+  const { error } = await db.auth.admin.updateUserById(p.id, { ban_duration: "876000h" });
+  if (error) redirect(`/admin/learners?error=${encodeURIComponent(`Couldn't suspend: ${error.message}`)}`);
+  await db.from("profiles").update({ suspended_at: new Date().toISOString() }).eq("id", p.id);
+  revalidatePath("/admin/learners");
+  redirect(`/admin/learners?done=${encodeURIComponent(`${p.email} is suspended.`)}`);
+}
+
+export async function restoreUser(f: FormData) {
+  const p = await target(f);
+  const db = supabaseAdmin();
+  const { error } = await db.auth.admin.updateUserById(p.id, { ban_duration: "none" });
+  if (error) redirect(`/admin/learners?error=${encodeURIComponent(`Couldn't restore: ${error.message}`)}`);
+  await db.from("profiles").update({ suspended_at: null }).eq("id", p.id);
+  revalidatePath("/admin/learners");
+  redirect(`/admin/learners?done=${encodeURIComponent(`${p.email} can sign in again.`)}`);
+}
+
+/**
+ * Permanent deletion. Removes the sign-in, profile, progress, answers and assignments. Issued certificates stay on
+ * record so employers can still verify them; payment records stay for the accounts. The admin must type DELETE.
+ */
+export async function deleteUser(f: FormData) {
+  const p = await target(f);
+  if (str(f, "confirm", 20) !== "DELETE") redirect(`/admin/learners?error=${encodeURIComponent("Type DELETE in capitals to confirm.")}`);
+  const { error } = await supabaseAdmin().auth.admin.deleteUser(p.id);
+  if (error) redirect(`/admin/learners?error=${encodeURIComponent(`Couldn't delete: ${error.message}`)}`);
+  revalidatePath("/admin/learners");
+  redirect(`/admin/learners?done=${encodeURIComponent(`${p.email} was deleted.`)}`);
+}

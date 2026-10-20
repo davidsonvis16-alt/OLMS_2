@@ -17,7 +17,7 @@ const DEFAULTS: Record<string, () => Row> = {
   courses: () => ({ categories: [], topics: [], slide_count: 0, slides_version: 0, published: false, sort: 0, certificate_price_usd: null, assignment: null, summary: null, category: "food-safety", created_at: now() }),
   modules: () => ({ extra_pages: [], video_url: null, page_from: 1, page_to: 1 }),
   questions: () => ({ in_final: true, position: 0, review_note: null, source: "admin", module_id: null }),
-  profiles: () => ({ role: "learner", company_id: null, company_role: null, country: "Kenya", id_number: null, phone: null, created_at: now() }),
+  profiles: () => ({ role: "learner", company_id: null, company_role: null, country: "Kenya", id_number: null, phone: null, suspended_at: null, created_at: now() }),
   companies: () => ({ seats: 0, paid_until: null, join_code: crypto.randomBytes(4).toString("hex").toUpperCase(), created_at: now() }),
   certificates: () => ({ revoked: false, issued_at: now(), modules: [], company_name: null, payment_id: null }),
   payments: () => ({ status: "pending", created_at: now(), paid_at: null, channel: null }),
@@ -27,9 +27,10 @@ const DEFAULTS: Record<string, () => Row> = {
   assignment_submissions: () => ({ updated_at: now() }),
   settings: () => ({}),
   rate_limits: () => ({}),
+  test_locks: () => ({ started_at: now() }),
 };
 const KEYS: Record<string, string[]> = {
-  enrollments: ["user_id", "course_id"], module_progress: ["user_id", "module_id"], assignment_submissions: ["user_id", "course_id"], settings: ["key"],
+  enrollments: ["user_id", "course_id"], test_locks: ["user_id", "course_id"], module_progress: ["user_id", "module_id"], assignment_submissions: ["user_id", "course_id"], settings: ["key"],
 };
 // relation name -> how to join, per table
 const REL: Record<string, Record<string, { table: string; local: string; foreign: string; many: boolean }>> = {
@@ -228,6 +229,21 @@ export const sessions = new Set<string>();
 const rateCounts = new Map<string, number>();
 export const resetRateLimits = () => rateCounts.clear();
 
+/** Accounts banned through the fake auth admin API (id -> ban duration). */
+export const bans = new Map<string, string>();
+const normPhone = (t: unknown) => String(t ?? "").replace(/\D/g, "").slice(-9) || null;
+const normId = (t: unknown) => String(t ?? "").replace(/[^A-Za-z0-9]/g, "").toUpperCase() || null;
+
+/** Mirrors auth.users deletion: the ON DELETE rules in schema.sql (cascade, or set null for records that are kept). */
+function deleteAuthUser(id: string) {
+  const db = fakeDb();
+  for (const t of ["profiles"]) db[t] = db[t].filter((r) => r.id !== id);
+  for (const t of ["enrollments", "module_progress", "exam_attempts", "assignment_submissions"]) db[t] = db[t].filter((r) => r.user_id !== id);
+  for (const r of db.certificates) if (r.user_id === id) r.user_id = null;
+  for (const r of db.payments) if (r.user_id === id) r.user_id = null;
+  for (const r of db.companies) if (r.owner_id === id) r.owner_id = null;
+}
+
 /** Files "stored" by the fake storage API. */
 export const stored: { bucket: string; path: string; size: number; upsert?: boolean }[] = [];
 
@@ -236,6 +252,12 @@ export function fakeClient(uid: string | null) {
     from: (t: string) => new Query(t),
     storage: { from: (bucket: string) => ({ upload: async (path: string, body: Uint8Array, o?: { upsert?: boolean }) => { stored.push({ bucket, path, size: body.length, upsert: o?.upsert }); return { data: { path }, error: null }; } }) },
     rpc: async (fn: string, args: Record<string, unknown>) => {
+      if (fn === "identity_taken") {
+        const others = fakeDb().profiles.filter((p) => p.id !== args.p_user);
+        const id = normId(args.p_id_number), ph = normPhone(args.p_phone);
+        const data = id && others.some((p) => normId(p.id_number) === id) ? "id_number" : ph && others.some((p) => normPhone(p.phone) === ph) ? "phone" : null;
+        return { data, error: null };
+      }
       if (fn !== "hit_rate_limit") return { data: null, error: { message: `unknown rpc ${fn}` } };
       const w = Math.floor(Date.now() / 1000 / Number(args.p_window_seconds));
       const k = `${args.p_key}@${w}`;
@@ -248,6 +270,10 @@ export function fakeClient(uid: string | null) {
         return { data: { user: p ? { id: String(p.id), email: String(p.email) } : null }, error: null };
       },
       signOut: async () => ({ error: null }),
+      admin: {
+        updateUserById: async (id: string, o: { ban_duration?: string }) => { if (o.ban_duration) bans.set(id, o.ban_duration); return { data: {}, error: null }; },
+        deleteUser: async (id: string) => { deleteAuthUser(id); bans.delete(id); return { data: {}, error: null }; },
+      },
       verifyOtp: async ({ token_hash }: { token_hash: string }) => (token_hash === "valid-token" ? { error: null } : { error: { message: "invalid or expired" } }),
       exchangeCodeForSession: async (code: string) => (code === "valid-code" ? { error: null } : { error: { message: "invalid code" } }),
     },

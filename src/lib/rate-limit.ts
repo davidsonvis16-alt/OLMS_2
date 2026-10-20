@@ -18,6 +18,8 @@ export const LIMITS = {
   progress: [900, 3600],
   quiz: [120, 3600],
   exam: [20, 3600],
+  start: [150, 3600],
+  preview: [900, 3600],
   join: [10, 3600],
   payment: [15, 3600],
   pdf: [60, 3600],

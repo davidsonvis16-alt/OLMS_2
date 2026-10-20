@@ -11,7 +11,7 @@ import { SITE, wa } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Consultancy",
-  description: "Aspire consultancy in Kenya: hygiene audits, HACCP support, pest control and cleaning reviews, on-site training and hospitality solutions.",
+  description: "Aspire consultancy in Kenya: hospital food-service strategy, kitchen planning and readiness, food safety and accreditation, and operational improvement.",
 };
 
 export default function Consultancy() {
@@ -24,7 +24,7 @@ export default function Consultancy() {
           <div className="wrap nh-hero-in">
             <span className="nh-eyebrow">Aspire consultancy · Kenya</span>
             <h1 id="c-title" className="nh-title" style={{ maxWidth: "14ch" }}>Expert help for your kitchen.</h1>
-            <p className="nh-lede">Aspire audits your premises, helps you build your HACCP plan, reviews pest control and cleaning, and trains your team on site. <span className="motto">Value, Quality &amp; Service.</span></p>
+            <p className="nh-lede">Aspire helps you plan and ready your kitchen, build food safety systems that pass audits and accreditation, improve day-to-day operations, and design food service for hospitals. <span className="motto">Value, Quality &amp; Service.</span></p>
             <div className="row nh-actions">
               <a className="btn btn--go btn--lg" href="#enquire">Book a consultation</a>
               <a className="btn btn--ghost btn--lg" href={wa("Hello Aspire, I'd like to discuss a consultancy project.")} target="_blank" rel="noopener"><Icon name="whatsapp" />WhatsApp us</a>

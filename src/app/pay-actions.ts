@@ -6,6 +6,7 @@ import { coveredByCompany, issueCertificate } from "@/lib/certs";
 import { initialize, newReference, quote, type Method } from "@/lib/paystack";
 import { SITE } from "@/lib/site";
 import { limit } from "@/lib/rate-limit";
+import { identityTaken, TAKEN_MESSAGE } from "@/lib/identity";
 
 export async function claimCertificate(formData: FormData) {
   const slug = String(formData.get("slug"));
@@ -19,6 +20,8 @@ export async function claimCertificate(formData: FormData) {
   const id_number = String(formData.get("id_number") ?? "").trim().slice(0, 40);
   if (full_name.length < 3 || id_number.length < 4) back("Enter your full name and ID or passport number.");
   if (formData.get("confirm") !== "on") back("Please confirm your details are correct.");
+  // One person, one account: an ID number already on another account can't earn certificates here too.
+  if ((await identityTaken(db, user.id, id_number, null)) === "id_number") back(TAKEN_MESSAGE.id_number);
   await db.from("profiles").update({ full_name, id_number }).eq("id", user.id);
 
   const { data: course } = await db.from("courses").select("id,title,certificate_price_usd").eq("slug", slug).single();

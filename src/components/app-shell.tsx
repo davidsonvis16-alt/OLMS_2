@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getSession } from "@/lib/auth";
+import { canLearn } from "@/lib/config";
 import { SITE } from "@/lib/site";
 import { signOut } from "@/app/actions";
 import { Icon } from "./icons";
@@ -9,6 +10,11 @@ import { AppNav, AppTabs, type NavGroup } from "./app-nav";
 export async function AppShell({ children, wide }: { children: React.ReactNode; active?: string; wide?: boolean }) {
   const { profile } = await getSession();
   const isAdmin = profile?.role === "admin";
+  const learnLinks = [
+    { href: "/dashboard", label: "My learning" },
+    { href: "/courses", label: "Browse courses" },
+    { href: "/certificates", label: "My certificates" },
+  ];
   const groups: NavGroup[] = isAdmin
     ? [
         { title: "Administration", links: [
@@ -20,14 +26,11 @@ export async function AppShell({ children, wide }: { children: React.ReactNode; 
           { href: "/admin/companies", label: "Companies" },
           { href: "/admin/submissions", label: "Assignments" },
         ] },
-        { title: "Account", links: [{ href: "/account", label: "Your details" }] },
+        ...(canLearn(profile) ? [{ title: "Learn", links: learnLinks }] : []),
+        { title: "Account", links: [{ href: "/account", label: "Your details" }, { href: "/", label: "Main website" }] },
       ]
     : [
-        { title: "Learn", links: [
-          { href: "/dashboard", label: "My learning" },
-          { href: "/courses", label: "Browse courses" },
-          { href: "/certificates", label: "Certificates" },
-        ] },
+        { title: "Learn", links: learnLinks },
         { title: "Account", links: [
           { href: "/company", label: profile?.company_role === "owner" ? "My company" : "Company" },
           { href: "/account", label: "Your details" },
