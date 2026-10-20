@@ -1,7 +1,6 @@
-"use client";
 import { useEffect, useRef, useState } from "react";
-import { certificatePreview, type Preview } from "@/app/cert-preview";
-import { claimCertificate } from "@/app/pay-actions";
+import type { CertModel as Preview } from "@/lib/certificate-model";
+import { callAction } from "@/lib/call-action";
 import { CertSvg } from "./cert-svg";
 
 /**
@@ -22,7 +21,7 @@ export function ClaimDetails({ slug, initial, name: name0, idNumber: id0, childr
     const mine = ++turn.current;
     setBusy(true);
     const t = setTimeout(async () => {
-      const p = await certificatePreview(slug, name, idn).catch(() => null);
+      const p = await callAction<Preview | null>("certificatePreview", { slug, full_name: name, id_number: idn }).catch(() => null);
       if (mine !== turn.current) return; // a newer keystroke is on its way
       if (p) setPreview(p);
       setBusy(false);
@@ -31,14 +30,13 @@ export function ClaimDetails({ slug, initial, name: name0, idNumber: id0, childr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, idn, slug]);
 
-  const src = { logo: "/brand/logo-light.png", signature: "/brand/signature.png", qr: preview?.qr ?? "" };
   return (
     <div className="claim">
       <div className={`claim-preview${busy ? " is-updating" : ""}`}>
-        {preview && <div className="cert-stage"><CertSvg ops={preview.ops} src={src} label={preview.label} /></div>}
+        {preview && <div className="cert-stage"><CertSvg {...preview} /></div>}
         <p className="muted small center">Preview: it updates as you type. Your real certificate gets its own number and QR code.</p>
       </div>
-      <form action={claimCertificate} className="form-card claim-form">
+      <form method="post" action="/do/claimCertificate" className="form-card claim-form">
         <input type="hidden" name="slug" value={slug} />
         <h3>Your details on the certificate</h3>
         <p>Type them exactly as they appear on your national ID or passport. They can&apos;t be changed after the certificate is issued.</p>

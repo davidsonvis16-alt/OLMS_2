@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/components/link";
 import { Contact, LegalPage } from "@/components/legal";
-import { SITE } from "@/lib/site";
+import { SITE, pageTitle } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Privacy Policy", description: `How ${SITE.name} collects, uses and protects your personal data.` };
+export const meta = () => [...pageTitle("Privacy Policy"), { name: "description", content: `How ${SITE.name} collects, uses and protects your personal data.` }];
 
 const sections = [
   { id: "who", title: "Who we are", body: <>

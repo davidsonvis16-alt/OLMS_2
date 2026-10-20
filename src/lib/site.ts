@@ -60,3 +60,6 @@ export function companyActive(c: { paid_until: string | null } | null | undefine
   if (!c?.paid_until) return false;
   return new Date(c.paid_until + "T23:59:59") >= new Date();
 }
+
+/** Page title in the browser tab: "<page> | ASPIRE SAFETY & HYGIENE SOLUTIONS". */
+export const pageTitle = (t: string) => [{ title: `${t} | ${SITE.name}` }];

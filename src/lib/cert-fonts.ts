@@ -1,9 +1,8 @@
-import fs from "node:fs/promises";
-import path from "node:path";
+import { assetBytes } from "./server/assets";
 import { PDFDocument, type PDFFont } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 
-/** Font files shared by the on-screen certificate (for measuring) and the PDF (for drawing). */
+/** Font files (in public/cert-assets) shared by the on-screen certificate (for measuring) and the PDF (for drawing). */
 export const CERT_FONT_FILES = {
   sans500: "archivo-500.ttf",
   sans600: "archivo-600.ttf",
@@ -14,13 +13,11 @@ export const CERT_FONT_FILES = {
 } as const;
 export type FontKey = keyof typeof CERT_FONT_FILES;
 
-const dir = () => path.join(process.cwd(), "src", "assets", "fonts");
-
 let bytesCache: Promise<Record<FontKey, Uint8Array>> | null = null;
 export function fontBytes() {
   bytesCache ??= (async () => {
     const out = {} as Record<FontKey, Uint8Array>;
-    for (const [k, f] of Object.entries(CERT_FONT_FILES)) out[k as FontKey] = new Uint8Array(await fs.readFile(path.join(dir(), f)));
+    for (const [k, f] of Object.entries(CERT_FONT_FILES)) out[k as FontKey] = await assetBytes(`/cert-assets/${f}`);
     return out;
   })();
   return bytesCache;

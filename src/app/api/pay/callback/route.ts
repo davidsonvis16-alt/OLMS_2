@@ -1,12 +1,13 @@
-import { NextResponse } from "next/server";
+import type { LoaderFunctionArgs } from "react-router";
+import { seeOther } from "@/lib/server/http";
 import { verify } from "@/lib/paystack";
 import { applyPayment } from "@/lib/certs";
 import { supabaseAdmin } from "@/lib/supabase";
 
-export async function GET(req: Request) {
+async function get(req: Request) {
   const url = new URL(req.url);
   const ref = url.searchParams.get("reference") || url.searchParams.get("trxref");
-  const to = (p: string) => NextResponse.redirect(new URL(p, url.origin));
+  const to = (p: string) => seeOther(new URL(p, url.origin));
   if (!ref || ref.length > 100) return to("/dashboard");
   const { data: pay } = await supabaseAdmin().from("payments").select("purpose,course_id,courses(slug)").eq("reference", ref).maybeSingle();
   const slug = (pay?.courses as unknown as { slug: string } | null)?.slug;
@@ -24,3 +25,5 @@ export async function GET(req: Request) {
     return to(slug ? `/learn/${slug}/certificate?error=${encodeURIComponent(msg)}` : "/dashboard");
   }
 }
+
+export const loader = ({ request }: LoaderFunctionArgs) => get(request);

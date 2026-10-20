@@ -33,5 +33,6 @@ export function limit(kind: keyof typeof LIMITS, who: string) {
 
 /** The client address as seen by the hosting proxy (Vercel sets x-forwarded-for). */
 export function clientIp(h: Headers) {
-  return h.get("x-forwarded-for")?.split(",")[0].trim() || h.get("x-real-ip") || "unknown";
+  // Cloudflare sets cf-connecting-ip itself; visitors can't fake it. The others are for local runs and tests.
+  return h.get("cf-connecting-ip") || h.get("x-forwarded-for")?.split(",")[0].trim() || h.get("x-real-ip") || "unknown";
 }

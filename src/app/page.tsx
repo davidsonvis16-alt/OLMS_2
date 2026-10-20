@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { useLoaderData } from "react-router";
+import Link from "@/components/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Icon } from "@/components/icons";
@@ -7,11 +8,8 @@ import { EnquiryForm, Reveal, VerifyForm } from "@/components/forms";
 import { HoverPics, Thermo } from "@/components/home-client";
 import { CONSULTANCY } from "@/lib/consultancy";
 import { supabaseAdmin } from "@/lib/supabase";
+import { certificateModel } from "@/lib/certificate-model";
 import { SITE, catLabel, coursePhoto, wa } from "@/lib/site";
-
-// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
-
-export const dynamic = "force-dynamic"; // the header is per-user, so these pages are never cached
 
 type Row = { title: string; slug: string; category: string; categories: string[] | null; summary: string | null; modules: { count: number }[]; questions: { count: number }[] };
 
@@ -37,8 +35,13 @@ const FAQ = [
   ["Do you train on-site?", "We do. We run group training, hygiene audits and HACCP support at hotels, restaurants and food premises. Message us on WhatsApp to book."],
 ] as const;
 
-export default async function Home() {
-  const courses = await getCourses();
+export async function loader() {
+  const [courses, sample] = await Promise.all([getCourses(), certificateModel({ serial: "ASH-2026-SAMPLE", fullName: "Learner Full Name", idNumber: "••••••••", course: "HACCP Principles", modules: ["Food safety fundamentals", "Introduction to HACCP", "Prerequisites & the HACCP team", "Hazard analysis", "Critical control points", "Monitoring & records"], score: 92, issuedAt: new Date(), sample: true })]);
+  return { courses, sample };
+}
+
+export default function Home() {
+  const { courses, sample } = useLoaderData<typeof loader>();
   const count = courses.length;
   return (
     <>
@@ -168,7 +171,7 @@ export default async function Home() {
               <span className="pin" style={{ left: "21%", top: "45%" }}>B</span>
               <span className="pin" style={{ left: "5%", bottom: "16%" }}>C</span>
               <span className="pin" style={{ right: "2.5%", bottom: "28%" }}>D</span>
-              <CertificateView c={{ serial: "ASH-2026-SAMPLE", fullName: "Learner Full Name", idNumber: "••••••••", course: "HACCP Principles", modules: ["Food safety fundamentals", "Introduction to HACCP", "Prerequisites & the HACCP team", "Hazard analysis", "Critical control points", "Monitoring & records"], score: 92, issuedAt: new Date(), sample: true }} />
+              <CertificateView model={sample} />
             </div>
             <div className="certshow-side">
               <span className="nh-eyebrow">The certificate</span>

@@ -1,15 +1,18 @@
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 import { AppShell, PageHead } from "@/components/app-shell";
 import { requireAdmin } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { companyActive } from "@/lib/site";
 import { AdminNav } from "../admin-nav";
-import { adjustCompany } from "../actions";
 
-// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
-
-export default async function Companies() {
+export async function loader(_: LoaderFunctionArgs) {
   await requireAdmin();
   const { data } = await supabaseAdmin().from("companies").select("id,name,contact_name,email,phone,seats,paid_until,join_code,profiles(count)").order("created_at", { ascending: false });
+  return { data };
+}
+
+export default function Companies() {
+  const { data } = useLoaderData<typeof loader>();
   return (
     <AppShell active="admin" wide>
       <PageHead eyebrow="Admin" title="Companies" />
@@ -23,7 +26,7 @@ export default async function Companies() {
             <td>{c.contact_name || "—"}<br /><small>{c.email} {c.phone}</small></td>
             <td>{(c.profiles as unknown as { count: number }[])?.[0]?.count ?? 0}</td>
             <td>
-              <form action={adjustCompany} className="inline-form inline-form--tight">
+              <form method="post" action="/do/adjustCompany" className="inline-form inline-form--tight">
                 <input type="hidden" name="id" value={c.id} />
                 <input name="seats" type="number" min={0} defaultValue={c.seats} aria-label="Seats" className="w-xs" />
                 <input name="paid_until" type="date" defaultValue={c.paid_until ?? ""} aria-label="Valid until" />

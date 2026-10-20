@@ -1,15 +1,13 @@
-import Link from "next/link";
-import { getSession } from "@/lib/auth";
-import { canLearn } from "@/lib/config";
+import Link from "@/components/link";
 import { SITE } from "@/lib/site";
-import { signOut } from "@/app/actions";
+import { useViewer } from "@/lib/viewer";
 import { Icon } from "./icons";
 import { AppNav, AppTabs, type NavGroup } from "./app-nav";
 
 /** The signed-in workspace. Admins get an admin-only menu; learners and company owners get their own. */
-export async function AppShell({ children, wide }: { children: React.ReactNode; active?: string; wide?: boolean }) {
-  const { profile } = await getSession();
-  const isAdmin = profile?.role === "admin";
+export function AppShell({ children, wide }: { children: React.ReactNode; active?: string; wide?: boolean }) {
+  const viewer = useViewer();
+  const isAdmin = viewer?.role === "admin";
   const learnLinks = [
     { href: "/dashboard", label: "My learning" },
     { href: "/courses", label: "Browse courses" },
@@ -26,17 +24,17 @@ export async function AppShell({ children, wide }: { children: React.ReactNode; 
           { href: "/admin/companies", label: "Companies" },
           { href: "/admin/submissions", label: "Assignments" },
         ] },
-        ...(canLearn(profile) ? [{ title: "Learn", links: learnLinks }] : []),
+        ...(viewer?.canLearn ? [{ title: "Learn", links: learnLinks }] : []),
         { title: "Account", links: [{ href: "/account", label: "Your details" }, { href: "/", label: "Main website" }] },
       ]
     : [
         { title: "Learn", links: learnLinks },
         { title: "Account", links: [
-          { href: "/company", label: profile?.company_role === "owner" ? "My company" : "Company" },
+          { href: "/company", label: viewer?.companyRole === "owner" ? "My company" : "Company" },
           { href: "/account", label: "Your details" },
         ] },
       ];
-  const name = (profile?.full_name || profile?.email || "?").trim();
+  const name = (viewer?.name || viewer?.email || "?").trim();
   return (
     <div className="app">
       <a className="skip" href="#main">Skip to content</a>
@@ -48,15 +46,15 @@ export async function AppShell({ children, wide }: { children: React.ReactNode; 
         <AppNav groups={groups} />
         <div className="app-user">
           <span className="avatar" aria-hidden="true">{name[0]?.toUpperCase()}</span>
-          <span className="who"><b>{profile?.full_name || (isAdmin ? "Administrator" : "Learner")}</b><small>{isAdmin ? "Admin · " : ""}{profile?.email}</small></span>
-          <form action={signOut}><button className="icon-btn" aria-label="Sign out" title="Sign out"><Icon name="logout" /></button></form>
+          <span className="who"><b>{viewer?.name || (isAdmin ? "Administrator" : "Learner")}</b><small>{isAdmin ? "Admin · " : ""}{viewer?.email}</small></span>
+          <form method="post" action="/do/signOut"><button className="icon-btn" aria-label="Sign out" title="Sign out"><Icon name="logout" /></button></form>
         </div>
       </aside>
       <div className="app-main">
         <div className="app-topbar">
           <div className="app-topbar-row">
             <Link href="/" className="app-brand"><img src="/brand/logo-light.png" alt="" width={466} height={640} /><span><b>ASPIRE</b></span></Link>
-            <form action={signOut}><button className="icon-btn" aria-label="Sign out"><Icon name="logout" /></button></form>
+            <form method="post" action="/do/signOut"><button className="icon-btn" aria-label="Sign out"><Icon name="logout" /></button></form>
           </div>
           <AppTabs groups={groups} />
         </div>

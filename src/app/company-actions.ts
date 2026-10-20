@@ -1,6 +1,5 @@
-"use server";
-import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+/** Form actions (posted to /do/<name>, see app/do.$name.ts). Each one checks who is signed in. Server only. */
+import { redirect } from "@/lib/server/http";
 import { requireUser } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { initialize, newReference, quote, type Method } from "@/lib/paystack";
@@ -26,7 +25,6 @@ export async function createCompany(formData: FormData) {
   }).select("id").single();
   if (error || !co) back("Could not create the company account.");
   await db.from("profiles").update({ company_id: co!.id, company_role: "owner" }).eq("id", user.id);
-  revalidatePath("/company");
   redirect("/company?created=1");
 }
 
@@ -62,7 +60,6 @@ export async function removeMember(formData: FormData) {
   if (profile.company_role !== "owner") back("Only the owner can remove staff.");
   const id = String(formData.get("user_id"));
   await supabaseAdmin().from("profiles").update({ company_id: null, company_role: null }).eq("id", id).eq("company_id", profile.company_id!).eq("company_role", "member");
-  revalidatePath("/company");
 }
 
 export async function joinCompany(formData: FormData) {

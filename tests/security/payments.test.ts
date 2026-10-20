@@ -2,8 +2,11 @@ import crypto from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { form, paystack, redirectOf, signIn } from "../support/setup";
 import { USERS, COMPANY, fakeDb, stableId } from "../support/fake-supabase";
-import { POST as webhook } from "@/app/api/pay/webhook/route";
-import { GET as callback } from "@/app/api/pay/callback/route";
+import { action as webhookAction } from "@/app/api/pay/webhook/route";
+import { loader as callbackLoader } from "@/app/api/pay/callback/route";
+import { asRoute } from "../support/setup";
+const webhook = asRoute(webhookAction);
+const callback = asRoute(callbackLoader);
 import { claimCertificate } from "@/app/pay-actions";
 import { buySeats } from "@/app/company-actions";
 
@@ -176,7 +179,7 @@ describe("the browser callback is not proof of payment", () => {
     const ref = pendingCertificate();
     paystack.txs.set(ref, { status: "failed", amount: 1500, currency: "USD", reference: ref });
     const res = await callback(new Request(`https://aspire.test/api/pay/callback?reference=${ref}`));
-    expect(res.status).toBe(307);
+    expect(res.status).toBe(303);
     expect(res.headers.get("location")).toContain("/learn/haccp-principles/certificate?error=");
     expect(certs()).toHaveLength(0);
   });

@@ -1,18 +1,15 @@
-import Link from "next/link";
-import type { Metadata } from "next";
+import Link from "@/components/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Icon } from "@/components/icons";
 import { EnquiryForm, Reveal } from "@/components/forms";
 import { CONSULTANCY, CONSULT_STEPS } from "@/lib/consultancy";
-import { SITE, wa } from "@/lib/site";
+import { SITE, pageTitle, wa } from "@/lib/site";
 
-// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
-
-export const metadata: Metadata = {
-  title: "Consultancy",
-  description: "Aspire consultancy in Kenya: hospital food-service strategy, kitchen planning and readiness, food safety and accreditation, and operational improvement.",
-};
+export const meta = () => [
+  ...pageTitle("Consultancy"),
+  { name: "description", content: "Aspire consultancy in Kenya: hospital food-service strategy, kitchen planning and readiness, food safety and accreditation, and operational improvement." },
+];
 
 export default function Consultancy() {
   return (

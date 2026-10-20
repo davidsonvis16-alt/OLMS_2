@@ -1,7 +1,6 @@
-"use client";
 import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import { setSlides } from "@/app/admin/actions";
+import { useRouter } from "@/lib/navigation";
+import { callAction } from "@/lib/call-action";
 import { Icon } from "./icons";
 
 /**
@@ -35,7 +34,7 @@ export function SlideUploader({ courseId, version, count }: { courseId: string; 
         for (const x of batch) fd.set(`p${x.page}`, x.blob, `${x.page}.webp`);
         const p: Promise<void> = fetch("/api/admin/slides", { method: "POST", body: fd })
           .then(async (res) => {
-            if (!res.ok) throw new Error((await res.json().catch(() => null))?.error ?? `server said ${res.status}`);
+            if (!res.ok) throw new Error(((await res.json().catch(() => null)) as { error?: string } | null)?.error ?? `server said ${res.status}`);
             uploaded += batch.length;
             setState({ phase: "work", msg: `Uploading… ${uploaded} of ${total} slides saved. Keep this page open.`, done: uploaded, total });
           })
@@ -63,7 +62,7 @@ export function SlideUploader({ courseId, version, count }: { courseId: string; 
       }
       await Promise.all(inFlight);
       if (failure) throw failure;
-      await setSlides(courseId, next, total);
+      await callAction("setSlides", { course: courseId, version: next, count: total });
       setState({ phase: "done", msg: `✓ ${total} slides uploaded and saved.`, done: total, total });
       r.refresh();
     } catch (e) {

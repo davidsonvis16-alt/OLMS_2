@@ -1,24 +1,22 @@
-import Link from "next/link";
-import { redirect } from "next/navigation";
-import type { Metadata } from "next";
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
+import Link from "@/components/link";
+import { redirect } from "@/lib/server/http";
 import { AppShell } from "@/components/app-shell";
 import { Icon } from "@/components/icons";
 import { requireUser } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
-import { catLabel, companyActive, coursePhoto } from "@/lib/site";
+import { catLabel, companyActive, coursePhoto, pageTitle } from "@/lib/site";
 import { ConsultPromo } from "@/components/consult-promo";
 import { canLearn } from "@/lib/config";
 
-// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
-
-export const metadata: Metadata = { title: "My learning" };
+export const meta = () => pageTitle("My learning");
 
 function greeting() {
   const h = Number(new Date().toLocaleString("en-GB", { hour: "numeric", hour12: false, timeZone: "Africa/Nairobi" }));
   return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
 }
 
-export default async function Dashboard() {
+export async function loader(_: LoaderFunctionArgs) {
   const { user, profile } = await requireUser();
   if (!canLearn(profile)) redirect("/admin");
   const db = supabaseAdmin();
@@ -39,27 +37,38 @@ export default async function Dashboard() {
   const others = (all.data ?? []).filter((c) => !enrolled.some((e) => e.id === c.id)).slice(0, 3);
   const firstName = (profile.full_name || "").split(" ")[0];
 
+  // Worked out here (Nairobi time) so the page reads the same on the server and in the browser.
+  const today = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "Africa/Nairobi" });
+  return {
+    hello: greeting(), today, firstName, needsDetails: !profile.full_name || !profile.id_number,
+    company: company.data ? { name: company.data.name, active: companyActive(company.data) } : null,
+    enrolled, doneBy, passedSet, certBy, others,
+  };
+}
+
+export default function Dashboard() {
+  const { hello, today, firstName, needsDetails, company, enrolled, doneBy, passedSet, certBy, others } = useLoaderData<typeof loader>();
   return (
     <AppShell active="dashboard">
       <div className="page-head">
         <div>
-          <span className="eyebrow">My learning · {new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}</span>
-          <h1 className="greet">{greeting()}{firstName ? <>,<br /><span className="gtext">{firstName}.</span></> : "."}</h1>
+          <span className="eyebrow">My learning · {today}</span>
+          <h1 className="greet">{hello}{firstName ? <>,<br /><span className="gtext">{firstName}.</span></> : "."}</h1>
         </div>
         <div className="page-head-actions"><Link className="btn btn--line btn--sm" href="/courses">Browse courses <Icon name="arrow" /></Link></div>
       </div>
 
-      {(!profile.full_name || !profile.id_number) && (
+      {needsDetails && (
         <div className="alert alert--info row-alert">
           <Icon name="id" />
           <span>Add your <b>full name</b> and <b>ID or passport number</b> exactly as they should appear on your certificates.</span>
           <Link className="btn btn--sm btn--ink" href="/account?next=/dashboard">Complete profile</Link>
         </div>
       )}
-      {company.data && (
-        <div className={`alert ${companyActive(company.data) ? "alert--ok" : "alert--warn"} row-alert`}>
+      {company && (
+        <div className={`alert ${company.active ? "alert--ok" : "alert--warn"} row-alert`}>
           <Icon name="users" />
-          <span>You&apos;re training with <b>{company.data.name}</b>. {companyActive(company.data) ? "Your certificates are covered by your company." : "Your company account has expired, so certificates are paid individually until it is renewed."}</span>
+          <span>You&apos;re training with <b>{company.name}</b>. {company.active ? "Your certificates are covered by your company." : "Your company account has expired, so certificates are paid individually until it is renewed."}</span>
         </div>
       )}
 

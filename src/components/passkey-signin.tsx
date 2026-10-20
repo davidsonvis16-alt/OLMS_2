@@ -1,6 +1,5 @@
-"use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/lib/navigation";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 import { passkeyMessage, passkeysSupported } from "@/lib/passkey";
 import { Icon } from "./icons";

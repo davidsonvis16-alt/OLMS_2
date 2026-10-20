@@ -40,12 +40,4 @@ export async function courseState(userId: string, slug: string) {
 
 export type CourseState = NonNullable<Awaited<ReturnType<typeof courseState>>>;
 
-export function moduleUnlocked(state: CourseState, position: number) {
-  // Modules open in order: a module unlocks once the previous one is completed.
-  const idx = state.modules.findIndex((m) => m.position === position);
-  if (idx <= 0) return true;
-  return !!state.progress.get(state.modules[idx - 1].id)?.completed_at;
-}
-
-export function moduleSlides(m: ModuleRow) { return pagesOf(m); }
-export const PASS = SITE.passMark;
+export { moduleUnlocked, moduleSlides, PASS } from "./learning-rules";

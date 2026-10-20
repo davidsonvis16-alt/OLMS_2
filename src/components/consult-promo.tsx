@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import { Icon } from "./icons";
 
 /** Points learners and visitors from free training to paid consultancy (the client's funnel). */

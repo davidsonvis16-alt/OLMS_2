@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { signIn } from "../support/setup";
 import { USERS, stableId, stored } from "../support/fake-supabase";
-import { POST } from "@/app/api/admin/slides/route";
+import { action as slidesAction } from "@/app/api/admin/slides/route";
+import { asRoute } from "../support/setup";
+const POST = asRoute(slidesAction);
 
 const COURSE = stableId("haccp-principles");
 const webp = () => { const b = new Uint8Array(64); b.set([82, 73, 70, 70], 0); b.set([87, 69, 66, 80], 8); return b; };

@@ -1,7 +1,9 @@
 /**
- * Runs the real route handlers and server actions in-process. Only three things are replaced:
- * the Supabase client (by an in-memory double), Next's request cookies/headers, and Paystack's HTTP API.
+ * Runs the real route handlers, loaders and form actions in-process. Only four things are replaced: the Supabase
+ * client (by an in-memory double), the request's cookies/headers, files read from /public, and Paystack's HTTP API.
  */
+import fs from "node:fs";
+import path from "node:path";
 import { vi, beforeEach } from "vitest";
 import { bans, fakeClient, resetFakeDb, resetRateLimits, sessions } from "./fake-supabase";
 
@@ -16,11 +18,15 @@ vi.mock("@/lib/supabase", () => ({
   supabaseAdmin: () => fakeClient(null),
   slideUrl: (c: string, v: number, p: number) => `https://storage.test/slides/${c}/v${v}/${p}.webp`,
 }));
-vi.mock("next/headers", () => ({
+vi.mock("@/lib/server/request", async (actual) => ({
+  ...(await actual<typeof import("@/lib/server/request")>()),
   headers: async () => new Headers({ "x-forwarded-for": ctx.ip }),
-  cookies: async () => ({ get: () => undefined, getAll: () => [], set: () => {}, delete: () => {} }),
+  cookies: async () => ({ get: () => undefined, getAll: () => [], set: () => {} }),
 }));
-vi.mock("next/cache", () => ({ revalidatePath: () => {}, revalidateTag: () => {} }));
+// On Cloudflare these come through the static-assets binding; here, straight from /public.
+vi.mock("@/lib/server/assets", () => ({
+  assetBytes: async (p: string) => new Uint8Array(fs.readFileSync(path.join(process.cwd(), "public", p))),
+}));
 
 /** Sign in as a user with a valid session (or null for anonymous). */
 export function signIn(uid: string | null) { ctx.uid = uid; if (uid) sessions.add(uid); }
@@ -57,9 +63,13 @@ beforeEach(() => {
 export async function redirectOf(fn: () => unknown): Promise<string | null> {
   try { await fn(); return null; }
   catch (e) {
-    const d = (e as { digest?: string }).digest;
-    if (typeof d === "string" && d.startsWith("NEXT_REDIRECT")) return d.split(";")[2];
+    // Loaders and actions stop with a thrown Response: a redirect (where to) or e.g. a 404.
+    if (e instanceof Response) return e.status >= 300 && e.status < 400 ? e.headers.get("Location") : `status ${e.status}`;
     throw e;
   }
 }
 export const form = (o: Record<string, string>) => { const f = new FormData(); for (const [k, v] of Object.entries(o)) f.set(k, v); return f; };
+
+/** Calls a route's loader or action the way React Router does. */
+export const asRoute = (fn: (args: never) => unknown, params: Record<string, string> = {}) =>
+  (request: Request) => fn({ request, params, context: {} } as never) as Promise<Response>;

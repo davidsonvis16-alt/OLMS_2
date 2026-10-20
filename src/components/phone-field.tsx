@@ -1,4 +1,3 @@
-"use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { COUNTRY_CODES as ALL, countryName, dial, isCountry, splitPhone } from "@/lib/phone";
 import type { CountryCode } from "libphonenumber-js/min";

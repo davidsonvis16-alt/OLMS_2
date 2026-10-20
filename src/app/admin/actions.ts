@@ -1,6 +1,5 @@
-"use server";
-import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+/** Form actions (posted to /do/<name>, see app/do.$name.ts). Each one checks who is signed in. Server only. */
+import { redirect } from "@/lib/server/http";
 import { requireAdmin } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { safeVideoUrl } from "@/lib/video";
@@ -42,7 +41,6 @@ export async function saveCourse(f: FormData) {
     published: f.get("published") === "on",
     sort: Number(str(f, "sort")) || 0,
   }).eq("id", id);
-  revalidatePath("/courses"); revalidatePath("/");
   redirect(`/admin/courses/${id}?${error ? `error=${encodeURIComponent(error.message)}` : "saved=1"}#setup`);
 }
 
@@ -53,7 +51,6 @@ export async function deleteCourse(f: FormData) {
   const { count } = await db.from("certificates").select("id", { count: "exact", head: true }).eq("course_id", id);
   if (count) redirect(`/admin/courses/${id}?error=${encodeURIComponent("This course has certificates issued; unpublish it instead.")}`);
   await db.from("courses").delete().eq("id", id);
-  revalidatePath("/courses");
   redirect("/admin/courses");
 }
 
@@ -62,7 +59,6 @@ export async function setSlides(courseId: string, version: number, count: number
   await requireAdmin();
   if (typeof courseId !== "string" || !Number.isInteger(version) || version < 1 || !Number.isInteger(count) || count < 0 || count > 2000) throw new Error("Bad slide data");
   await supabaseAdmin().from("courses").update({ slide_count: count, slides_version: version }).eq("id", courseId);
-  revalidatePath(`/admin/courses/${courseId}`);
   return { ok: true };
 }
 
@@ -131,14 +127,12 @@ export async function saveSettings(f: FormData) {
   await requireAdmin();
   const v = str(f, "seat_price_usd");
   await supabaseAdmin().from("settings").upsert({ key: "seat_price_usd", value: v === "" ? null : Math.max(0, Number(v) || 0) });
-  revalidatePath("/business");
   redirect("/admin?saved=1");
 }
 
 export async function setRevoked(f: FormData) {
   await requireAdmin();
   await supabaseAdmin().from("certificates").update({ revoked: f.get("revoked") === "1" }).eq("id", str(f, "id"));
-  revalidatePath("/admin/certificates");
 }
 
 export async function setRole(f: FormData) {
@@ -146,14 +140,12 @@ export async function setRole(f: FormData) {
   const id = str(f, "id");
   if (id === user.id) return;
   await supabaseAdmin().from("profiles").update({ role: str(f, "role") === "admin" ? "admin" : "learner" }).eq("id", id);
-  revalidatePath("/admin/learners");
 }
 
 export async function adjustCompany(f: FormData) {
   await requireAdmin();
   const until = str(f, "paid_until");
   await supabaseAdmin().from("companies").update({ seats: Math.max(0, Number(str(f, "seats")) || 0), paid_until: until || null }).eq("id", str(f, "id"));
-  revalidatePath("/admin/companies");
 }
 
 /**
@@ -179,7 +171,6 @@ export async function suspendUser(f: FormData) {
   const { error } = await db.auth.admin.updateUserById(p.id, { ban_duration: "876000h" });
   if (error) redirect(`/admin/learners?error=${encodeURIComponent(`Couldn't suspend: ${error.message}`)}`);
   await db.from("profiles").update({ suspended_at: new Date().toISOString() }).eq("id", p.id);
-  revalidatePath("/admin/learners");
   redirect(`/admin/learners?done=${encodeURIComponent(`${p.email} is suspended.`)}`);
 }
 
@@ -189,7 +180,6 @@ export async function restoreUser(f: FormData) {
   const { error } = await db.auth.admin.updateUserById(p.id, { ban_duration: "none" });
   if (error) redirect(`/admin/learners?error=${encodeURIComponent(`Couldn't restore: ${error.message}`)}`);
   await db.from("profiles").update({ suspended_at: null }).eq("id", p.id);
-  revalidatePath("/admin/learners");
   redirect(`/admin/learners?done=${encodeURIComponent(`${p.email} can sign in again.`)}`);
 }
 
@@ -202,6 +192,5 @@ export async function deleteUser(f: FormData) {
   if (str(f, "confirm", 20) !== "DELETE") redirect(`/admin/learners?error=${encodeURIComponent("Type DELETE in capitals to confirm.")}`);
   const { error } = await supabaseAdmin().auth.admin.deleteUser(p.id);
   if (error) redirect(`/admin/learners?error=${encodeURIComponent(`Couldn't delete: ${error.message}`)}`);
-  revalidatePath("/admin/learners");
   redirect(`/admin/learners?done=${encodeURIComponent(`${p.email} was deleted.`)}`);
 }

@@ -1,5 +1,4 @@
-"use client";
-import Link from "next/link";
+import Link from "@/components/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { PublicQuestion } from "@/lib/grading";
 import { Icon } from "./icons";
@@ -38,7 +37,7 @@ export function ModulePlayer({ course, module, slides, startAt, questions, compl
     if (page === sent.current) return;
     sent.current = page;
     fetch("/api/learn", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "progress", moduleId: module.id, page }), keepalive: true })
-      .then(async (r) => { if (r.status === 409 && (await r.json().catch(() => ({}))).locked) setBlocked(true); })
+      .then(async (r) => { if (r.status === 409 && ((await r.json().catch(() => ({}))) as { locked?: boolean }).locked) setBlocked(true); })
       .catch(() => {});
   }, [module.id]);
 

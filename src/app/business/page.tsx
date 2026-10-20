@@ -1,19 +1,21 @@
-import Link from "next/link";
-import type { Metadata } from "next";
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
+import Link from "@/components/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Icon } from "@/components/icons";
 import { Reveal } from "@/components/forms";
-import { SITE, usd, wa } from "@/lib/site";
+import { SITE, usd, wa, pageTitle } from "@/lib/site";
 import { seatPrice } from "@/app/company-actions";
 
-// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+export const meta = () => pageTitle("Company accounts");
 
-export const metadata: Metadata = { title: "Company accounts" };
-export const dynamic = "force-dynamic"; // the header is per-user, so these pages are never cached
-
-export default async function Business() {
+export async function loader(_: LoaderFunctionArgs) {
   const price = await seatPrice().catch(() => null);
+  return { price };
+}
+
+export default function Business() {
+  const { price } = useLoaderData<typeof loader>();
   return (
     <>
       <SiteHeader current="business" />

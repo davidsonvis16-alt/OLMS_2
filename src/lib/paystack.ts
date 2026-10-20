@@ -34,16 +34,18 @@ export async function initialize(opts: { email: string; amount: number; currency
     }),
     cache: "no-store",
   });
-  const data = await res.json();
-  if (!res.ok || !data.status) throw new Error(data.message || "Could not start payment");
-  return data.data as { authorization_url: string; reference: string };
+  const data = (await res.json()) as Reply<{ authorization_url: string; reference: string }>;
+  if (!res.ok || !data.status || !data.data) throw new Error(data.message || "Could not start payment");
+  return data.data;
 }
+
+type Reply<T> = { status?: boolean; message?: string; data?: T };
 
 export async function verify(reference: string) {
   const res = await fetch(`${API}/transaction/verify/${encodeURIComponent(reference)}`, { headers: { Authorization: `Bearer ${key()}` }, cache: "no-store" });
-  const data = await res.json();
-  if (!res.ok || !data.status || data.data?.reference !== reference) return null;
-  return data.data as { status: string; amount: number; currency: string; reference: string; channel: string; paid_at: string };
+  const data = (await res.json()) as Reply<{ status: string; amount: number; currency: string; reference: string; channel: string; paid_at: string }>;
+  if (!res.ok || !data.status || !data.data || data.data.reference !== reference) return null;
+  return data.data;
 }
 
 export function validSignature(raw: string, signature: string | null) {

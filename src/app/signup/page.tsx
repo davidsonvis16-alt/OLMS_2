@@ -1,16 +1,17 @@
-import { Suspense } from "react";
-import { headers } from "next/headers";
-import type { Metadata } from "next";
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
+import { pageTitle } from "@/lib/site";
 import { AuthForm } from "@/components/auth-form";
 import { AuthFrame } from "@/components/auth-aside";
 
-// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+export const meta = () => pageTitle("Create account");
 
-export const metadata: Metadata = { title: "Create account" };
+export async function loader({ request }: LoaderFunctionArgs) {
+  // Cloudflare tells us the visitor's country from their connection; no lookup service is used.
+  const cf = (request as Request & { cf?: { country?: string } }).cf;
+  return { country: cf?.country ?? request.headers.get("cf-ipcountry") };
+}
 
-export default async function Page() {
-  // The host tells us the visitor's country from their connection (Vercel or Cloudflare); no lookup service is used.
-  const h = await headers();
-  const country = h.get("x-vercel-ip-country") ?? h.get("cf-ipcountry");
-  return <AuthFrame><Suspense><AuthForm mode="signup" country={country} /></Suspense></AuthFrame>;
+export default function Page() {
+  const { country } = useLoaderData<typeof loader>();
+  return <AuthFrame><AuthForm mode="signup" country={country} /></AuthFrame>;
 }

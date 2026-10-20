@@ -1,4 +1,3 @@
-"use client";
 import { useMemo, useState } from "react";
 import { checkPassword, generatePassword, MIN_LENGTH } from "@/lib/password";
 import { Icon } from "./icons";

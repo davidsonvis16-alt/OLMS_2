@@ -1,6 +1,5 @@
-"use client";
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams } from "@/lib/navigation";
 import { CATEGORIES } from "@/lib/site";
 
 /** Category filter for the catalogue. Rows carry data-cats; the URL keeps ?c= in sync. */

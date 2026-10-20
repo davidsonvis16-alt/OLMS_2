@@ -1,13 +1,17 @@
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 import { AppShell, PageHead } from "@/components/app-shell";
 import { requireAdmin } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { AdminNav } from "../admin-nav";
 
-// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
-
-export default async function Submissions() {
+export async function loader(_: LoaderFunctionArgs) {
   await requireAdmin();
   const { data } = await supabaseAdmin().from("assignment_submissions").select("body,updated_at,profiles(full_name,email),courses(title)").order("updated_at", { ascending: false }).limit(200);
+  return { data };
+}
+
+export default function Submissions() {
+  const { data } = useLoaderData<typeof loader>();
   return (
     <AppShell active="admin" wide>
       <PageHead eyebrow="Admin" title="Course assignments" />

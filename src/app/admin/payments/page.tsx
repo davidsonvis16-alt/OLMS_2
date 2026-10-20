@@ -1,14 +1,18 @@
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 import { AppShell, PageHead } from "@/components/app-shell";
 import { requireAdmin } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { usd } from "@/lib/site";
 import { AdminNav } from "../admin-nav";
 
-// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
-
-export default async function Payments() {
+export async function loader(_: LoaderFunctionArgs) {
   await requireAdmin();
   const { data } = await supabaseAdmin().from("payments").select("reference,purpose,seats,amount,currency,amount_usd,status,channel,created_at,paid_at,profiles(full_name,email),courses(title),companies(name)").order("created_at", { ascending: false }).limit(500);
+  return { data };
+}
+
+export default function Payments() {
+  const { data } = useLoaderData<typeof loader>();
   return (
     <AppShell active="admin" wide>
       <PageHead eyebrow="Admin" title="Payments" />

@@ -1,24 +1,21 @@
-import Link from "next/link";
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
+import Link from "@/components/link";
 import { Suspense } from "react";
-import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CourseTabs } from "@/components/course-tabs";
 import { Icon } from "@/components/icons";
 import { supabaseAdmin } from "@/lib/supabase";
-import { SITE, catLabel, coursePhoto, wa, usd } from "@/lib/site";
+import { SITE, catLabel, coursePhoto, wa, usd, pageTitle } from "@/lib/site";
 
-// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
-
-export const metadata: Metadata = { title: "Courses" };
-export const dynamic = "force-dynamic"; // the header is per-user, so these pages are never cached
+export const meta = () => pageTitle("Courses");
 
 type C = { id: string; slug: string; title: string; category: string; categories: string[]; summary: string | null; topics: string[]; certificate_price_usd: number | null; modules: { count: number }[]; questions: { count: number }[] };
 
 const n = (x: { count: number }[] | undefined) => x?.[0]?.count ?? 0;
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
-export default async function CoursesPage() {
+export async function loader(_: LoaderFunctionArgs) {
   const { data } = await supabaseAdmin().from("courses")
     .select("id,slug,title,category,categories,summary,topics,certificate_price_usd,modules(count),questions(count)")
     .eq("published", true).order("sort");
@@ -26,6 +23,11 @@ export default async function CoursesPage() {
   const counts: Record<string, number> = { all: courses.length };
   for (const c of courses) for (const k of new Set([c.category, ...c.categories])) counts[k] = (counts[k] ?? 0) + 1;
 
+  return { courses, counts };
+}
+
+export default function CoursesPage() {
+  const { courses, counts } = useLoaderData<typeof loader>();
   return (
     <>
       <SiteHeader current="courses" />

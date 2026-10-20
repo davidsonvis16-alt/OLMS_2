@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/components/link";
 import { Contact, LegalPage } from "@/components/legal";
-import { SITE } from "@/lib/site";
+import { SITE, pageTitle } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Terms and Conditions", description: `The terms for using ${SITE.name} online training, certificates and company accounts.` };
+export const meta = () => [...pageTitle("Terms and Conditions"), { name: "description", content: `The terms for using ${SITE.name} online training, certificates and company accounts.` }];
 
 const sections = [
   { id: "about", title: "About these terms", body: <>

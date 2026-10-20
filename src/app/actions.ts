@@ -1,6 +1,5 @@
-"use server";
-import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+/** Form actions (posted to /do/<name>, see app/do.$name.ts). Each one checks who is signed in. Server only. */
+import { redirect } from "@/lib/server/http";
 import { supabaseAdmin, supabaseServer } from "@/lib/supabase";
 import { getSession, requireUser } from "@/lib/auth";
 import { safeNext } from "@/lib/safe-next";
@@ -38,7 +37,6 @@ async function applyProfile(userId: string, formData: FormData): Promise<string 
   if (taken) return TAKEN_MESSAGE[taken];
   const { error } = await db.from("profiles").update({ full_name, id_number, phone, country: clean("country", 60) }).eq("id", userId);
   if (error) return error.code === "23505" ? "That ID or phone number is already on another account. Each person can have one account." : "Couldn't save. Please try again.";
-  revalidatePath("/account");
   return null;
 }
 

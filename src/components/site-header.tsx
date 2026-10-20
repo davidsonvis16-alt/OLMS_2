@@ -1,11 +1,11 @@
-import Link from "next/link";
-import { getSession } from "@/lib/auth";
+import Link from "@/components/link";
+import { useViewer } from "@/lib/viewer";
 import { SITE } from "@/lib/site";
 import { HeaderShell } from "./header-client";
 
 /** `stage` = the header sits on the dark homepage stage until the visitor scrolls past it. */
-export async function SiteHeader({ current, stage }: { current?: "home" | "courses" | "verify" | "business" | "consultancy"; stage?: boolean }) {
-  const { user, profile } = await getSession();
+export function SiteHeader({ current, stage }: { current?: "home" | "courses" | "verify" | "business" | "consultancy"; stage?: boolean }) {
+  const viewer = useViewer();
   const brand = (
     <Link className="brand" href="/" aria-label={`${SITE.name}, home`}>
       <img src="/brand/logo-light.png" alt="" width={466} height={640} />
@@ -14,7 +14,7 @@ export async function SiteHeader({ current, stage }: { current?: "home" | "cours
     </Link>
   );
   const cur = (k: string) => (current === k ? { "aria-current": "page" as const } : {});
-  const home = profile?.role === "admin" ? "/admin" : profile?.company_role === "owner" ? "/company" : "/dashboard";
+  const home = viewer?.role === "admin" ? "/admin" : viewer?.companyRole === "owner" ? "/company" : "/dashboard";
   return (
     <HeaderShell brand={brand} stage={stage}>
       <Link href="/courses" {...cur("courses")}>Courses</Link>
@@ -22,7 +22,7 @@ export async function SiteHeader({ current, stage }: { current?: "home" | "cours
       <Link href="/business" {...cur("business")}>For companies</Link>
       <Link href="/verify" {...cur("verify")}>Verify</Link>
       <Link href="/#contact">Contact</Link>
-      {user ? (
+      {viewer ? (
         <Link className="nav-cta" href={home}>My account</Link>
       ) : (
         <>

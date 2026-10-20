@@ -1,5 +1,6 @@
-import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
+import Link from "@/components/link";
+import { notFound, redirect } from "@/lib/server/http";
 import { AppShell } from "@/components/app-shell";
 import { Icon } from "@/components/icons";
 import { ClaimDetails } from "@/components/claim-details";
@@ -10,13 +11,10 @@ import { coveredByCompany } from "@/lib/certs";
 import { mpesaAvailable, quote } from "@/lib/paystack";
 import { usd, wa } from "@/lib/site";
 
-// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
-
-type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ error?: string }> };
-
-export default async function ClaimPage({ params, searchParams }: Props) {
-  const { slug } = await params;
-  const { error } = await searchParams;
+export async function loader({ params, request }: LoaderFunctionArgs) {
+  const searchParams = Object.fromEntries(new URL(request.url).searchParams) as Record<string, string | undefined>;
+  const slug = params.slug ?? "";
+  const error = searchParams.error ?? null;
   const { user, profile } = await requireUser(`/learn/${slug}/certificate`);
   const s = await courseState(user.id, slug);
   if (!s) notFound();
@@ -29,6 +27,15 @@ export default async function ClaimPage({ params, searchParams }: Props) {
   if (!free && price != null && mpesaAvailable()) kes = quote(Number(price), "mpesa").amount;
   const preview = await certificatePreview(slug, profile.full_name ?? "", profile.id_number ?? "");
 
+  return {
+    slug, error, covered, price, free, kes, preview,
+    name: profile.full_name ?? "", idNumber: profile.id_number ?? "",
+    s: { course: { title: s.course.title }, bestScore: s.bestScore },
+  };
+}
+
+export default function ClaimPage() {
+  const { slug, error, covered, price, free, kes, preview, name, idNumber, s } = useLoaderData<typeof loader>();
   return (
     <AppShell active="dashboard" wide>
       <div className="learn-head">
@@ -37,7 +44,7 @@ export default async function ClaimPage({ params, searchParams }: Props) {
         <h1>Claim your certificate</h1>
       </div>
 
-      <ClaimDetails slug={slug} initial={preview} name={profile.full_name ?? ""} idNumber={profile.id_number ?? ""}>
+      <ClaimDetails slug={slug} initial={preview} name={name} idNumber={idNumber}>
 
           {error && <p className="alert alert--error" role="alert">{error}</p>}
 

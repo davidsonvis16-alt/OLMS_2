@@ -1,5 +1,5 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { headers } from "@/lib/server/request";
+import { redirect } from "@/lib/server/http";
 import { safeNext } from "./safe-next";
 import { supabaseServer, supabaseAdmin } from "./supabase";
 

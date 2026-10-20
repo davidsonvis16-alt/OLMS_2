@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "aspire-lms",
+  "main": "./workers/app.ts",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  // Files in /public; the Worker also reads certificate fonts and images through this binding.
+  "assets": { "binding": "ASSETS" },
+  "observability": { "enabled": true }
+  // Secrets (SUPABASE_SERVICE_ROLE_KEY, PAYSTACK_SECRET_KEY) are set with `wrangler secret put`, never in this file.
+}

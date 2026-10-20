@@ -1,6 +1,5 @@
-"use client";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import Link from "@/components/link";
+import { useRouter, useSearchParams } from "@/lib/navigation";
 import { useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 import { Icon } from "./icons";

@@ -1,8 +1,9 @@
 node_modules
-.next
 .env
 .env.local
 *.tsbuildinfo
-next-env.d.ts
-.vercel
 decks-pdf
+.react-router
+build
+.wrangler
+.dev.vars

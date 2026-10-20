@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import type { ActionFunctionArgs } from "react-router";
+import { json as reply } from "@/lib/server/http";
 import { getSession } from "@/lib/auth";
 import { z } from "zod";
 import { supabaseAdmin } from "@/lib/supabase";
@@ -17,13 +18,13 @@ const Body = z.discriminatedUnion("type", [
   z.object({ type: z.literal("start"), courseId: id, moduleId: id.optional() }),
 ]);
 
-const json = (body: unknown, status = 200) => NextResponse.json(body, { status, headers: { "Cache-Control": "no-store" } });
+const json = (body: unknown, status = 200) => reply(body, status);
 
 /**
  * Progress, knowledge checks and the final exam. Identity comes from the session only; everything is graded here.
  * A test must be started before it can be submitted, and while one is open the course's slides are closed.
  */
-export async function POST(req: Request) {
+async function post(req: Request) {
   const { user } = await getSession(); // also treats suspended accounts as signed out
   if (!user) return json({ error: "Not signed in" }, 401);
   if (Number(req.headers.get("content-length") ?? 0) > 64_000) return json({ error: "Request too large" }, 413);
@@ -115,3 +116,5 @@ export async function POST(req: Request) {
   // Score only; never which answers were right.
   return json({ score: g.score, correct: g.correct, total: g.total, passed });
 }
+
+export const action = ({ request }: ActionFunctionArgs) => post(request);

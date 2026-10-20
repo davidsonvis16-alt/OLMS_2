@@ -1,21 +1,19 @@
-import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
+import Link from "@/components/link";
+import { notFound, redirect } from "@/lib/server/http";
 import { AppShell } from "@/components/app-shell";
 import { Icon } from "@/components/icons";
 import { requireUser } from "@/lib/auth";
-import { courseState, moduleUnlocked, moduleSlides, PASS } from "@/lib/learning";
+import { courseState } from "@/lib/learning";
+import { moduleUnlocked, moduleSlides, PASS } from "@/lib/learning-rules";
 import { supabaseAdmin } from "@/lib/supabase";
 import { catLabel } from "@/lib/site";
-import { saveAssignment } from "@/app/actions";
 import { openTest, testHref } from "@/lib/test-lock";
 
-// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
-
-type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ assignment?: string }> };
-
-export default async function LearnCourse({ params, searchParams }: Props) {
-  const { slug } = await params;
-  const sp = await searchParams;
+export async function loader({ params, request }: LoaderFunctionArgs) {
+  const searchParams = Object.fromEntries(new URL(request.url).searchParams) as Record<string, string | undefined>;
+  const slug = params.slug ?? "";
+  const sp = { assignment: searchParams.assignment ?? null };
   const { user } = await requireUser(`/learn/${slug}`);
   let s = await courseState(user.id, slug);
   if (!s || (!s.course.published && !s.enrolled)) notFound();
@@ -28,6 +26,11 @@ export default async function LearnCourse({ params, searchParams }: Props) {
   if (lock) redirect(testHref(slug, lock, s.modules));
   const next = s.modules.find((m) => !s!.progress.get(m.id)?.completed_at);
 
+  return { slug, sp, s, next };
+}
+
+export default function LearnCourse() {
+  const { slug, sp, s, next } = useLoaderData<typeof loader>();
   return (
     <AppShell active="dashboard">
       <div className="learn-head">
@@ -92,7 +95,7 @@ export default async function LearnCourse({ params, searchParams }: Props) {
           <h3 id="assign-title" style={{ marginTop: 10 }}>Put it into practice</h3>
           <p>{s.course.assignment}</p>
           {sp.assignment === "saved" && <p className="alert alert--ok" role="status">Assignment saved. Your trainer can read it.</p>}
-          <form action={saveAssignment}>
+          <form method="post" action="/do/saveAssignment">
             <input type="hidden" name="course_id" value={s.course.id} />
             <input type="hidden" name="slug" value={slug} />
             <div className="field"><label htmlFor="body">Your answer</label><textarea id="body" name="body" rows={8} defaultValue={s.assignment?.body ?? ""} placeholder="Write your answer here. You can save it and come back to it." /></div>

@@ -1,18 +1,13 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import type { Metadata } from "next";
+import { useLoaderData, type LoaderFunctionArgs, type MetaArgs } from "react-router";
+import Link from "@/components/link";
+import { notFound } from "@/lib/server/http";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Icon } from "@/components/icons";
 import { supabaseAdmin } from "@/lib/supabase";
 import { getSession } from "@/lib/auth";
-import { SITE, catLabel, coursePhoto, pagesOf, usd } from "@/lib/site";
-import { enrol } from "@/app/actions";
+import { SITE, catLabel, coursePhoto, pageTitle, pagesOf, usd } from "@/lib/site";
 import { ConsultPromo } from "@/components/consult-promo";
-
-// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
-
-type Props = { params: Promise<{ slug: string }> };
 
 async function load(slug: string) {
   const { data } = await supabaseAdmin().from("courses")
@@ -21,17 +16,15 @@ async function load(slug: string) {
   return data;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const c = await load((await params).slug);
-  return c ? { title: c.title, description: c.summary ?? undefined } : {};
-}
+export const meta = ({ loaderData }: MetaArgs<typeof loader>) =>
+  loaderData ? [...pageTitle(loaderData.c.title), { name: "description", content: loaderData.c.summary ?? "" }] : pageTitle("Course");
 
-export default async function CoursePage({ params }: Props) {
-  const { slug } = await params;
-  const c = await load(slug);
+export async function loader({ params }: LoaderFunctionArgs) {
+  const c = await load(params.slug ?? "");
   if (!c) notFound();
   const modules = [...(c.modules ?? [])].sort((a, b) => a.position - b.position);
   const { user } = await getSession();
+  const signedIn = !!user;
   let enrolled = false;
   if (user) {
     const { data } = await supabaseAdmin().from("enrollments").select("course_id").eq("user_id", user.id).eq("course_id", c.id).maybeSingle();
@@ -42,15 +35,19 @@ export default async function CoursePage({ params }: Props) {
   const price = c.certificate_price_usd != null ? usd(c.certificate_price_usd) : "On request";
   const cats = [...new Set([c.category, ...(c.categories ?? [])])].map(catLabel).join(" / ");
 
+  return { c, modules, signedIn, enrolled, slides, qCount, price, cats };
+}
+
+export default function CoursePage() {
+  const { c, modules, signedIn, enrolled, slides, qCount, price, cats } = useLoaderData<typeof loader>();
   const start = (block?: boolean) => (
-    <form action={enrol}>
+    <form method="post" action="/do/enrol">
       <input type="hidden" name="slug" value={c.slug} />
       {enrolled
         ? <Link className={`cta${block ? " cta--block" : ""}`} href={`/learn/${c.slug}`}><span>Continue learning</span><i><Icon name="arrow" /></i></Link>
-        : <button className={`cta${block ? " cta--block" : ""}`} type="submit"><span>{user ? "Start this course, free" : "Sign up & start free"}</span><i><Icon name="arrow" /></i></button>}
+        : <button className={`cta${block ? " cta--block" : ""}`} type="submit"><span>{signedIn ? "Start this course, free" : "Sign up & start free"}</span><i><Icon name="arrow" /></i></button>}
     </form>
   );
-
   return (
     <>
       <SiteHeader current="courses" />

@@ -1,6 +1,5 @@
-"use client";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/lib/navigation";
 import { Icon } from "./icons";
 
 export function HeaderShell({ children, brand, stage }: { children: React.ReactNode; brand: React.ReactNode; stage?: boolean }) {

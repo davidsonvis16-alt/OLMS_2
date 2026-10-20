@@ -1,18 +1,22 @@
-import Link from "next/link";
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
+import Link from "@/components/link";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Icon } from "@/components/icons";
 import { supabaseAdmin } from "@/lib/supabase";
 import { getSession } from "@/lib/auth";
-import { joinCompany } from "@/app/company-actions";
 
-// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
-
-export default async function Join({ params, searchParams }: { params: Promise<{ code: string }>; searchParams: Promise<{ error?: string }> }) {
-  const code = (await params).code.toUpperCase();
-  const { error } = await searchParams;
+export async function loader({ params, request }: LoaderFunctionArgs) {
+  const searchParams = Object.fromEntries(new URL(request.url).searchParams) as Record<string, string | undefined>;
+  const code = (params.code ?? "").toUpperCase().slice(0, 64);
+  const { error } = searchParams;
   const { data: co } = await supabaseAdmin().from("companies").select("name").eq("join_code", code).maybeSingle();
   const { user } = await getSession();
+  return { code, error, co, signedIn: !!user };
+}
+
+export default function Join() {
+  const { code, error, co, signedIn } = useLoaderData<typeof loader>();
   return (
     <>
       <SiteHeader />
@@ -26,8 +30,8 @@ export default async function Join({ params, searchParams }: { params: Promise<{
               <p className="lede">{co.name} has invited you to do your food safety, hygiene and health &amp; safety training. While their account is active, your certificates are covered by your employer.</p>
               {error && <p className="alert alert--error" style={{ marginTop: 24 }}>{error}</p>}
               <div className="row" style={{ marginTop: 32 }}>
-                {user ? (
-                  <form action={joinCompany}><input type="hidden" name="code" value={code} /><button className="cta" type="submit"><span>Join {co.name}</span><i><Icon name="arrow" /></i></button></form>
+                {signedIn ? (
+                  <form method="post" action="/do/joinCompany"><input type="hidden" name="code" value={code} /><button className="cta" type="submit"><span>Join {co.name}</span><i><Icon name="arrow" /></i></button></form>
                 ) : (
                   <>
                     <Link className="cta" href={`/signup?next=/join/${code}`}><span>Create a free account</span><i><Icon name="arrow" /></i></Link>

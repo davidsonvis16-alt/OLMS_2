@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/link";
 
 /** Shared frame for the sign-in pages: the form on the left, a photograph and the motto on the right. */
 export function AuthFrame({ children }: { children: React.ReactNode }) {

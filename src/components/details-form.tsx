@@ -1,8 +1,10 @@
-"use client";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import Link from "@/components/link";
+import { useRouter } from "@/lib/navigation";
 import { useActionState, useEffect, useState } from "react";
-import { saveDetails, type SaveState } from "@/app/actions";
+import { callAction } from "@/lib/call-action";
+
+type SaveState = { ok?: boolean; error?: string; at?: number };
+const save = (_prev: SaveState, form: FormData) => callAction<SaveState>("saveDetails", form);
 import { PhoneField } from "./phone-field";
 import { Icon } from "./icons";
 
@@ -14,7 +16,7 @@ type Details = { full_name: string | null; id_number: string | null; phone: stri
  */
 export function DetailsForm({ profile, next }: { profile: Details; next?: string }) {
   const r = useRouter();
-  const [state, action, pending] = useActionState<SaveState, FormData>(saveDetails, {});
+  const [state, action, pending] = useActionState<SaveState, FormData>(save, {});
   const [name, setName] = useState(profile.full_name ?? "");
   const [idn, setIdn] = useState(profile.id_number ?? "");
   const [dirty, setDirty] = useState(false);

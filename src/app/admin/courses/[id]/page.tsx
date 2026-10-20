@@ -1,23 +1,23 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
+import Link from "@/components/link";
+import { notFound } from "@/lib/server/http";
 import { AppShell, PageHead } from "@/components/app-shell";
 import { SlideUploader } from "@/components/slide-uploader";
 import { Icon } from "@/components/icons";
 import { requireAdmin } from "@/lib/auth";
-import { supabaseAdmin, slideUrl } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase";
+import { slideUrl } from "@/lib/slides";
 import { CATEGORIES, pagesOf } from "@/lib/site";
 import { AdminNav } from "../../admin-nav";
-import { deleteCourse, deleteModule, deleteQuestion, saveCourse, saveModule, saveQuestion } from "../../actions";
-
-// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
 
 type Q = { id: string; module_id: string | null; position: number; prompt: string; options: string[]; answer: number[]; review_note: string | null; source: string | null; in_final: boolean };
 type M = { id: string; position: number; title: string; page_from: number; page_to: number; extra_pages: number[]; video_url: string | null };
 
-export default async function EditCourse({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ saved?: string; error?: string }> }) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
+  const searchParams = Object.fromEntries(new URL(request.url).searchParams) as Record<string, string | undefined>;
   await requireAdmin();
-  const { id } = await params;
-  const sp = await searchParams;
+  const id = params.id ?? "";
+  const sp = { error: searchParams.error ?? null, saved: searchParams.saved ?? null };
   const db = supabaseAdmin();
   const { data: c } = await db.from("courses").select("*").eq("id", id).maybeSingle();
   if (!c) notFound();
@@ -29,6 +29,11 @@ export default async function EditCourse({ params, searchParams }: { params: Pro
   const questions = (qs ?? []) as Q[];
   const flagged = questions.filter((q) => q.review_note);
 
+  return { sp, c, modules, questions, flagged };
+}
+
+export default function EditCourse() {
+  const { sp, c, modules, questions, flagged } = useLoaderData<typeof loader>();
   return (
     <AppShell active="admin" wide>
       <PageHead eyebrow={c.published ? "Course · showing to learners" : "Course · hidden from learners"} title={c.title} />
@@ -36,7 +41,7 @@ export default async function EditCourse({ params, searchParams }: { params: Pro
       {sp.error && <p className="alert alert--error">{sp.error}</p>}
 
       {/* SET UP: everything most admins need, with one Save button */}
-      <form action={saveCourse} className="setup" id="setup">
+      <form method="post" action="/do/saveCourse" className="setup" id="setup">
         <input type="hidden" name="id" value={c.id} />
 
         <div className="setup-step">
@@ -110,7 +115,7 @@ export default async function EditCourse({ params, searchParams }: { params: Pro
         <p>Each module shows a range of slides, then its knowledge check. Leave quiz slides out of the ranges; the quiz is interactive. Video: paste a Bunny Stream (or YouTube) embed URL.</p>
         <div className="mod-rows">
           {[...modules, null].map((m, i) => (
-            <form action={saveModule} className={`mod-row${m ? "" : " mod-row--new"}`} key={m?.id ?? "new"}>
+            <form method="post" action="/do/saveModule" className={`mod-row${m ? "" : " mod-row--new"}`} key={m?.id ?? "new"}>
               <input type="hidden" name="course_id" value={c.id} />
               <input type="hidden" name="id" value={m?.id ?? ""} />
               <span className="mnum">{m ? m.position : "+"}</span>
@@ -119,7 +124,7 @@ export default async function EditCourse({ params, searchParams }: { params: Pro
               <input name="extra_pages" defaultValue={m?.extra_pages?.join(", ") ?? ""} placeholder="extra slides e.g. 73" aria-label="Extra slides" className="w-sm" />
               <input name="video_url" defaultValue={m?.video_url ?? ""} placeholder="Video embed URL (optional)" aria-label="Video URL" className="w-md" />
               <button className="btn btn--sm btn--green">{m ? "Save" : "Add"}</button>
-              {m && <button className="link-btn danger" formAction={deleteModule} formNoValidate>Delete</button>}
+              {m && <button className="link-btn danger" formAction="/do/deleteModule" formNoValidate>Delete</button>}
               {i === 0 && null}
             </form>
           ))}
@@ -142,7 +147,7 @@ export default async function EditCourse({ params, searchParams }: { params: Pro
         ))}
       </details>
 
-      <form action={deleteCourse} className="danger-zone">
+      <form method="post" action="/do/deleteCourse" className="danger-zone">
         <input type="hidden" name="id" value={c.id} />
         <span>Delete this course and all its modules and questions. Courses with issued certificates can only be unpublished.</span>
         <button className="btn btn--sm btn--outline danger">Delete course</button>
@@ -153,7 +158,7 @@ export default async function EditCourse({ params, searchParams }: { params: Pro
 
 function QuestionForm({ q, courseId, modules, moduleId }: { q?: Q; courseId: string; modules: M[]; moduleId?: string }) {
   return (
-    <form action={saveQuestion} className={`q-edit${q?.review_note ? " q-edit--flag" : ""}`} id={`q-${q?.id ?? "new"}`}>
+    <form method="post" action="/do/saveQuestion" className={`q-edit${q?.review_note ? " q-edit--flag" : ""}`} id={`q-${q?.id ?? "new"}`}>
       <input type="hidden" name="course_id" value={courseId} />
       <input type="hidden" name="id" value={q?.id ?? ""} />
       {q?.review_note && <p className="review-note"><b>Review:</b> {q.review_note}<input type="hidden" name="review_note" value={q.review_note} /></p>}
@@ -172,7 +177,7 @@ function QuestionForm({ q, courseId, modules, moduleId }: { q?: Q; courseId: str
           {q?.review_note && <label className="check"><input type="checkbox" name="clear_review" /><span>Reviewed, clear the flag</span></label>}
           <div className="row-btns">
             <button className="btn btn--sm btn--green">{q ? "Save" : "Add question"}</button>
-            {q && <button className="link-btn danger" formAction={deleteQuestion} formNoValidate>Delete</button>}
+            {q && <button className="link-btn danger" formAction="/do/deleteQuestion" formNoValidate>Delete</button>}
           </div>
         </div>
       </div>

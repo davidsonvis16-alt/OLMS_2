@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { cookies } from "next/headers";
+import { cookies } from "@/lib/server/request";
 import { supabaseConfigured } from "./config";
 
 const URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -32,6 +32,4 @@ export function supabaseAdmin(): SupabaseClient {
   });
 }
 
-export function slideUrl(courseId: string, version: number, page: number) {
-  return `${URL}/storage/v1/object/public/slides/${courseId}/v${version}/${String(page).padStart(3, "0")}.webp`;
-}
+export { slideUrl } from "./slides";

@@ -1,5 +1,4 @@
-"use client";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/lib/navigation";
 import { useEffect, useState } from "react";
 import { SITE } from "@/lib/site";
 import { Icon } from "./icons";

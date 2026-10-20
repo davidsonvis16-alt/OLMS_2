@@ -1,4 +1,3 @@
-"use client";
 import { useMemo, useState } from "react";
 import type { PublicQuestion } from "@/lib/grading";
 import { Icon } from "./icons";
@@ -48,7 +47,7 @@ export function Quiz({
     setBusy(true); setErr(null);
     try {
       const res = await fetch("/api/learn", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(startBody) });
-      const data = await res.json();
+      const data = (await res.json()) as { error?: string; notStarted?: boolean } & (ModuleResult | ExamResult);
       if (!res.ok) throw new Error(data.error || "Could not start");
       setAnswers({}); setResult(null); setStarted(true); onStart?.();
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -72,7 +71,7 @@ export function Quiz({
     setBusy(true); setErr(null);
     try {
       const res = await fetch("/api/learn", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...endpointBody, answers }) });
-      const data = await res.json();
+      const data = (await res.json()) as { error?: string; notStarted?: boolean } & (ModuleResult | ExamResult);
       if (!res.ok) {
         if (data.notStarted) setStarted(false);
         throw new Error(data.error || "Could not submit");

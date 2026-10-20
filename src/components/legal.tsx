@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/link";
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
 import { SITE } from "@/lib/site";

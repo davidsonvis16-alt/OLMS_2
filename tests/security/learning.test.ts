@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { signIn } from "../support/setup";
 import { USERS, fakeDb, stableId } from "../support/fake-supabase";
-import { POST as learn } from "@/app/api/learn/route";
+import { action as learnAction } from "@/app/api/learn/route";
+import { asRoute } from "../support/setup";
+const learn = asRoute(learnAction);
 import { loadQuestions, toPublic } from "@/lib/grading";
 
 const PH = stableId("personal-health-hygiene");
@@ -18,6 +20,8 @@ async function withStart(body: unknown, raw?: string) {
   return send(body, raw);
 }
 const call = withStart;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Json = Record<string, any>;
 const deepKeys = (o: unknown): string[] => (o && typeof o === "object" ? Object.entries(o).flatMap(([k, v]) => [k, ...deepKeys(v)]) : []);
 
 describe("answer keys never leave the server", () => {
@@ -31,14 +35,14 @@ describe("answer keys never leave the server", () => {
     signIn(USERS.learner);
     const res = await call({ type: "quiz", moduleId: m("haccp-principles", 2), answers: {} });
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as Json;
     expect(deepKeys(body)).not.toContain("answer");
     for (const r of Object.values(body.results)) expect(Object.keys(r as object)).toEqual(["correct"]);
   });
 
   it("the final exam returns only the score", async () => {
     signIn(USERS.learner);
-    const body = await (await call({ type: "exam", courseId: PH, answers: {} })).json();
+    const body = (await (await call({ type: "exam", courseId: PH, answers: {} })).json()) as Json;
     expect(Object.keys(body).sort()).toEqual(["correct", "passed", "score", "total"]);
   });
 });
@@ -46,7 +50,7 @@ describe("answer keys never leave the server", () => {
 describe("grades are computed on the server", () => {
   it("ignores score and pass fields sent by the browser", async () => {
     signIn(USERS.learner);
-    const body = await (await call({ type: "exam", courseId: PH, answers: {}, score: 100, passed: true, correct: 99 })).json();
+    const body = (await (await call({ type: "exam", courseId: PH, answers: {}, score: 100, passed: true, correct: 99 })).json()) as Json;
     expect(body).toMatchObject({ score: 0, passed: false });
     expect(fakeDb().exam_attempts.filter((a) => a.user_id === USERS.learner && a.course_id === PH).at(-1)).toMatchObject({ score: 0, passed: false });
   });
@@ -54,7 +58,7 @@ describe("grades are computed on the server", () => {
   it("the correct answers do score 100, so grading is real", async () => {
     signIn(USERS.learner);
     const qs = await loadQuestions({ courseId: PH, finalOnly: true });
-    const body = await (await call({ type: "exam", courseId: PH, answers: Object.fromEntries(qs.map((q) => [q.id, q.answer])) })).json();
+    const body = (await (await call({ type: "exam", courseId: PH, answers: Object.fromEntries(qs.map((q) => [q.id, q.answer])) })).json()) as Json;
     expect(body).toMatchObject({ score: 100, passed: true });
   });
 });
@@ -74,11 +78,11 @@ describe("course rules are enforced by the server, not the page", () => {
   it("a module only completes once its slides have been viewed", async () => {
     signIn(USERS.learner);
     const mod = m("haccp-principles", 2);
-    const first = await (await call({ type: "quiz", moduleId: mod, answers: {} })).json();
+    const first = (await (await call({ type: "quiz", moduleId: mod, answers: {} })).json()) as Json;
     expect(first.completed).toBe(false);
     expect(first.slidesLeft).toBeGreaterThan(0);
     await call({ type: "progress", moduleId: mod, page: 9999 }); // clamped to the module's real slide count
-    const again = await (await call({ type: "quiz", moduleId: mod, answers: {} })).json();
+    const again = (await (await call({ type: "quiz", moduleId: mod, answers: {} })).json()) as Json;
     expect(again.completed).toBe(true);
     const row = fakeDb().module_progress.find((p) => p.user_id === USERS.learner && p.module_id === mod)!;
     expect(row.viewed_upto).toBe(9); // slides 22–30
@@ -128,7 +132,7 @@ describe("a test, once started, closes the slides until it is submitted", () => 
     const before = JSON.stringify(fakeDb());
     const q = await send({ type: "quiz", moduleId: m("haccp-principles", 2), answers: {} });
     expect(q.status).toBe(409);
-    expect((await q.json()).notStarted).toBe(true);
+    expect(((await q.json()) as Json).notStarted).toBe(true);
     expect((await send({ type: "exam", courseId: PH, answers: {} })).status).toBe(409);
     expect(JSON.stringify(fakeDb())).toBe(before);
   });
@@ -141,7 +145,7 @@ describe("a test, once started, closes the slides until it is submitted", () => 
     for (const mod of [m("haccp-principles", 1), m("haccp-principles", 2)]) {
       const r = await send({ type: "progress", moduleId: mod, page: 5 });
       expect(r.status).toBe(409);
-      expect((await r.json()).locked).toBe(true);
+      expect(((await r.json()) as Json).locked).toBe(true);
     }
     expect(viewed()).toBe(was);
     expect((await start(HACCP, m("haccp-principles", 1))).status).toBe(409); // another check in the same course
@@ -180,13 +184,20 @@ describe("a test, once started, closes the slides until it is submitted", () => 
 
   it("the course and module pages send a learner with an open test back to it", async () => {
     const { redirectOf } = await import("../support/setup");
-    const { default: ModulePage } = await import("@/app/learn/[slug]/m/[position]/page");
-    const { default: CoursePage } = await import("@/app/learn/[slug]/page");
+    const { loader: moduleLoader } = await import("@/app/learn/[slug]/m/[position]/page");
+    const { loader: courseLoader } = await import("@/app/learn/[slug]/page");
+    const args = (params: Record<string, string>, path: string) => ({ params, request: new Request(`https://aspire.test${path}`), context: {} as never, unstable_pattern: "", url: new URL(`https://aspire.test${path}`) }) as unknown as Parameters<typeof moduleLoader>[0];
     signIn(USERS.learner);
     await start(PH);
-    expect(await redirectOf(() => ModulePage({ params: Promise.resolve({ slug: "personal-health-hygiene", position: "1" }) }))).toBe("/learn/personal-health-hygiene/exam");
-    expect(await redirectOf(() => CoursePage({ params: Promise.resolve({ slug: "personal-health-hygiene" }), searchParams: Promise.resolve({}) }))).toBe("/learn/personal-health-hygiene/exam");
+    expect(await redirectOf(() => moduleLoader(args({ slug: "personal-health-hygiene", position: "1" }, "/learn/personal-health-hygiene/m/1")))).toBe("/learn/personal-health-hygiene/exam");
+    expect(await redirectOf(() => courseLoader(args({ slug: "personal-health-hygiene" }, "/learn/personal-health-hygiene")))).toBe("/learn/personal-health-hygiene/exam");
+    // No slide addresses are sent to a learner who has a test open in that module.
     await send({ type: "exam", courseId: PH, answers: {} });
-    expect(await redirectOf(() => ModulePage({ params: Promise.resolve({ slug: "personal-health-hygiene", position: "1" }) }))).toBeNull();
+    expect(await redirectOf(() => moduleLoader(args({ slug: "personal-health-hygiene", position: "1" }, "/learn/personal-health-hygiene/m/1")))).toBeNull();
+    await start(PH, m("personal-health-hygiene", 1));
+    const open = await moduleLoader(args({ slug: "personal-health-hygiene", position: "1" }, "/learn/personal-health-hygiene/m/1"));
+    expect(open.testOpen).toBe(true);
+    expect(open.slides).toEqual([]);
   });
+
 });

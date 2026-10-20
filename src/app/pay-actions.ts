@@ -1,5 +1,5 @@
-"use server";
-import { redirect } from "next/navigation";
+/** Form actions (posted to /do/<name>, see app/do.$name.ts). Each one checks who is signed in. Server only. */
+import { redirect } from "@/lib/server/http";
 import { requireUser } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { coveredByCompany, issueCertificate } from "@/lib/certs";

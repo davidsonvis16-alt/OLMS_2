@@ -1,22 +1,30 @@
-import Link from "next/link";
-import type { Metadata } from "next";
+import { useLoaderData, type LoaderFunctionArgs } from "react-router";
+import Link from "@/components/link";
 import { AppShell, PageHead } from "@/components/app-shell";
 import { CertificateView } from "@/components/certificate";
 import { Icon } from "@/components/icons";
 import { requireUser } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
-import { SITE } from "@/lib/site";
+import { certificateModel } from "@/lib/certificate-model";
+import { SITE, pageTitle } from "@/lib/site";
 import { ConsultPromo } from "@/components/consult-promo";
 
-// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+export const meta = () => pageTitle("My certificates");
 
-export const metadata: Metadata = { title: "My certificates" };
-
-export default async function Certificates({ searchParams }: { searchParams: Promise<{ new?: string }> }) {
+export async function loader({ request }: LoaderFunctionArgs) {
+  const searchParams = Object.fromEntries(new URL(request.url).searchParams) as Record<string, string | undefined>;
   const { user } = await requireUser("/certificates");
-  const { new: fresh } = await searchParams;
-  const { data } = await supabaseAdmin().from("certificates").select("*").eq("user_id", user.id).eq("revoked", false).order("issued_at", { ascending: false });
-  const certs = data ?? [];
+  const fresh = searchParams.new ?? null;
+  const { data } = await supabaseAdmin().from("certificates").select("id,serial,full_name,id_number,course_title,modules,score,issued_at").eq("user_id", user.id).eq("revoked", false).order("issued_at", { ascending: false });
+  const certs = await Promise.all((data ?? []).map(async (c) => ({
+    id: c.id, serial: c.serial, course_title: c.course_title, issued_at: c.issued_at,
+    model: await certificateModel({ serial: c.serial, fullName: c.full_name, idNumber: c.id_number, course: c.course_title, modules: c.modules, score: c.score, issuedAt: c.issued_at }),
+  })));
+  return { fresh, certs };
+}
+
+export default function Certificates() {
+  const { fresh, certs } = useLoaderData<typeof loader>();
   return (
     <AppShell active="certificates" wide>
       <PageHead eyebrow="Achievements" title="My certificates" />
@@ -34,7 +42,7 @@ export default async function Certificates({ searchParams }: { searchParams: Pro
         <div className="cert-list">
           {certs.map((c) => (
             <article key={c.id} className={`cert-item${c.serial === fresh ? " is-new" : ""}`}>
-              <CertificateView tilt={false} c={{ serial: c.serial, fullName: c.full_name, idNumber: c.id_number, course: c.course_title, modules: c.modules, score: c.score, issuedAt: c.issued_at }} />
+              <CertificateView model={c.model} />
               <div className="cert-actions">
                 <div><b>{c.course_title}</b><small>{c.serial} · {new Date(c.issued_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</small></div>
                 <div className="row-btns">

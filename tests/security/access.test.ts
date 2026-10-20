@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { form, redirectOf, signIn, staleSession } from "../support/setup";
+import { asRoute, form, redirectOf, signIn, staleSession } from "../support/setup";
 import { USERS, COMPANY, fakeDb, stableId } from "../support/fake-supabase";
-import { GET as certificatePdf } from "@/app/api/certificate/[serial]/route";
-import { POST as learn } from "@/app/api/learn/route";
+import { loader as certificateLoader } from "@/app/api/certificate/[serial]/route";
+import { action as learnAction } from "@/app/api/learn/route";
 import { enrol, saveAssignment, updateProfile } from "@/app/actions";
 import { claimCertificate } from "@/app/pay-actions";
 import { buySeats, createCompany, joinCompany, removeMember } from "@/app/company-actions";
@@ -11,8 +11,9 @@ import { coveredByCompany } from "@/lib/certs";
 
 const HACCP = stableId("haccp-principles");
 const JANE_CERT = "ASH-2026-JWK001";
-const pdf = (serial: string) => certificatePdf(new Request(`https://aspire.test/api/certificate/${serial}`), { params: Promise.resolve({ serial }) });
+const pdf = (serial: string) => asRoute(certificateLoader, { serial })(new Request(`https://aspire.test/api/certificate/${serial}`));
 /** Sends a request; quiz and exam answers are preceded by starting that test, as the page does. */
+const learn = asRoute(learnAction);
 const send = (body: unknown, raw?: string) => learn(new Request("https://aspire.test/api/learn", { method: "POST", body: raw ?? JSON.stringify(body), headers: { "content-type": "application/json" } }));
 async function withStart(body: unknown, raw?: string) {
   const b = (body ?? {}) as { type?: string; moduleId?: string; courseId?: string };
@@ -194,5 +195,17 @@ describe("company accounts are isolated", () => {
     // Hotel: 3 seats, 2 used (owner + member).
     await Promise.all(extra.map(async (id) => { signIn(id); return redirectOf(() => joinCompany(form({ code: "HOTEL0000000CODE" }))); }));
     expect(db.profiles.filter((p) => p.company_id === COMPANY.hotel).length).toBeLessThanOrEqual(3);
+  });
+});
+
+describe("public certificate checks", () => {
+  it("the verify page sends only a partly hidden ID number to the browser", async () => {
+    const { loader } = await import("@/app/verify/[serial]/page");
+    const cert = fakeDb().certificates.find((c) => c.serial === JANE_CERT)!;
+    const data = await loader({ request: new Request(`https://aspire.test/verify/${JANE_CERT}`), params: { serial: JANE_CERT }, context: {} } as never);
+    const sent = JSON.stringify(data);
+    expect(sent).toContain("Jane Wanjiku Kamau");
+    expect(sent).not.toContain(String(cert.id_number)); // the full number never leaves the server
+    expect(data.allowed && data.c?.id_number).toMatch(/•/);
   });
 });
