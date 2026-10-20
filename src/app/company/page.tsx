@@ -5,7 +5,7 @@ import { Icon } from "@/components/icons";
 import { requireUser } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { SITE, companyActive, usd, wa, pageTitle } from "@/lib/site";
-import { mpesaAvailable } from "@/lib/paystack";
+import { mpesaAvailable, paymentsAvailable } from "@/lib/paystack";
 import { seatPrice } from "@/app/company-actions";
 
 export const meta = () => pageTitle("Company account");
@@ -34,7 +34,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const doneBy = new Map<string, number>(); for (const p of prog ?? []) if (ids.has(p.user_id) && p.completed_at) doneBy.set(p.user_id, (doneBy.get(p.user_id) ?? 0) + 1);
   const certBy = new Map<string, string[]>(); for (const c of certs ?? []) if (ids.has(c.user_id)) certBy.set(c.user_id, [...(certBy.get(c.user_id) ?? []), c.course_title]);
   const link = `${SITE.url.replace(/\/$/, "")}/join/${co!.join_code}`;
-  return { view: "owner" as const, notice, price, co: co!, active, staff: staff ?? [], doneBy, certBy, used: staff?.length ?? 0, link, mpesa: mpesaAvailable() };
+  return { view: "owner" as const, notice, price, co: co!, active, staff: staff ?? [], doneBy, certBy, used: staff?.length ?? 0, link, mpesa: mpesaAvailable(), payable: paymentsAvailable() };
 }
 
 export default function CompanyPage() {
@@ -76,7 +76,7 @@ export default function CompanyPage() {
       </AppShell>
     );
   }
-  const { price, co, active, staff, doneBy, certBy, used, link, mpesa } = d;
+  const { price, co, active, staff, doneBy, certBy, used, link, mpesa, payable } = d;
   return (
     <AppShell active="company" wide>
       <PageHead eyebrow="Company account" title={co!.name} />
@@ -99,9 +99,9 @@ export default function CompanyPage() {
         </div>
         <form method="post" action="/do/buySeats" className="form-card">
           <h3>{active ? "Change or renew seats" : "Buy staff seats"}</h3>
-          {price == null ? (
+          {price == null || !payable ? (
             <>
-              <p>Seat pricing is confirmed on request.</p>
+              <p>{price == null ? "Seat pricing is confirmed on request." : "Payment isn't available yet. Message us and we'll set up your seats."}</p>
               <a className="btn btn--wa" href={wa(`Hello Aspire, I'd like seats for ${co!.name}.`)} target="_blank" rel="noopener"><Icon name="whatsapp" />Ask about pricing</a>
             </>
           ) : (

@@ -2,7 +2,7 @@
 import { redirect } from "@/lib/server/http";
 import { requireUser } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
-import { initialize, newReference, quote, type Method } from "@/lib/paystack";
+import { PAYMENTS_OFF_MESSAGE, initialize, newReference, paymentsAvailable, quote, type Method } from "@/lib/paystack";
 import { SITE, companyActive } from "@/lib/site";
 import { limit } from "@/lib/rate-limit";
 
@@ -37,6 +37,7 @@ export async function buySeats(formData: FormData) {
   const method = (String(formData.get("method")) === "mpesa" ? "mpesa" : "card") as Method;
   const price = await seatPrice();
   if (price == null) back("Seat pricing hasn't been set yet. Please contact us on WhatsApp.");
+  if (!paymentsAvailable()) back(PAYMENTS_OFF_MESSAGE);
   const db = supabaseAdmin();
   const { count } = await db.from("profiles").select("id", { count: "exact", head: true }).eq("company_id", profile.company_id!);
   if (seats < (count ?? 0)) back(`You have ${count} people on the account; buy at least that many seats.`);

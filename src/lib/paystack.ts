@@ -17,6 +17,10 @@ export function quote(usd: number, method: Method) {
   return { amount: Math.ceil(usd * rate), currency: "KES" as const };
 }
 export const mpesaAvailable = () => !!Number(process.env.USD_TO_KES);
+/** Online payment needs the Paystack secret key. Without it, pages show a "contact us" note instead of Pay buttons. */
+export const paymentsAvailable = () => !!process.env.PAYSTACK_SECRET_KEY;
+const NOT_ON = "Payment isn't available yet. Contact us on WhatsApp.";
+export { NOT_ON as PAYMENTS_OFF_MESSAGE };
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
 export async function initialize(opts: { email: string; amount: number; currency: "USD" | "KES"; reference: string; callbackUrl: string; method: Method; metadata: Record<string, unknown> }) {

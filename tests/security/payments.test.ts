@@ -228,3 +228,22 @@ describe("the client never decides the price", () => {
     expect(paystack.initialized[0]).toMatchObject({ amount: 5000, currency: "USD" });
   });
 });
+
+describe("without the Paystack key, payment is refused plainly", () => {
+  it("records no payment and tells the person to contact us", async () => {
+    const saved = process.env.PAYSTACK_SECRET_KEY;
+    process.env.PAYSTACK_SECRET_KEY = "";
+    try {
+      pendingCertificate("unused"); fakeDb().payments.length = 0;
+      signIn(USERS.learner);
+      const to = decodeURIComponent((await redirectOf(() => claimCertificate(form({ slug: "haccp-principles", method: "card", full_name: "Jane Wanjiku Kamau", id_number: "32456789", confirm: "on" })))) ?? "");
+      expect(to).toContain("Payment isn't available yet");
+      fakeDb().settings.find((s) => s.key === "seat_price_usd")!.value = 10;
+      signIn(USERS.owner);
+      expect(decodeURIComponent((await redirectOf(() => buySeats(form({ seats: "5", method: "card" })))) ?? "")).toContain("Payment isn't available yet");
+      expect(fakeDb().payments).toHaveLength(0);
+      expect(paystack.initialized).toHaveLength(0);
+      expect(certs()).toHaveLength(0);
+    } finally { process.env.PAYSTACK_SECRET_KEY = saved; }
+  });
+});

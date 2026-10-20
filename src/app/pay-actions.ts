@@ -3,7 +3,7 @@ import { redirect } from "@/lib/server/http";
 import { requireUser } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { coveredByCompany, issueCertificate } from "@/lib/certs";
-import { initialize, newReference, quote, type Method } from "@/lib/paystack";
+import { PAYMENTS_OFF_MESSAGE, initialize, newReference, paymentsAvailable, quote, type Method } from "@/lib/paystack";
 import { SITE } from "@/lib/site";
 import { limit } from "@/lib/rate-limit";
 import { identityTaken, TAKEN_MESSAGE } from "@/lib/identity";
@@ -38,6 +38,7 @@ export async function claimCertificate(formData: FormData) {
     redirect(`/certificates?new=${serial}`);
   }
   if (course.certificate_price_usd == null) back("The certificate fee for this course hasn't been set yet. Please contact us on WhatsApp.");
+  if (!paymentsAvailable()) back(PAYMENTS_OFF_MESSAGE);
 
   let q: ReturnType<typeof quote>;
   try { q = quote(Number(course.certificate_price_usd), method); } catch (e) { return back(e instanceof Error ? e.message : "Payment unavailable"); }
