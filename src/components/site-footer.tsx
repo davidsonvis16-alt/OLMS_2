@@ -28,7 +28,8 @@ export function SiteFooter(_: { dark?: boolean }) {
             <h4>Organisation</h4>
             <ul>
               <li><Link href="/business">Company accounts</Link></li>
-              <li><Link href="/#about">Audits &amp; consultancy</Link></li>
+              <li><Link href="/consultancy">Consultancy</Link></li>
+              <li><Link href="/consultancy#enquire">Book a consultation</Link></li>
               <li><Link href="/#contact">Book on-site training</Link></li>
             </ul>
           </div>
@@ -51,7 +52,7 @@ export function SiteFooter(_: { dark?: boolean }) {
         </div>
         <div className="wrap" aria-hidden="true"><div className="foot-word">ASPIRE<span>.</span></div></div>
       </footer>
-      <a className="wa-float" href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener" aria-label="Chat with Aspire on WhatsApp"><Icon name="whatsapp" /></a>
+      <a className="wa-float" href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener" aria-label="Chat with Aspire on WhatsApp"><Icon name="whatsapp" />Chat with Aspire</a>
     </>
   );
 }

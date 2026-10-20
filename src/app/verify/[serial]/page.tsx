@@ -10,6 +10,8 @@ import { headers } from "next/headers";
 import { SITE, maskId } from "@/lib/site";
 import { clientIp, limit } from "@/lib/rate-limit";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 export const metadata: Metadata = { title: "Certificate verification", robots: { index: false } };
 export const dynamic = "force-dynamic";
 

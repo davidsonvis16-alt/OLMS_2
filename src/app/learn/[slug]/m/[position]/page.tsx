@@ -6,6 +6,8 @@ import { slideUrl } from "@/lib/supabase";
 import { ModulePlayer } from "@/components/module-player";
 import { safeVideoUrl } from "@/lib/video";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 type Props = { params: Promise<{ slug: string; position: string }> };
 
 export default async function ModulePage({ params }: Props) {

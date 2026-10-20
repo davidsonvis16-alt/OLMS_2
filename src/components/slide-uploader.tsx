@@ -1,7 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabaseBrowser } from "@/lib/supabase-browser";
 import { setSlides } from "@/app/admin/actions";
 import { Icon } from "./icons";
 
@@ -23,28 +22,52 @@ export function SlideUploader({ courseId, version, count }: { courseId: string; 
       const doc = await pdfjs.getDocument({ data: await file.arrayBuffer(), isEvalSupported: false }).promise;
       const total = doc.numPages;
       const next = version + 1;
-      const sb = supabaseBrowser();
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d")!;
+      // Pages are converted one by one, and sent in batches of 6 with up to 3 batches uploading at once.
+      const BATCH = 6, PARALLEL = 3;
+      let uploaded = 0;
+      let failure: Error | null = null;
+      const inFlight = new Set<Promise<void>>();
+      const send = (batch: { page: number; blob: Blob }[]) => {
+        const fd = new FormData();
+        fd.set("course", courseId); fd.set("version", String(next));
+        for (const x of batch) fd.set(`p${x.page}`, x.blob, `${x.page}.webp`);
+        const p: Promise<void> = fetch("/api/admin/slides", { method: "POST", body: fd })
+          .then(async (res) => {
+            if (!res.ok) throw new Error((await res.json().catch(() => null))?.error ?? `server said ${res.status}`);
+            uploaded += batch.length;
+            setState({ phase: "work", msg: `Uploading… ${uploaded} of ${total} slides saved. Keep this page open.`, done: uploaded, total });
+          })
+          .catch((e) => { failure ??= e instanceof Error ? e : new Error(String(e)); })
+          .finally(() => { inFlight.delete(p); });
+        inFlight.add(p);
+      };
+      let batch: { page: number; blob: Blob }[] = [];
+      setState({ phase: "work", msg: `Uploading… 0 of ${total} slides saved. Keep this page open.`, done: 0, total });
       for (let n = 1; n <= total; n++) {
-        setState({ phase: "work", msg: `Converting & uploading slide ${n} of ${total}`, done: n - 1, total });
+        if (failure) break;
         const page = await doc.getPage(n);
         const base = page.getViewport({ scale: 1 });
         const vp = page.getViewport({ scale: 1600 / base.width });
         canvas.width = Math.round(vp.width); canvas.height = Math.round(vp.height);
         ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
         await page.render({ canvasContext: ctx, viewport: vp }).promise;
-        const blob = await new Promise<Blob>((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error("Could not encode slide"))), "image/webp", 0.74));
-        const path = `${courseId}/v${next}/${String(n).padStart(3, "0")}.webp`;
-        const { error } = await sb.storage.from("slides").upload(path, blob, { contentType: "image/webp", upsert: true, cacheControl: "31536000" });
-        if (error) throw new Error(error.message);
+        const blob = await new Promise<Blob>((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error("could not convert a slide"))), "image/webp", 0.74));
         page.cleanup();
+        batch.push({ page: n, blob });
+        if (batch.length === BATCH || n === total) {
+          send(batch); batch = [];
+          while (inFlight.size >= PARALLEL) await Promise.race(inFlight);
+        }
       }
+      await Promise.all(inFlight);
+      if (failure) throw failure;
       await setSlides(courseId, next, total);
-      setState({ phase: "done", msg: `${total} slides uploaded. Now set each module's slide range below.`, done: total, total });
+      setState({ phase: "done", msg: `✓ ${total} slides uploaded and saved.`, done: total, total });
       r.refresh();
     } catch (e) {
-      setState({ phase: "error", msg: e instanceof Error ? e.message : "Upload failed" });
+      setState({ phase: "error", msg: `Upload stopped: ${e instanceof Error ? e.message : "unknown problem"}. Nothing was changed; try again, ideally in Chrome or Firefox.` });
     } finally {
       if (input.current) input.current.value = "";
     }
@@ -55,11 +78,11 @@ export function SlideUploader({ courseId, version, count }: { courseId: string; 
     <div className="uploader">
       <div className="uploader-row">
         <div>
-          <b>{count ? `${count} slides uploaded` : "No slides yet"}</b>
-          <small>Upload the course deck as a PDF. Each page becomes a slide. Re-uploading replaces all slides.</small>
+          <b>{count ? `${count} slides are uploaded` : "No slides yet"}</b>
+          <small>{count ? "Uploading a new PDF replaces all the slides." : "Each page of the PDF becomes one slide."}</small>
         </div>
         <label className={`btn btn--green btn--sm${state.phase === "work" ? " is-disabled" : ""}`}>
-          <Icon name="upload" />{count ? "Replace slides" : "Upload PDF"}
+          <Icon name="upload" />{state.phase === "work" ? "Uploading…" : count ? "Upload a new PDF" : "Upload course PDF"}
           <input ref={input} type="file" accept="application/pdf,.pdf" hidden disabled={state.phase === "work"} onChange={(e) => e.target.files?.[0] && run(e.target.files[0])} />
         </label>
       </div>

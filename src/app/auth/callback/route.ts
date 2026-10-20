@@ -10,5 +10,5 @@ export async function GET(req: NextRequest) {
   const sb = await supabaseServer();
   const { error } = await sb.auth.exchangeCodeForSession(code);
   if (error) return NextResponse.redirect(new URL("/login?error=link", url.origin));
-  return NextResponse.redirect(new URL(next, url.origin));
+  return NextResponse.redirect(new URL(next, url.origin)); // /dashboard sends admins on to /admin
 }

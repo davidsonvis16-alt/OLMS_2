@@ -5,6 +5,8 @@ import { companyActive } from "@/lib/site";
 import { AdminNav } from "../admin-nav";
 import { adjustCompany } from "../actions";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 export default async function Companies() {
   await requireAdmin();
   const { data } = await supabaseAdmin().from("companies").select("id,name,contact_name,email,phone,seats,paid_until,join_code,profiles(count)").order("created_at", { ascending: false });

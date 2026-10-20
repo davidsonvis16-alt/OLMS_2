@@ -16,7 +16,8 @@ export function VerifyForm(_: { dark?: boolean }) {
   );
 }
 
-export function EnquiryForm({ courses }: { courses: string[] }) {
+export function EnquiryForm({ courses, kind = "training" }: { courses: string[]; kind?: "training" | "consultancy" }) {
+  const consult = kind === "consultancy";
   const [via, setVia] = useState<"whatsapp" | "email">("whatsapp");
   const [err, setErr] = useState(false);
   function submit(e: React.FormEvent<HTMLFormElement>) {
@@ -29,10 +30,10 @@ export function EnquiryForm({ courses }: { courses: string[] }) {
     if (g("company")) lines.push(`Business: ${g("company")}`);
     if (g("phone")) lines.push(`Phone: ${g("phone")}`);
     if (g("staff")) lines.push(`Staff to train: ${g("staff")}`);
-    lines.push(`Training: ${g("course") || "Not sure yet, please advise"}`);
+    lines.push(`${consult ? "Consultancy" : "Training"}: ${g("course") || "Not sure yet, please advise"}`);
     if (g("message")) lines.push("", g("message"));
     const text = lines.join("\n");
-    if (via === "email") window.location.href = `mailto:${SITE.email}?subject=${encodeURIComponent(`Training enquiry — ${g("name")}`)}&body=${encodeURIComponent(text)}`;
+    if (via === "email") window.location.href = `mailto:${SITE.email}?subject=${encodeURIComponent(`${consult ? "Consultancy" : "Training"} enquiry — ${g("name")}`)}&body=${encodeURIComponent(text)}`;
     else window.open(`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(text)}`, "_blank", "noopener");
   }
   return (
@@ -41,17 +42,17 @@ export function EnquiryForm({ courses }: { courses: string[] }) {
         <div className="field"><label htmlFor="f-name">Your name</label><input id="f-name" name="name" autoComplete="name" aria-invalid={err || undefined} /></div>
         <div className="field"><label htmlFor="f-company">Business / organisation</label><input id="f-company" name="company" autoComplete="organization" /></div>
         <div className="field"><label htmlFor="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autoComplete="tel" /></div>
-        <div className="field"><label htmlFor="f-staff">Number of staff to train</label><input id="f-staff" name="staff" inputMode="numeric" /></div>
+        <div className="field"><label htmlFor="f-staff">{consult ? "Size of your operation (staff or meals a day)" : "Number of staff to train"}</label><input id="f-staff" name="staff" inputMode="numeric" /></div>
         <div className="field field--full">
-          <label htmlFor="f-course">Training you&apos;re interested in</label>
+          <label htmlFor="f-course">{consult ? "What do you need help with?" : <>Training you&apos;re interested in</>}</label>
           <select id="f-course" name="course" defaultValue="">
             <option value="">Not sure yet, please advise</option>
             {courses.map((c) => <option key={c}>{c}</option>)}
-            <option>Company account for my staff</option>
-            <option>Audit / Consultancy</option>
+            {!consult && <option>Company account for my staff</option>}
+            {!consult && <option>Audit / Consultancy</option>}
           </select>
         </div>
-        <div className="field field--full"><label htmlFor="f-msg">Message</label><textarea id="f-msg" name="message" placeholder="Where are you based, and when would suit you?" /></div>
+        <div className="field field--full"><label htmlFor="f-msg">Message</label><textarea id="f-msg" name="message" placeholder={consult ? "Tell us about your facility and what you want to achieve." : "Where are you based, and when would suit you?"} /></div>
       </div>
       {err && <p className="form-error">Please add your name.</p>}
       <div className="form-actions">

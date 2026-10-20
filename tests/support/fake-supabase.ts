@@ -228,9 +228,13 @@ export const sessions = new Set<string>();
 const rateCounts = new Map<string, number>();
 export const resetRateLimits = () => rateCounts.clear();
 
+/** Files "stored" by the fake storage API. */
+export const stored: { bucket: string; path: string; size: number; upsert?: boolean }[] = [];
+
 export function fakeClient(uid: string | null) {
   return {
     from: (t: string) => new Query(t),
+    storage: { from: (bucket: string) => ({ upload: async (path: string, body: Uint8Array, o?: { upsert?: boolean }) => { stored.push({ bucket, path, size: body.length, upsert: o?.upsert }); return { data: { path }, error: null }; } }) },
     rpc: async (fn: string, args: Record<string, unknown>) => {
       if (fn !== "hit_rate_limit") return { data: null, error: { message: `unknown rpc ${fn}` } };
       const w = Math.floor(Date.now() / 1000 / Number(args.p_window_seconds));
@@ -244,6 +248,7 @@ export function fakeClient(uid: string | null) {
         return { data: { user: p ? { id: String(p.id), email: String(p.email) } : null }, error: null };
       },
       signOut: async () => ({ error: null }),
+      verifyOtp: async ({ token_hash }: { token_hash: string }) => (token_hash === "valid-token" ? { error: null } : { error: { message: "invalid or expired" } }),
       exchangeCodeForSession: async (code: string) => (code === "valid-code" ? { error: null } : { error: { message: "invalid code" } }),
     },
   };

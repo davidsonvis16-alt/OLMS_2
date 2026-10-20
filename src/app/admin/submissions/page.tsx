@@ -3,6 +3,8 @@ import { requireAdmin } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { AdminNav } from "../admin-nav";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 export default async function Submissions() {
   await requireAdmin();
   const { data } = await supabaseAdmin().from("assignment_submissions").select("body,updated_at,profiles(full_name,email),courses(title)").order("updated_at", { ascending: false }).limit(200);

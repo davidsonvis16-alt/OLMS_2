@@ -11,7 +11,7 @@ export function HeaderShell({ children, brand, stage }: { children: React.ReactN
   useEffect(() => {
     const on = () => {
       if (!stage) return;
-      const s = document.querySelector<HTMLElement>(".stage");
+      const s = document.querySelector<HTMLElement>(".stage, .nh-hero");
       setOnStage(!!s && window.scrollY < s.offsetHeight - 68);
     };
     on();

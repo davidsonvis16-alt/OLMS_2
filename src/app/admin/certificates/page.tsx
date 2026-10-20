@@ -5,6 +5,8 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { AdminNav } from "../admin-nav";
 import { setRevoked } from "../actions";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 export default async function AdminCerts() {
   await requireAdmin();
   const { data } = await supabaseAdmin().from("certificates").select("id,serial,full_name,id_number,course_title,score,issued_at,revoked,company_name,payment_id").order("issued_at", { ascending: false }).limit(500);

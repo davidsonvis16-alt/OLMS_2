@@ -4,6 +4,8 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { usd } from "@/lib/site";
 import { AdminNav } from "../admin-nav";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 export default async function Payments() {
   await requireAdmin();
   const { data } = await supabaseAdmin().from("payments").select("reference,purpose,seats,amount,currency,amount_usd,status,channel,created_at,paid_at,profiles(full_name,email),courses(title),companies(name)").order("created_at", { ascending: false }).limit(500);

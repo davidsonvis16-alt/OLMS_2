@@ -6,6 +6,9 @@ import { Icon } from "@/components/icons";
 import { requireUser } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { SITE } from "@/lib/site";
+import { ConsultPromo } from "@/components/consult-promo";
+
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
 
 export const metadata: Metadata = { title: "My certificates" };
 
@@ -43,6 +46,7 @@ export default async function Certificates({ searchParams }: { searchParams: Pro
           ))}
         </div>
       )}
+      <ConsultPromo title="Want your whole workplace up to this standard?" text="Book an Aspire consultation: hygiene audits, HACCP support and training for every member of staff." />
     </AppShell>
   );
 }

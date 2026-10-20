@@ -1,10 +1,14 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { AppShell } from "@/components/app-shell";
 import { Icon } from "@/components/icons";
 import { requireUser } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { catLabel, companyActive, coursePhoto } from "@/lib/site";
+import { ConsultPromo } from "@/components/consult-promo";
+
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
 
 export const metadata: Metadata = { title: "My learning" };
 
@@ -15,6 +19,7 @@ function greeting() {
 
 export default async function Dashboard() {
   const { user, profile } = await requireUser();
+  if (profile.role === "admin") redirect("/admin");
   const db = supabaseAdmin();
   const [enr, prog, passed, certs, all, company] = await Promise.all([
     db.from("enrollments").select("created_at, courses(id,slug,title,category, modules(id))").eq("user_id", user.id).order("created_at", { ascending: false }),
@@ -111,6 +116,7 @@ export default async function Dashboard() {
           </div>
         </>
       )}
+      <ConsultPromo title="Need this for your workplace?" text="Aspire can audit your workplace, help with your HACCP plan and train every member of staff." />
     </AppShell>
   );
 }

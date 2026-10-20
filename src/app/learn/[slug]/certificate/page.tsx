@@ -10,6 +10,8 @@ import { mpesaAvailable, quote } from "@/lib/paystack";
 import { usd, wa } from "@/lib/site";
 import { claimCertificate } from "@/app/pay-actions";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ error?: string }> };
 
 export default async function ClaimPage({ params, searchParams }: Props) {

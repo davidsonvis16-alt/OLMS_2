@@ -47,6 +47,16 @@ export async function middleware(request: NextRequest) {
     return secure(new NextResponse(body, { status: 503, headers: { "Content-Type": p.startsWith("/api/") ? "application/json" : "text/html; charset=utf-8", "Cache-Control": "no-store" } }), policy);
   }
 
+  // Email links land on the Site URL (e.g. "/?code=…") when the exact callback address isn't in Supabase's
+  // redirect list. Hand the one-time code to the callback, which exchanges it securely and signs the person in.
+  const code = request.nextUrl.searchParams.get("code");
+  if (code && p !== "/auth/callback" && /^[A-Za-z0-9-]{20,128}$/.test(code)) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/callback";
+    url.search = `?code=${encodeURIComponent(code)}&next=${encodeURIComponent(p === "/" ? "/dashboard" : p)}`;
+    return secure(NextResponse.redirect(url), policy);
+  }
+
   const headers = new Headers(request.headers);
   headers.set("x-nonce", nonce);
   headers.set("Content-Security-Policy", policy);

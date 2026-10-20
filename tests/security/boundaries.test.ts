@@ -115,3 +115,30 @@ describe("static checks on the code and database policies", () => {
     expect(seed).not.toMatch(/\.ilike\("email"/);
   });
 });
+
+describe("email links that fall back to the site address", () => {
+  const env = { ...process.env };
+  afterEach(() => { process.env = { ...env }; vi.resetModules(); });
+  it("hand the one-time code to the callback, and nothing else", async () => {
+    Object.assign(process.env, { NEXT_PUBLIC_SUPABASE_URL: "https://proj.supabase.co", NEXT_PUBLIC_SUPABASE_ANON_KEY: "anon", SUPABASE_SERVICE_ROLE_KEY: "service" });
+    const { middleware } = await import("@/middleware");
+    const code = "5f0c9a3e-1b2c-4d5e-8f90-1234567890ab";
+    const res = await middleware(new NextRequest(`https://aspire.test/?code=${code}`));
+    expect(res.headers.get("location")).toBe(`https://aspire.test/auth/callback?code=${code}&next=%2Fdashboard`);
+    const junk = await middleware(new NextRequest("https://aspire.test/?code=<script>"));
+    expect(junk.headers.get("location")).toBeNull();
+  });
+});
+
+describe("email confirmation and reset links (/auth/confirm)", () => {
+  it("signs in with a valid one-time token and stays on this site", async () => {
+    const { GET } = await import("@/app/auth/confirm/route");
+    const go = async (q: string) => (await GET(new NextRequest(`https://aspire.test/auth/confirm?${q}`))).headers.get("location");
+    expect(await go("token_hash=valid-token&type=email")).toBe("https://aspire.test/dashboard");
+    expect(await go("token_hash=valid-token&type=recovery")).toBe("https://aspire.test/reset");
+    expect(await go("token_hash=valid-token&type=email&next=%2F%5Cevil.com")).toBe("https://aspire.test/dashboard");
+    expect(await go("token_hash=forged&type=email")).toBe("https://aspire.test/login?error=link");
+    expect(await go("token_hash=valid-token&type=admin")).toBe("https://aspire.test/login?error=link");
+    expect(await go("type=email")).toBe("https://aspire.test/login?error=link");
+  });
+});

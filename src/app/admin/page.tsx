@@ -8,6 +8,8 @@ import { AdminNav } from "./admin-nav";
 import { saveSettings } from "./actions";
 import { seatPrice } from "@/app/company-actions";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 export const metadata: Metadata = { title: "Admin" };
 
 export default async function AdminHome({ searchParams }: { searchParams: Promise<{ saved?: string }> }) {

@@ -4,9 +4,12 @@ import { SiteFooter } from "@/components/site-footer";
 import { Icon } from "@/components/icons";
 import { CertificateView } from "@/components/certificate";
 import { EnquiryForm, Reveal, VerifyForm } from "@/components/forms";
-import { HoverPics, Thermo } from "@/components/home-client";
+import { Thermo } from "@/components/home-client";
+import { CONSULTANCY } from "@/lib/consultancy";
 import { supabaseAdmin } from "@/lib/supabase";
 import { SITE, catLabel, coursePhoto, wa } from "@/lib/site";
+
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
 
 export const dynamic = "force-dynamic"; // the header is per-user, so these pages are never cached
 
@@ -22,7 +25,6 @@ async function getCourses(): Promise<Row[]> {
 }
 
 const n = (x: { count: number }[] | undefined) => x?.[0]?.count ?? 0;
-const pad = (i: number) => String(i + 1).padStart(2, "0");
 const plural = (k: number, w: string) => `${k} ${w}${k === 1 ? "" : "s"}`;
 const cats = (c: Row) => [...new Set([c.category, ...(c.categories ?? [])])].map(catLabel).join(" / ");
 
@@ -42,85 +44,98 @@ export default async function Home() {
     <>
       <SiteHeader current="home" stage />
       <main id="main">
-        {/* THE STAGE */}
-        <section className="stage" aria-labelledby="hero-title">
-          <div className="wrap">
-            <div className="stage-top">
-              <p className="micro"><b>{SITE.name}</b><br />Food safety · Hygiene · Health &amp; safety</p>
-              <p className="micro">Online training for the<br />hospitality &amp; food industry</p>
-              <p className="micro">Kenya<br />Learn free · {SITE.passMark}% to pass</p>
-            </div>
-            <h1 className="headline" id="hero-title">
-              <span className="sr-only">Safer people. Stronger industries.</span>
-              <span className="l1" aria-hidden="true">Safer pe<span className="lens lens--dial"><img src="/photos/thermometer.jpg" alt="" /></span>ple.</span>
-              <span className="l2" aria-hidden="true">Stronger industries<span className="gtext">.</span></span>
-            </h1>
-            <div className="stage-base">
-              <div className="stage-name">
-                <b>Aspire Safety &amp;<br />Hygiene Solutions</b>
-                <span className="motto">Value, Quality &amp; Service.</span>
-              </div>
-              <dl className="stage-facts">
-                <div><dt className="micro">Courses</dt><dd style={{ margin: 0 }}><b>{count > 0 ? `${count} online courses` : "Courses coming soon"}</b></dd></div>
-                <div><dt className="micro">To learn</dt><dd style={{ margin: 0 }}><b>Free, every module</b></dd></div>
-                <div><dt className="micro">To pass</dt><dd style={{ margin: 0 }}><b>{SITE.passMark}% on the final assessment</b></dd></div>
-                <div><dt className="micro">To prove it</dt><dd style={{ margin: 0 }}><b>Numbered, QR-verified certificate</b></dd></div>
-              </dl>
-              <div className="stage-cta">
-                <Link className="cta" href="/courses"><span>Explore training</span><i><Icon name="arrow" /></i></Link>
-                <Link className="link" href="/business">Train my team <Icon name="arrow" /></Link>
-              </div>
+        {/* HERO */}
+        <section className="nh-hero" aria-labelledby="hero-title">
+          <div className="nh-hero-pic" aria-hidden="true"><img src="/photos/prep.jpg" alt="" /></div>
+          <div className="wrap nh-hero-in">
+            <span className="nh-eyebrow">Food safety, hygiene &amp; health and safety training · Kenya</span>
+            <h1 id="hero-title" className="nh-title">Safer people.<br />Stronger industries.</h1>
+            <p className="nh-lede"><b>{SITE.name}</b> trains food handlers, kitchen and service teams, supervisors and managers online and on site, and proves it with a certificate anyone can check. <span className="motto">Value, Quality &amp; Service.</span></p>
+            <div className="row nh-actions">
+              <Link className="btn btn--go btn--lg" href="/courses">Explore training</Link>
+              <Link className="btn btn--ghost btn--lg" href="/consultancy">Book a consultation <Icon name="arrow" /></Link>
             </div>
           </div>
-          {count > 0 && (
-            <div className="ticker" aria-hidden="true">
-              <ul>{[...courses, ...courses].map((c, i) => <li key={i}><b>{pad(i % count)}</b>{c.title}</li>)}</ul>
-            </div>
-          )}
+          <div className="wrap">
+            <dl className="nh-stats">
+              <div><dt>{count > 0 ? count : "Free"}</dt><dd>{count > 0 ? "online courses, free to study" : "to learn, every module"}</dd></div>
+              <div><dt>{SITE.passMark}%</dt><dd>pass mark, unlimited retakes</dd></div>
+              <div><dt>QR-verified</dt><dd>numbered certificates</dd></div>
+            </dl>
+          </div>
         </section>
 
-        {/* 01 STATEMENT */}
-        <section className="sec" aria-label="About Aspire">
-          <div className="wrap statement">
-            <span className="micro">(01) Who we train</span>
-            <p className="rv">We train the people who cook, serve, clean and care, so that every plate leaves the kitchen <em>safe</em>, and every worker goes home safe too. Then we prove it, with a certificate anyone can check. <span className="motto">Value, Quality &amp; Service.</span></p>
-            <div className="statement-foot">
-              <div className="rv"><span className="idx">A</span><b>Learn online</b><p>Short slide lessons and a knowledge check after every module, on any phone.</p></div>
-              <div className="rv rv-d1"><span className="idx">B</span><b>Train on site</b><p>Group training, hygiene audits and HACCP support at your premises.</p></div>
-              <div className="rv rv-d2"><span className="idx">C</span><b>Prove it</b><p>Numbered certificates with a QR code that checks against our records.</p></div>
+        <section className="wrap nh-cards" aria-label="What we do">
+          {[
+            ["/courses?c=food-safety", "/photos/gloves.jpg", "Food safety training"],
+            ["/courses?c=health-safety", "/photos/flame.jpg", "Health & safety"],
+            ["/consultancy", "/photos/team.jpg", "Consultancy & audits"],
+          ].map(([href, img, label]) => (
+            <Link key={label} href={href} className="nh-card"><img src={img} alt="" /><span>{label}</span></Link>
+          ))}
+        </section>
+
+        {/* CONSULTANCY: prominent, straight after the hero */}
+        <section className="sec nh-consult" aria-labelledby="consult-title">
+          <div className="wrap">
+            <div className="nh-consult-head">
+              <div>
+                <span className="nh-eyebrow">Consultancy</span>
+                <h2 className="h-l" id="consult-title">Expert help for your kitchen.</h2>
+              </div>
+              <div>
+                <p className="lede">Aspire audits your premises, helps you build your HACCP plan, reviews pest control and cleaning, and trains your team on site.</p>
+                <div className="row" style={{ marginTop: 22 }}>
+                  <Link className="btn btn--go btn--lg" href="/consultancy#enquire">Book a consultation</Link>
+                  <Link className="link" href="/consultancy">All consultancy services <Icon name="arrow" /></Link>
+                </div>
+              </div>
+            </div>
+            <div className="nh-ctiles">
+              {CONSULTANCY.map((c, i) => (
+                <Link key={c.id} href={`/consultancy#${c.id}`} className="nh-ctile">
+                  <span className="nh-num">{String(i + 1).padStart(2, "0")}</span>
+                  <b>{c.title}</b>
+                  <small>{c.points.slice(0, 2).join(" · ")}</small>
+                  <i aria-hidden="true">↗</i>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 01 VALUE */}
+        <section className="sec" aria-labelledby="value-title">
+          <div className="wrap nh-value">
+            <span className="nh-eyebrow">Who we train</span>
+            <h2 className="h-l" id="value-title">Training grounded in the reality<br />of the kitchen floor.</h2>
+            <div className="nh-two">
+              <p>We train the people who cook, serve, clean and care, so that every plate leaves the kitchen safe and every worker goes home safe too. Courses run on any phone, with short slide lessons and a knowledge check after every module.</p>
+              <p>For businesses we add group training at your premises, hygiene audits and HACCP support, and a company account that shows exactly who has passed. Every certificate carries a unique number and a QR code.</p>
             </div>
           </div>
         </section>
 
         {/* 02 COURSES */}
-        <section className="sec" style={{ paddingTop: 0 }} aria-labelledby="courses-title">
+        <section className="sec sec--bone" aria-labelledby="courses-title">
           <div className="wrap">
-            <div className="sec-head">
-              <span className="micro">(02) The courses</span>
-              <h2 className="h-xl" id="courses-title"><span className="sr-only">Courses</span><span aria-hidden="true">C<span className="lens"><img src="/photos/hands.jpg" alt="" /></span>urses</span></h2>
-              <p className="lede">Free to study. A knowledge check after every module, a final assessment at {SITE.passMark}%, and a certificate when you pass.</p>
-            </div>
+            <span className="nh-eyebrow">Online courses</span>
+            <h2 className="h-l" id="courses-title">Explore our courses.</h2>
+            <p className="lede" style={{ marginTop: 18 }}>Free to study. A final assessment at {SITE.passMark}% and a certificate when you pass.</p>
             {count === 0 ? (
-              <p className="empty-card">Courses are being prepared. <a className="text-link" href="#contact">Contact us</a> in the meantime.</p>
+              <div className="empty-card" style={{ marginTop: 40 }}><p>Courses are being prepared. <a className="text-link" href="#contact">Contact us</a> in the meantime.</p></div>
             ) : (
-              <div className="cindex">
-                {courses.map((c, i) => (
-                  <Link key={c.slug} href={`/courses/${c.slug}`} className={`crow${i === 0 ? " crow--feature" : ""}`} data-pic={coursePhoto(c.slug, c.category)}>
-                    <span className="crow-n">{pad(i)}</span>
-                    <span>{i === 0 && <span className="crow-tag">Featured</span>}<span className="crow-t" style={{ display: "block" }}>{c.title}</span></span>
-                    <span className="crow-c">{cats(c)}</span>
-                    <span className="crow-m">{plural(n(c.modules), "module")}<br />{plural(n(c.questions), "question")}</span>
-                    <span className="crow-go"><Icon name="arrow" /></span>
+              <div className="nh-tiles">
+                {courses.map((c) => (
+                  <Link key={c.slug} href={`/courses/${c.slug}`} className="nh-tile">
+                    <span><b>{c.title}</b><small>{cats(c)} · {plural(n(c.modules), "module")}</small></span>
+                    <i aria-hidden="true">↗</i>
                   </Link>
                 ))}
               </div>
             )}
-            <div className="row" style={{ marginTop: 32, justifyContent: "space-between" }}>
-              <span className="micro">Every course: free to learn · certificate on passing</span>
-              <Link className="link" href="/courses">Full catalogue with filters <Icon name="arrow" /></Link>
-            </div>
+            <Link className="link" href="/courses" style={{ marginTop: 32 }}>Full catalogue with details <Icon name="arrow" /></Link>
           </div>
-          <HoverPics />
         </section>
 
         {/* 03 THERMO */}
@@ -129,10 +144,10 @@ export default async function Home() {
         </section>
 
         {/* 04 HOW */}
-        <section className="sec" aria-labelledby="how-title">
+        <section className="sec sec--night nh-how" aria-labelledby="how-title">
           <div className="wrap">
             <div className="sec-head">
-              <span className="micro">(04) How it works</span>
+              <span className="nh-eyebrow">How it works</span>
               <h2 className="h-l" id="how-title">From the first slide<br />to a framed certificate.</h2>
             </div>
             <ol className="ruler-steps">
@@ -155,7 +170,7 @@ export default async function Home() {
               <CertificateView c={{ serial: "ASH-2026-SAMPLE", fullName: "Learner Full Name", idNumber: "••••••••", course: "HACCP Principles", modules: ["Food safety fundamentals", "Introduction to HACCP", "Prerequisites & the HACCP team", "Hazard analysis", "Critical control points", "Monitoring & records"], score: 92, issuedAt: new Date(), sample: true }} />
             </div>
             <div className="certshow-side">
-              <span className="micro">(05) The certificate</span>
+              <span className="nh-eyebrow">The certificate</span>
               <h2 className="h-m" id="cert-title" style={{ margin: "18px 0 32px" }}>Checked by an inspector in seconds.</h2>
               <ol className="callouts">
                 <li><span className="k">A</span><div><b>A unique serial number</b><span>Issued once, never reused.</span></div></li>
@@ -178,7 +193,7 @@ export default async function Home() {
             </figure>
             <div className="split-copy">
               <div>
-                <span className="micro">(06) For employers</span>
+                <span className="nh-eyebrow">For employers</span>
                 <h2 className="h-l" id="team-title" style={{ marginTop: 18 }}>Train the whole kitchen.</h2>
                 <p className="lede">A company account gives your staff every course. You see who has started, who has passed, and every certificate carries your company name.</p>
               </div>
@@ -199,24 +214,33 @@ export default async function Home() {
         <section className="sec sec--bone" id="about" aria-labelledby="services-title">
           <div className="wrap">
             <div className="sec-head">
-              <span className="micro">(07) Beyond the screen</span>
-              <h2 className="h-l" id="services-title">More than courses.<br />A partner for compliance.</h2>
+              <span className="nh-eyebrow">Our services</span>
+              <h2 className="h-l" id="services-title">From first lesson to inspection day.</h2>
             </div>
-            <div className="svc">
-              <ul className="svc-list">
-                <li><Link href="/courses?c=food-safety"><span className="idx">01</span><div><h3>Food safety training</h3><p>Food hygiene for handlers, HACCP principles and allergen awareness that stop food poisoning before it starts.</p></div><Icon name="arrow" /></Link></li>
-                <li><Link href="/courses?c=health-safety"><span className="idx">02</span><div><h3>Health &amp; safety</h3><p>Occupational safety, fire safety and fire marshal training for busy kitchens and hotels.</p></div><Icon name="arrow" /></Link></li>
-                <li><a href="#contact"><span className="idx">03</span><div><h3>Audits &amp; consultancy</h3><p>Hygiene audits, HACCP plan development, pest control and cleaning reviews of your premises and records.</p></div><Icon name="arrow" /></a></li>
-                <li><Link href="/business"><span className="idx">04</span><div><h3>Hospitality solutions</h3><p>Standards, induction programmes and staff development for hotels, lodges, restaurants and caterers.</p></div><Icon name="arrow" /></Link></li>
-              </ul>
-              <aside className="award rv">
-                <figure>
-                  <img src="/brand/certificate-gold.jpg" alt="Framed Aspire Food Hygiene Training Standards Gold award" loading="lazy" width={1164} height={1400} />
-                </figure>
-                <span className="micro" style={{ marginTop: 16 }}>On the wall</span>
-                <p>Businesses that train with Aspire can display the Aspire Food Hygiene Training Standards award for customers and inspectors.</p>
-              </aside>
+            <div className="nh-grid">
+              {[
+                ["Food safety training", "Practical courses that stop food poisoning before it starts.", ["Food hygiene for food handlers", "HACCP principles", "Food allergen awareness"], "/courses?c=food-safety"],
+                ["Health & safety", "Safer kitchens, hotels and food plants for the people who work in them.", ["Occupational safety & health", "Fire safety & fire marshal", "Slips, trips, lifting and PPE"], "/courses?c=health-safety"],
+                ["Audits & consultancy", "Independent checks of your premises, systems and records.", ["Hygiene audits", "HACCP plan development", "Pest control and cleaning reviews"], "/consultancy"],
+                ["Hospitality solutions", "Standards and people development for hospitality businesses.", ["Standards and induction programmes", "Company accounts for staff training", "On-site group training"], "/business"],
+              ].map(([t, d, list, href], i) => (
+                <div className="nh-cell" key={t as string}>
+                  <span className="nh-num">{String(i + 1).padStart(2, "0")}</span>
+                  <h3>{t as string}</h3>
+                  <p>{d as string}</p>
+                  <ul>{(list as string[]).map((x) => <li key={x}>{x}</li>)}</ul>
+                  <Link className="nh-more" href={href as string}>Find out more</Link>
+                </div>
+              ))}
             </div>
+            <aside className="nh-award">
+              <img src="/brand/certificate-gold.jpg" alt="Framed Aspire Food Hygiene Training Standards Gold award" loading="lazy" width={1164} height={1400} />
+              <div>
+                <span className="nh-eyebrow">On the wall</span>
+                <h3>The Aspire Food Hygiene Training Standards award</h3>
+                <p>Businesses that train with Aspire can display the award for customers and inspectors.</p>
+              </div>
+            </aside>
           </div>
         </section>
 
@@ -224,7 +248,7 @@ export default async function Home() {
         <section className="sec" aria-labelledby="faq-title">
           <div className="wrap faq">
             <header>
-              <span className="micro">(08) Questions</span>
+              <span className="nh-eyebrow">Questions</span>
               <h2 className="h-l" id="faq-title" style={{ marginTop: 18 }}>Asked &amp; answered.</h2>
               <p className="muted" style={{ marginTop: 20 }}>Something else? <a className="text-link" href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener">Message us on WhatsApp</a> and a person will reply.</p>
             </header>
@@ -243,7 +267,7 @@ export default async function Home() {
         <section className="sec sec--bone" id="contact" aria-labelledby="contact-title">
           <div className="wrap contact">
             <div className="contact-copy">
-              <span className="micro">(09) Contact</span>
+              <span className="nh-eyebrow">Contact</span>
               <h2 className="h-l" id="contact-title" style={{ marginTop: 18 }}>Let&apos;s train your team.</h2>
               <p className="lede" style={{ marginTop: 20 }}>Tell us what your business does and how many people need training. We&apos;ll come back with a plan.</p>
               <div className="contact-lines">

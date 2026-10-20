@@ -8,6 +8,8 @@ import { Icon } from "@/components/icons";
 import { supabaseAdmin } from "@/lib/supabase";
 import { SITE, catLabel, coursePhoto, wa, usd } from "@/lib/site";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 export const metadata: Metadata = { title: "Courses" };
 export const dynamic = "force-dynamic"; // the header is per-user, so these pages are never cached
 
@@ -66,7 +68,7 @@ export default async function CoursesPage() {
                 })}
               </ol>
               {courses.length === 0 && <p className="empty-line is-visible">Courses are being prepared. <a className="text-link" href="#book">Contact us</a> in the meantime.</p>}
-              <p className="empty-line" data-empty>No courses in this category yet. <a className="text-link" href="#book">Ask us</a> about tailored training.</p>
+              {courses.length > 0 && <p className="empty-line" data-empty>No courses in this category yet. <a className="text-link" href="#book">Ask us</a> about tailored training.</p>}
             </section>
           </CourseTabs>
         </Suspense>

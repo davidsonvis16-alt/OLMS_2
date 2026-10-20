@@ -4,6 +4,8 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { AdminNav } from "../admin-nav";
 import { setRole } from "../actions";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 export default async function Learners({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const { user } = await requireAdmin();
   const { q } = await searchParams;

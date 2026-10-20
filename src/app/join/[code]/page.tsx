@@ -6,6 +6,8 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { getSession } from "@/lib/auth";
 import { joinCompany } from "@/app/company-actions";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 export default async function Join({ params, searchParams }: { params: Promise<{ code: string }>; searchParams: Promise<{ error?: string }> }) {
   const code = (await params).code.toUpperCase();
   const { error } = await searchParams;

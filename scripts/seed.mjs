@@ -42,21 +42,25 @@ for (const c of courses) {
 }
 
 if (process.env.ADMIN_EMAIL) {
+  // ADMIN_EMAIL may list several addresses, separated by commas.
   // Promote by the sign-in account (auth.users), matched exactly and only once the email is confirmed.
   // Never by profiles.email: that column is a copy and must not decide who becomes an admin.
-  const want = process.env.ADMIN_EMAIL.trim().toLowerCase();
-  let found = null;
-  for (let page = 1; !found && page <= 50; page++) {
+  const wanted = process.env.ADMIN_EMAIL.split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
+  const users = [];
+  for (let page = 1; page <= 50; page++) {
     const { data, error } = await db.auth.admin.listUsers({ page, perPage: 200 });
     if (error) { console.error(error.message); break; }
-    found = data.users.find((u) => (u.email ?? "").toLowerCase() === want) ?? null;
+    users.push(...data.users);
     if (data.users.length < 200) break;
   }
-  if (!found) console.log(`! ${process.env.ADMIN_EMAIL} hasn't signed up yet. Sign up on the site, confirm the email, then run \`npm run seed\` again.`);
-  else if (!found.email_confirmed_at) console.log(`! ${found.email} has not confirmed their email yet. Confirm it, then run \`npm run seed\` again.`);
-  else {
-    const { error } = await db.from("profiles").update({ role: "admin" }).eq("id", found.id);
-    console.log(error ? error.message : `✓ ${found.email} is now an admin`);
+  for (const want of wanted) {
+    const found = users.find((u) => (u.email ?? "").toLowerCase() === want);
+    if (!found) console.log(`! ${want} hasn't signed up yet. Sign up on the site, confirm the email, then run \`npm run seed\` again.`);
+    else if (!found.email_confirmed_at) console.log(`! ${found.email} has not confirmed their email yet. Confirm it, then run \`npm run seed\` again.`);
+    else {
+      const { error } = await db.from("profiles").update({ role: "admin" }).eq("id", found.id);
+      console.log(error ? error.message : `✓ ${found.email} is now an admin`);
+    }
   }
 }
 console.log("\nNext: sign in as admin › Admin › Courses › upload each deck as a PDF › tick Published.");

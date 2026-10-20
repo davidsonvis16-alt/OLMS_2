@@ -18,7 +18,7 @@ export function Thermo() {
   return (
     <div className="thermo">
       <div className="thermo-copy">
-        <span className="micro" style={{ color: "rgba(255,255,255,.55)" }}>(03) A lesson in one gesture</span>
+        <span className="nh-eyebrow">A lesson in one gesture</span>
         <h2 className="h-l" style={{ marginTop: 20 }}>Know your<br />numbers.</h2>
         <p>Drag the scale. Every reading below is taken from the courses, and names the module it comes from.</p>
       </div>

@@ -8,6 +8,8 @@ import { SITE, companyActive, usd, wa } from "@/lib/site";
 import { mpesaAvailable } from "@/lib/paystack";
 import { buySeats, createCompany, removeMember, seatPrice } from "@/app/company-actions";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 export const metadata: Metadata = { title: "Company account" };
 
 export default async function CompanyPage({ searchParams }: { searchParams: Promise<{ error?: string; pay?: string; created?: string }> }) {

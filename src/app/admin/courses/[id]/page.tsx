@@ -9,6 +9,8 @@ import { CATEGORIES, pagesOf } from "@/lib/site";
 import { AdminNav } from "../../admin-nav";
 import { deleteCourse, deleteModule, deleteQuestion, saveCourse, saveModule, saveQuestion } from "../../actions";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 type Q = { id: string; module_id: string | null; position: number; prompt: string; options: string[]; answer: number[]; review_note: string | null; source: string | null; in_final: boolean };
 type M = { id: string; position: number; title: string; page_from: number; page_to: number; extra_pages: number[]; video_url: string | null };
 
@@ -29,60 +31,82 @@ export default async function EditCourse({ params, searchParams }: { params: Pro
 
   return (
     <AppShell active="admin" wide>
-      <PageHead eyebrow="Edit course" title={c.title}>
-        {c.published && <Link className="btn btn--outline btn--sm" href={`/courses/${c.slug}`} target="_blank">View live</Link>}
-      </PageHead>
+      <PageHead eyebrow={c.published ? "Course · showing to learners" : "Course · hidden from learners"} title={c.title} />
       <AdminNav active="courses" />
-      {sp.saved && <p className="alert alert--ok">Saved.</p>}
       {sp.error && <p className="alert alert--error">{sp.error}</p>}
 
-      <nav className="jump"><a href="#details">Details</a><a href="#slides">Slides</a><a href="#modules">Modules</a><a href="#questions">Questions{flagged.length ? ` (${flagged.length} to review)` : ""}</a></nav>
-
-      {/* DETAILS */}
-      <form action={saveCourse} className="form-card" id="details">
+      {/* SET UP: everything most admins need, with one Save button */}
+      <form action={saveCourse} className="setup" id="setup">
         <input type="hidden" name="id" value={c.id} />
-        <h3>Details</h3>
-        <div className="form-grid">
-          <div className="field field--full"><label>Title</label><input name="title" defaultValue={c.title} required /></div>
-          <div className="field"><label>URL slug</label><input name="slug" defaultValue={c.slug} /></div>
-          <div className="field"><label>Sort order</label><input name="sort" type="number" defaultValue={c.sort} /></div>
-          <div className="field"><label>Main category</label>
-            <select name="category" defaultValue={c.category}>{CATEGORIES.map((x) => <option key={x.id} value={x.id}>{x.label}</option>)}</select>
+
+        <div className="setup-step">
+          <span className="setup-n">1</span>
+          <div className="setup-body">
+            <h3>Course slides</h3>
+            <p className="muted">Pick the course PDF. Slides are saved automatically as soon as the upload finishes.</p>
+            <SlideUploader courseId={c.id} version={c.slides_version} count={c.slide_count} />
+            {c.slide_count > 0 && (
+              <details className="setup-thumbs">
+                <summary>Show all {c.slide_count} slides</summary>
+                <div className="thumbs">
+                  {Array.from({ length: c.slide_count }, (_, i) => i + 1).map((n) => {
+                    const mod = modules.find((m) => pagesOf(m).includes(n));
+                    return (
+                      <a key={n} href={slideUrl(c.id, c.slides_version, n)} target="_blank" rel="noopener" className={`thumb${mod ? "" : " is-unused"}`} title={mod ? `Module ${mod.position}: ${mod.title}` : "Not in any module (e.g. a quiz slide)"}>
+                        <img src={slideUrl(c.id, c.slides_version, n)} alt={`Slide ${n}`} loading="lazy" />
+                        <span>{n}{mod ? ` · M${mod.position}` : ""}</span>
+                      </a>
+                    );
+                  })}
+                </div>
+              </details>
+            )}
           </div>
-          <div className="field"><label>Also show under</label>
-            <div className="checks">{CATEGORIES.map((x) => <label key={x.id} className="check"><input type="checkbox" name="categories" value={x.id} defaultChecked={c.categories?.includes(x.id)} /><span>{x.label}</span></label>)}</div>
-          </div>
-          <div className="field field--full"><label>Short description</label><textarea name="summary" rows={3} defaultValue={c.summary ?? ""} /></div>
-          <div className="field field--full"><label>Key topics (one per line; first 3 show on the course card)</label><textarea name="topics" rows={4} defaultValue={(c.topics ?? []).join("\n")} /></div>
-          <div className="field field--full"><label>Course assignment (optional, shown to learners)</label><textarea name="assignment" rows={3} defaultValue={c.assignment ?? ""} /></div>
-          <div className="field"><label>Certificate fee (USD)</label><input name="certificate_price_usd" type="number" min={0} step="0.01" defaultValue={c.certificate_price_usd ?? ""} placeholder="Not set" /><small className="muted">Empty = learners are asked to contact you. 0 = free.</small></div>
-          <div className="field"><label>&nbsp;</label><label className="check"><input type="checkbox" name="published" defaultChecked={c.published} /><span>Published (visible to learners)</span></label></div>
         </div>
-        <div className="form-actions"><button className="btn btn--green">Save details</button></div>
+
+        <div className="setup-step">
+          <span className="setup-n">2</span>
+          <div className="setup-body">
+            <h3>Price and visibility</h3>
+            <div className="form-grid">
+              <div className="field"><label htmlFor="fee">Certificate price (US$)</label><input id="fee" name="certificate_price_usd" type="number" min={0} step="0.01" defaultValue={c.certificate_price_usd ?? ""} placeholder="Leave empty for “price on request”" /><small>Learning is always free. 0 = free certificate.</small></div>
+              <div className="field"><label>Who can see it</label>
+                <label className="switch"><input type="checkbox" name="published" defaultChecked={c.published} /><span className="switch-ui" aria-hidden="true" /><span>Show this course to learners</span></label>
+                {c.slide_count === 0 && <small className="warn-text">Upload the slides before showing the course.</small>}
+              </div>
+            </div>
+            <details className="setup-more">
+              <summary>Edit course name, description and topics</summary>
+              <div className="form-grid" style={{ marginTop: 16 }}>
+                <div className="field field--full"><label htmlFor="t">Course name</label><input id="t" name="title" defaultValue={c.title} required /></div>
+                <div className="field field--full"><label htmlFor="sm">Short description</label><textarea id="sm" name="summary" rows={3} defaultValue={c.summary ?? ""} /></div>
+                <div className="field field--full"><label htmlFor="tp">Key topics (one per line)</label><textarea id="tp" name="topics" rows={4} defaultValue={(c.topics ?? []).join("\n")} /></div>
+                <div className="field field--full"><label htmlFor="as">Course assignment (optional)</label><textarea id="as" name="assignment" rows={3} defaultValue={c.assignment ?? ""} /></div>
+                <div className="field"><label htmlFor="cat">Main category</label>
+                  <select id="cat" name="category" defaultValue={c.category}>{CATEGORIES.map((x) => <option key={x.id} value={x.id}>{x.label}</option>)}</select>
+                </div>
+                <div className="field"><label>Also show under</label>
+                  <div className="checks">{CATEGORIES.map((x) => <label key={x.id} className="check"><input type="checkbox" name="categories" value={x.id} defaultChecked={c.categories?.includes(x.id)} /><span>{x.label}</span></label>)}</div>
+                </div>
+                <div className="field"><label htmlFor="sl">Web address name</label><input id="sl" name="slug" defaultValue={c.slug} /></div>
+                <div className="field"><label htmlFor="so">Position in the course list</label><input id="so" name="sort" type="number" defaultValue={c.sort} /></div>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div className="setup-save">
+          <button className="btn btn--go btn--lg">Save course</button>
+          {sp.saved && <span className="gtext" role="status">✓ Saved</span>}
+          {c.published && <Link className="link" href={`/courses/${c.slug}`} target="_blank">See it as a learner <Icon name="arrow" /></Link>}
+        </div>
       </form>
 
-      {/* SLIDES */}
-      <section className="form-card" id="slides">
-        <h3>Slides</h3>
-        <SlideUploader courseId={c.id} version={c.slides_version} count={c.slide_count} />
-        {c.slide_count > 0 && (
-          <div className="thumbs">
-            {Array.from({ length: c.slide_count }, (_, i) => i + 1).map((n) => {
-              const mod = modules.find((m) => pagesOf(m).includes(n));
-              return (
-                <a key={n} href={slideUrl(c.id, c.slides_version, n)} target="_blank" rel="noopener" className={`thumb${mod ? "" : " is-unused"}`} title={mod ? `Module ${mod.position}: ${mod.title}` : "Not in any module (e.g. a quiz slide)"}>
-                  <img src={slideUrl(c.id, c.slides_version, n)} alt={`Slide ${n}`} loading="lazy" />
-                  <span>{n}{mod ? ` · M${mod.position}` : ""}</span>
-                </a>
-              );
-            })}
-          </div>
-        )}
-      </section>
+      <h2 className="section-title"><span>Advanced (most courses don&apos;t need changes here)</span></h2>
 
       {/* MODULES */}
-      <section className="form-card" id="modules">
-        <h3>Modules</h3>
+      <details className="form-card adv" id="modules">
+        <summary><b>Modules and slide ranges</b><small>Which slides belong to each module · {modules.length} modules</small></summary>
         <p>Each module shows a range of slides, then its knowledge check. Leave quiz slides out of the ranges; the quiz is interactive. Video: paste a Bunny Stream (or YouTube) embed URL.</p>
         <div className="mod-rows">
           {[...modules, null].map((m, i) => (
@@ -100,11 +124,11 @@ export default async function EditCourse({ params, searchParams }: { params: Pro
             </form>
           ))}
         </div>
-      </section>
+      </details>
 
       {/* QUESTIONS */}
-      <section className="form-card" id="questions">
-        <h3>Questions</h3>
+      <details className="form-card adv" id="questions">
+        <summary><b>Quiz questions</b><small>{questions.length} questions{flagged.length ? ` · ${flagged.length} need checking` : ""}</small></summary>
         <p>Options one per line. &ldquo;Correct&rdquo; is the option number(s), e.g. <code>2</code> or <code>1,3</code> for select-all-that-apply. Questions ticked &ldquo;final&rdquo; are used in the final assessment.</p>
         {flagged.length > 0 && <p className="alert alert--warn">{flagged.length} question{flagged.length > 1 ? "s need" : " needs"} review. Check the note, fix the answer if needed, then tick &ldquo;Reviewed&rdquo; and save.</p>}
         {[...modules.map((m) => ({ m, list: questions.filter((q) => q.module_id === m.id) })), { m: null as M | null, list: questions.filter((q) => !q.module_id) }].map(({ m, list }) => (
@@ -116,7 +140,7 @@ export default async function EditCourse({ params, searchParams }: { params: Pro
             </div>
           )
         ))}
-      </section>
+      </details>
 
       <form action={deleteCourse} className="danger-zone">
         <input type="hidden" name="id" value={c.id} />

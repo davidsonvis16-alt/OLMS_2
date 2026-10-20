@@ -43,7 +43,7 @@ export async function saveCourse(f: FormData) {
     sort: Number(str(f, "sort")) || 0,
   }).eq("id", id);
   revalidatePath("/courses"); revalidatePath("/");
-  redirect(`/admin/courses/${id}?${error ? `error=${encodeURIComponent(error.message)}` : "saved=1"}`);
+  redirect(`/admin/courses/${id}?${error ? `error=${encodeURIComponent(error.message)}` : "saved=1"}#setup`);
 }
 
 export async function deleteCourse(f: FormData) {

@@ -3,6 +3,9 @@ import { AppShell, PageHead } from "@/components/app-shell";
 import { requireUser } from "@/lib/auth";
 import { updateProfile } from "@/app/actions";
 import Link from "next/link";
+import { PasskeyManager } from "@/components/passkey-manager";
+
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
 
 export const metadata: Metadata = { title: "Account" };
 
@@ -25,6 +28,7 @@ export default async function Account({ searchParams }: { searchParams: Promise<
         </div>
         <div className="form-actions"><button className="btn btn--green">Save details</button><Link className="btn btn--outline" href="/reset">Change password</Link></div>
       </form>
+      <PasskeyManager />
     </AppShell>
   );
 }

@@ -3,48 +3,49 @@ import { getSession } from "@/lib/auth";
 import { SITE } from "@/lib/site";
 import { signOut } from "@/app/actions";
 import { Icon } from "./icons";
+import { AppNav, AppTabs, type NavGroup } from "./app-nav";
 
-type L = { href: string; label: string; key: string };
-
-export async function AppShell({ children, active, wide }: { children: React.ReactNode; active?: string; wide?: boolean }) {
+/** The signed-in workspace. Admins get an admin-only menu; learners and company owners get their own. */
+export async function AppShell({ children, wide }: { children: React.ReactNode; active?: string; wide?: boolean }) {
   const { profile } = await getSession();
-  const learn: L[] = [
-    { href: "/dashboard", label: "My learning", key: "dashboard" },
-    { href: "/courses", label: "Browse courses", key: "browse" },
-    { href: "/certificates", label: "Certificates", key: "certificates" },
-  ];
-  const account: L[] = [
-    { href: "/company", label: profile?.company_role === "owner" ? "My company" : "Company", key: "company" },
-    { href: "/account", label: "Your details", key: "account" },
-  ];
-  const admin: L[] = profile?.role === "admin" ? [{ href: "/admin", label: "Administration", key: "admin" }] : [];
-  const groups: [string, L[]][] = [["Learn", learn], ["Account", account], ...(admin.length ? [["Aspire", admin] as [string, L[]]] : [])];
-  const all = groups.flatMap(([, l]) => l);
+  const isAdmin = profile?.role === "admin";
+  const groups: NavGroup[] = isAdmin
+    ? [
+        { title: "Administration", links: [
+          { href: "/admin", label: "Overview" },
+          { href: "/admin/courses", label: "Courses" },
+          { href: "/admin/learners", label: "Learners" },
+          { href: "/admin/certificates", label: "Certificates" },
+          { href: "/admin/payments", label: "Payments" },
+          { href: "/admin/companies", label: "Companies" },
+          { href: "/admin/submissions", label: "Assignments" },
+        ] },
+        { title: "Account", links: [{ href: "/account", label: "Your details" }] },
+      ]
+    : [
+        { title: "Learn", links: [
+          { href: "/dashboard", label: "My learning" },
+          { href: "/courses", label: "Browse courses" },
+          { href: "/certificates", label: "Certificates" },
+        ] },
+        { title: "Account", links: [
+          { href: "/company", label: profile?.company_role === "owner" ? "My company" : "Company" },
+          { href: "/account", label: "Your details" },
+        ] },
+      ];
   const name = (profile?.full_name || profile?.email || "?").trim();
-  let i = 0;
   return (
     <div className="app">
       <a className="skip" href="#main">Skip to content</a>
       <aside className="app-side">
         <Link href="/" className="app-brand">
           <img src="/brand/logo-light.png" alt="" width={466} height={640} />
-          <span><b>ASPIRE</b><small>Safety &amp; Hygiene Solutions</small></span>
+          <span><b>ASPIRE</b><small>{isAdmin ? "Administration" : "Safety & Hygiene Solutions"}</small></span>
         </Link>
-        <nav className="app-nav" aria-label="Account">
-          {groups.map(([g, links]) => (
-            <div key={g} style={{ display: "contents" }}>
-              <span className="k">{g}</span>
-              {links.map((l) => (
-                <Link key={l.key} href={l.href} className={active === l.key ? "is-active" : ""} aria-current={active === l.key ? "page" : undefined}>
-                  <span className="n">{String(++i).padStart(2, "0")}</span>{l.label}
-                </Link>
-              ))}
-            </div>
-          ))}
-        </nav>
+        <AppNav groups={groups} />
         <div className="app-user">
           <span className="avatar" aria-hidden="true">{name[0]?.toUpperCase()}</span>
-          <span className="who"><b>{profile?.full_name || "Learner"}</b><small>{profile?.email}</small></span>
+          <span className="who"><b>{profile?.full_name || (isAdmin ? "Administrator" : "Learner")}</b><small>{isAdmin ? "Admin · " : ""}{profile?.email}</small></span>
           <form action={signOut}><button className="icon-btn" aria-label="Sign out" title="Sign out"><Icon name="logout" /></button></form>
         </div>
       </aside>
@@ -54,9 +55,7 @@ export async function AppShell({ children, active, wide }: { children: React.Rea
             <Link href="/" className="app-brand"><img src="/brand/logo-light.png" alt="" width={466} height={640} /><span><b>ASPIRE</b></span></Link>
             <form action={signOut}><button className="icon-btn" aria-label="Sign out"><Icon name="logout" /></button></form>
           </div>
-          <nav className="app-tabs" aria-label="Account">
-            {all.map((l) => <Link key={l.key} href={l.href} className={active === l.key ? "is-active" : ""} aria-current={active === l.key ? "page" : undefined}>{l.label}</Link>)}
-          </nav>
+          <AppTabs groups={groups} />
         </div>
         <main id="main" className={wide ? "app-content app-content--wide" : "app-content"}>{children}</main>
         <footer className="app-foot">© {new Date().getFullYear()} {SITE.name} · <a href={`https://wa.me/${SITE.whatsapp}`} target="_blank" rel="noopener">Help on WhatsApp</a></footer>

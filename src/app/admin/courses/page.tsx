@@ -6,6 +6,8 @@ import { catLabel, usd } from "@/lib/site";
 import { AdminNav } from "../admin-nav";
 import { createCourse } from "../actions";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 export default async function AdminCourses({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   await requireAdmin();
   const { error } = await searchParams;

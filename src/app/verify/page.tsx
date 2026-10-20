@@ -4,6 +4,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { VerifyForm } from "@/components/forms";
 import { SITE } from "@/lib/site";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 export const metadata: Metadata = { title: "Verify a certificate" };
 
 export default function VerifyIndex() {

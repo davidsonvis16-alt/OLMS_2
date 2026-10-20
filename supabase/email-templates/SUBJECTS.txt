@@ -1,0 +1,6 @@
+Paste each file into Supabase › Authentication › Emails › Templates, with these subjects:
+
+Confirm signup        confirm-signup.html   Subject: Confirm your Aspire account
+Reset password        reset-password.html   Subject: Reset your Aspire password
+Magic link            magic-link.html       Subject: Your Aspire sign-in link
+Change email address  change-email.html     Subject: Confirm your new email for Aspire

@@ -7,6 +7,8 @@ import { Reveal } from "@/components/forms";
 import { SITE, usd, wa } from "@/lib/site";
 import { seatPrice } from "@/app/company-actions";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 export const metadata: Metadata = { title: "Company accounts" };
 export const dynamic = "force-dynamic"; // the header is per-user, so these pages are never cached
 

@@ -8,6 +8,9 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { getSession } from "@/lib/auth";
 import { SITE, catLabel, coursePhoto, pagesOf, usd } from "@/lib/site";
 import { enrol } from "@/app/actions";
+import { ConsultPromo } from "@/components/consult-promo";
+
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -110,6 +113,7 @@ export default async function CoursePage({ params }: Props) {
                 {start(true)}
                 <div className="foot"><Link className="text-link" href="/#certificates">See a sample certificate</Link></div>
               </div>
+              <ConsultPromo title="Training a whole team?" text="We also train on site, audit premises and help with HACCP plans." />
             </aside>
           </div>
         </section>

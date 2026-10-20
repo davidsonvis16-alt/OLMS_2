@@ -8,6 +8,8 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { catLabel } from "@/lib/site";
 import { saveAssignment } from "@/app/actions";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ assignment?: string }> };
 
 export default async function LearnCourse({ params, searchParams }: Props) {

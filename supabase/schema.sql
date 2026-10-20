@@ -254,6 +254,8 @@ grant execute on function public.hit_rate_limit(text, int, int) to service_role;
 insert into storage.buckets (id, name, public) values ('slides', 'slides', true) on conflict (id) do nothing;
 
 -- Admins upload slide images from the browser (admin > course > upload slides).
+drop policy if exists "admin read slides" on storage.objects;
+create policy "admin read slides" on storage.objects for select to authenticated using (bucket_id = 'slides' and public.is_admin());
 drop policy if exists "admin upload slides" on storage.objects;
 create policy "admin upload slides" on storage.objects for insert to authenticated with check (bucket_id = 'slides' and public.is_admin());
 drop policy if exists "admin update slides" on storage.objects;
