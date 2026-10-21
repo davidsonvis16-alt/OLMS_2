@@ -1,6 +1,7 @@
 import Link from "@/components/link";
 import { useRouter, useSearchParams } from "@/lib/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createClient } from "@supabase/supabase-js";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 import { Icon } from "./icons";
 import { safeNext } from "@/lib/safe-next";
@@ -11,6 +12,7 @@ import { PhoneField, readPhone } from "./phone-field";
 
 type Mode = "login" | "signup" | "forgot" | "reset";
 
+const LINK_EXPIRED = "That link has expired or was already used. Sign in, or use “Forgot password?” to get a new one.";
 const SUSPENDED = "This account has been suspended. If you think this is a mistake, contact Aspire.";
 
 export function AuthForm({ mode, country }: { mode: Mode; country?: string | null }) {
@@ -19,10 +21,21 @@ export function AuthForm({ mode, country }: { mode: Mode; country?: string | nul
   const next = safeNext(params.get("next"));
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(
-    params.get("error") === "link" ? "That link has expired or was already used. Sign in, or use “Forgot password?” to get a new one."
+    params.get("error") === "link" ? LINK_EXPIRED
     : params.get("error") === "suspended" ? SUSPENDED : null);
   const [msg, setMsg] = useState<string | null>(null);
   const [who, setWho] = useState<{ email?: string; name?: string }>({});
+
+  // A reset link lands here as /reset#access_token=…&refresh_token=… (see "forgot" below). Sign in with it, then
+  // clear it from the address bar so it isn't left in history.
+  useEffect(() => {
+    if (mode !== "reset" || !window.location.hash) return;
+    const h = new URLSearchParams(window.location.hash.slice(1));
+    history.replaceState(null, "", window.location.pathname);
+    const access_token = h.get("access_token"), refresh_token = h.get("refresh_token");
+    if (!access_token || !refresh_token) { if (h.get("error")) setErr(LINK_EXPIRED); return; }
+    supabaseBrowser().auth.setSession({ access_token, refresh_token }).then(({ error }) => { if (error) setErr(LINK_EXPIRED); });
+  }, [mode]);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -55,11 +68,16 @@ export function AuthForm({ mode, country }: { mode: Mode; country?: string | nul
         if (data.session) { r.replace(next); r.refresh(); }
         else setMsg("Check your email and tap the confirmation link to activate your account.");
       } else if (mode === "forgot") {
-        const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: `${origin}/auth/callback?next=/reset` });
+        // Not the usual cookie-bound sign-in: that kind of link only works in the browser that asked for it. This
+        // kind carries its own one-time sign-in, so the email can be opened on any phone or computer.
+        const anyDevice = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          { auth: { flowType: "implicit", persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
+        const { error } = await anyDevice.auth.resetPasswordForEmail(email, { redirectTo: `${origin}/reset` });
         if (error) throw error;
         setMsg("If that email has an account, a reset link is on its way.");
       } else {
         newPassword(f, {});
+        if (!(await sb.auth.getSession()).data.session) throw new Error(LINK_EXPIRED);
         const { error } = await sb.auth.updateUser({ password });
         if (error) throw new Error(/different from the old/i.test(error.message) ? "Choose a password you haven't used on this account before." : error.message);
         r.replace("/dashboard"); r.refresh();
