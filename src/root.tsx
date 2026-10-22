@@ -5,14 +5,17 @@ import { getSession } from "@/lib/auth";
 import { canLearn } from "@/lib/config";
 import { isGated } from "@/lib/server/security";
 import { supabaseServer } from "@/lib/supabase";
-import { SITE } from "@/lib/site";
+import { SITE, SHARE_META } from "@/lib/site";
 import type { Viewer } from "@/lib/viewer";
 
 export const links: LinksFunction = () => [
   { rel: "preload", href: "/fonts/archivo-normal-100-900.woff2", as: "font", type: "font/woff2", crossOrigin: "anonymous" },
   { rel: "stylesheet", href: fonts },
   { rel: "stylesheet", href: styles },
-  { rel: "icon", href: "/brand/logo-light.png" },
+  { rel: "icon", href: "/favicon.ico", sizes: "48x48" },
+  { rel: "icon", href: "/icon-192.png", type: "image/png", sizes: "192x192" },
+  { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+  { rel: "manifest", href: "/manifest.webmanifest" },
 ];
 
 export const meta: MetaFunction = () => [
@@ -20,7 +23,8 @@ export const meta: MetaFunction = () => [
   { name: "description", content: "Online food safety, hygiene and workplace health & safety training for the hospitality and food industry. Learn free, pass the assessment and earn a verifiable Aspire certificate." },
   { property: "og:title", content: SITE.name },
   { property: "og:description", content: SITE.tagline },
-  { property: "og:image", content: "/brand/logo-light.png" },
+  { property: "og:url", content: SITE.url },
+  ...SHARE_META,
   { name: "theme-color", content: "#0b0b1f" },
 ];
 

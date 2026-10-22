@@ -59,4 +59,14 @@ export function companyActive(c: { paid_until: string | null } | null | undefine
 }
 
 /** Page title in the browser tab: "<page> | ASPIRE SAFETY & HYGIENE SOLUTIONS". */
-export const pageTitle = (t: string) => [{ title: `${t} | ${SITE.name}` }];
+/** Link previews (WhatsApp, Facebook, Google): the Aspire share picture on every page. */
+export const SHARE_META = [
+  { property: "og:type", content: "website" },
+  { property: "og:site_name", content: SITE.name },
+  { property: "og:image", content: `${SITE.url.replace(/\/$/, "")}/brand/share.png` },
+  { property: "og:image:width", content: "1200" },
+  { property: "og:image:height", content: "630" },
+  { name: "twitter:card", content: "summary_large_image" },
+];
+
+export const pageTitle = (t: string) => [{ title: `${t} | ${SITE.name}` }, { property: "og:title", content: `${t} | ${SITE.name}` }, ...SHARE_META];
