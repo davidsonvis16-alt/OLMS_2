@@ -14,7 +14,7 @@
   "vars": {
     "NEXT_PUBLIC_SUPABASE_URL": "https://dcuqwervhantugbrgafh.supabase.co",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_S-LUPBTSDku15a9-Gn0HrQ_CIRPPZli",
-    "NEXT_PUBLIC_SITE_URL": "https://aspirelms.davidson-vis-16.workers.dev",
+    "NEXT_PUBLIC_SITE_URL": "https://aspiresafetyhygienesolutions.co.ke",
     "USD_TO_KES": "129.84"
   }
   // Secrets (SUPABASE_SERVICE_ROLE_KEY, PAYSTACK_SECRET_KEY) are added in Cloudflare as type "Secret", never in this file.

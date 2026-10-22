@@ -6,10 +6,7 @@ export const SITE = {
   phone: "+254 725 009 705",
   phoneHref: "tel:+254725009705",
   whatsapp: "254725009705",
-  websites: [
-    { label: "sgfoodsafety.com", href: "https://sgfoodsafety.com" },
-    { label: "nexthospitality.ke", href: "http://nexthospitality.ke/" },
-  ],
+  websites: [] as { label: string; href: string }[],
   url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
   passMark: 80,
 };
