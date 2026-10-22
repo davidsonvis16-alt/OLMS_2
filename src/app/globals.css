@@ -492,7 +492,7 @@ input[aria-invalid="true"] { border-color: var(--red); }
 .mod-list .final .n { color: var(--blue); }
 .assign { border-left: 3px solid var(--blue); padding: 4px 0 4px 20px; }
 .assign p { font-size: 17px; color: var(--ink-2); margin-top: 10px; }
-.fees { position: sticky; top: 100px; border: 1px solid var(--ink); }
+.fees { border: 1px solid var(--ink); }
 .fees > * { padding-inline: 24px; }
 .fees header { padding-block: 18px; border-bottom: 1px solid var(--ink); display: flex; justify-content: space-between; align-items: center; }
 .fees dl { margin: 0; }
