@@ -21,10 +21,10 @@ const COURSE_PHOTOS: Record<string, string> = {
   "food-hygiene-safety-food-handlers": "plating",
   "personal-health-hygiene": "hands",
   "haccp-principles": "haccp",
-  "food-allergen-awareness": "gloves",
+  "food-allergen-awareness": "food-allergy",
   "fire-safety-fire-marshal": "flame",
-  "occupational-safety-health": "prep",
-  "kitchen-hygiene-sanitation": "clean-kitchen",
+  "occupational-safety-health": "ohs",
+  "kitchen-hygiene-sanitation": "kitchen-hygiene",
   "integrated-pest-control": "pass",
 };
 const CATEGORY_PHOTOS: Record<string, string> = { "food-safety": "plating", "health-safety": "prep", hospitality: "team" };

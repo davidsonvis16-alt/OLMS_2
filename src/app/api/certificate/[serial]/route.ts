@@ -26,7 +26,7 @@ async function get(req: Request, { params }: { params: Promise<{ serial: string 
   if (!(await limit("pdf", user.id))) return new Response("Too many requests", { status: 429 });
   // Brand files come from the site's own files, never from a URL built out of request headers.
   const verifyUrl = `${SITE.url.replace(/\/$/, "")}/verify/${encodeURIComponent(c.serial)}`;
-  const [logo, sig] = await Promise.all([assetBytes("/brand/logo-light.png"), assetBytes("/brand/signature.png")]);
+  const [logo, sig, seal] = await Promise.all([assetBytes("/brand/logo-light.png"), assetBytes("/brand/signature.png"), assetBytes("/brand/haccp-seal.png")]);
   const qr = qrShape(verifyUrl);
 
   const pdf = await PDFDocument.create();
@@ -36,7 +36,7 @@ async function get(req: Request, { params }: { params: Promise<{ serial: string 
   const PW = PAGE.w * K, PH = PAGE.h * K;
   const page = pdf.addPage([PW, PH]);
   const fonts = await embedCertFonts(pdf);
-  const img = { logo: await pdf.embedPng(logo), signature: await pdf.embedPng(sig) };
+  const img = { logo: await pdf.embedPng(logo), signature: await pdf.embedPng(sig), seal: await pdf.embedPng(seal) };
 
   const ops = layoutCertificate({
     serial: c.serial, fullName: c.full_name, idNumber: c.id_number, course: c.course_title, modules: c.modules ?? [], score: c.score,

@@ -28,7 +28,7 @@ export type Op =
   | { k: "circle"; cx: number; cy: number; r: number; fill?: string; stroke?: string; sw?: number; opacity?: number }
   | { k: "path"; d: string; fill?: string; stroke?: string; sw?: number; opacity?: number }
   | { k: "text"; x: number; y: number; text: string; font: FontKey; size: number; color: string; ls?: number; rotate?: number; opacity?: number }
-  | { k: "image"; src: "logo" | "signature" | "qr"; x: number; y: number; w: number; h: number; opacity?: number };
+  | { k: "image"; src: "logo" | "signature" | "qr" | "seal"; x: number; y: number; w: number; h: number; opacity?: number };
 
 type Fonts = Record<FontKey, PDFFont>;
 const r2 = (n: number) => Math.round(n * 100) / 100;
@@ -85,6 +85,8 @@ export function layoutCertificate(d: CertInput, f: Fonts): Op[] {
   ops.push({ k: "image", src: "logo", x: 20, y: 17, w: r2((466 / 640) * 27), h: 27 });
   text(SITE.name, 43, 28.5, "sans600", 4.5, C.blue, { ls: .14 });
   text("Value, Quality & Service.", 43, 35.6, "serifI", 5, C.greenInk);
+  // HACCP courses carry the gold "HACCP Certified" seal.
+  if (/haccp/i.test(d.course)) ops.push({ k: "image", src: "seal", x: 196, y: 13, w: r2((538 / 600) * 30), h: 30 });
   text("CERTIFICATE NO.", W - 20, 24, "mono", 2, C.mute, { ls: .32, align: "end" });
   text(d.serial, W - 20, 30.2, "mono", 3.9, C.ink, { ls: .1, align: "end" });
 

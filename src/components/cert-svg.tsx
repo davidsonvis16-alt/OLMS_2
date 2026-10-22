@@ -12,7 +12,7 @@ const FACE: Record<FontKey, React.CSSProperties> = {
   mono: { fontFamily: "var(--f-mono)", fontWeight: 500 },
 };
 
-const IMG = { logo: "/brand/logo-light.png", signature: "/brand/signature.png" };
+const IMG = { logo: "/brand/logo-light.png", signature: "/brand/signature.png", seal: "/brand/haccp-seal.png" };
 
 export function CertSvg({ ops, qr, label }: { ops: Op[]; qr: QrShape; label: string }) {
   return (
