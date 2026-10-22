@@ -49,7 +49,7 @@ export function SiteFooter(_: { dark?: boolean }) {
           <span className="foot-pay" aria-label="We accept M-Pesa, Visa and Mastercard">
             <img src="/brand/mpesa.svg" alt="" /><img src="/brand/visa.svg" alt="" /><img src="/brand/mastercard.svg" alt="" />
           </span>
-          <span className="micro foot-legal"><Link href="/terms">Terms</Link> · <Link href="/privacy">Privacy</Link> · Photography: Unsplash contributors</span>
+          <span className="micro foot-legal"><Link href="/terms">Terms</Link> · <Link href="/privacy">Privacy</Link></span>
         </div>
         <div className="wrap" aria-hidden="true"><div className="foot-word">ASPIRE<span>.</span></div></div>
       </footer>
