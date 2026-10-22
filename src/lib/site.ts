@@ -24,7 +24,7 @@ const COURSE_PHOTOS: Record<string, string> = {
   "food-allergen-awareness": "food-allergy",
   "fire-safety-fire-marshal": "flame",
   "occupational-safety-health": "ohs",
-  "kitchen-hygiene-sanitation": "kitchen-hygiene",
+  "kitchen-hygiene-sanitation": "kitchen-cleaning",
   "integrated-pest-control": "pass",
 };
 const CATEGORY_PHOTOS: Record<string, string> = { "food-safety": "plating", "health-safety": "prep", hospitality: "team" };
