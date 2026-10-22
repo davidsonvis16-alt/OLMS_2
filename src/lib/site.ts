@@ -18,14 +18,14 @@ export const CATEGORIES = [
 ] as const;
 
 const COURSE_PHOTOS: Record<string, string> = {
-  "food-hygiene-safety-food-handlers": "plating",
+  "food-hygiene-safety-food-handlers": "pass",
   "personal-health-hygiene": "hands",
   "haccp-principles": "haccp",
   "food-allergen-awareness": "food-allergy",
   "fire-safety-fire-marshal": "flame",
   "occupational-safety-health": "ohs",
   "kitchen-hygiene-sanitation": "kitchen-cleaning",
-  "integrated-pest-control": "pass",
+  "integrated-pest-control": "pest-control",
 };
 const CATEGORY_PHOTOS: Record<string, string> = { "food-safety": "plating", "health-safety": "prep", hospitality: "team" };
 
