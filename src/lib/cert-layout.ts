@@ -85,8 +85,6 @@ export function layoutCertificate(d: CertInput, f: Fonts): Op[] {
   ops.push({ k: "image", src: "logo", x: 20, y: 17, w: r2((466 / 640) * 27), h: 27 });
   text(SITE.name, 43, 28.5, "sans600", 4.5, C.blue, { ls: .14 });
   text("Value, Quality & Service.", 43, 35.6, "serifI", 5, C.greenInk);
-  // HACCP courses carry the gold "HACCP Certified" seal.
-  if (/haccp/i.test(d.course)) ops.push({ k: "image", src: "seal", x: 196, y: 13, w: r2((538 / 600) * 30), h: 30 });
   text("CERTIFICATE NO.", W - 20, 24, "mono", 2, C.mute, { ls: .32, align: "end" });
   text(d.serial, W - 20, 30.2, "mono", 3.9, C.ink, { ls: .1, align: "end" });
 
@@ -115,8 +113,10 @@ export function layoutCertificate(d: CertInput, f: Fonts): Op[] {
   text(SITE.name, 22, 184.6, "sans500", 2.3, C.ink);
   if (d.companyName) text(`Sponsored by ${d.companyName}`, 22, 189, "sans500", 2.3, C.mute);
 
-  // Seal (bottom centre)
-  const sx = CX, sy = 172;
+  // Seal (bottom centre). HACCP courses also carry the gold "HACCP Certified" seal beside it.
+  const haccp = /haccp/i.test(d.course);
+  const sx = haccp ? CX - 20 : CX, sy = 172;
+  if (haccp) ops.push({ k: "image", src: "seal", x: r2(CX + 20 - (538 / 600) * 16), y: sy - 16, w: r2((538 / 600) * 32), h: 32 });
   let star = "";
   for (let i = 0; i < 72; i++) {
     const a = (i / 72) * Math.PI * 2, rr = i % 2 ? 15.2 : 16.4;
