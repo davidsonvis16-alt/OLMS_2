@@ -30,7 +30,7 @@ function draw(o: Op, i: number, qr: QrShape) {
     case "path": return <path key={i} d={o.d} fill={o.fill ?? "none"} stroke={o.stroke} strokeWidth={o.sw} opacity={o.opacity} />;
     case "image": return o.src === "qr"
       ? <path key={i} d={qr.d} transform={`translate(${o.x} ${o.y}) scale(${o.w / qr.n})`} fill={C.ink} shapeRendering="crispEdges" />
-      : <image key={i} href={IMG[o.src]} x={o.x} y={o.y} width={o.w} height={o.h} preserveAspectRatio="xMidYMid meet" />;
+      : <image key={i} href={IMG[o.src]} x={o.x} y={o.y} width={o.w} height={o.h} preserveAspectRatio="xMidYMid meet" opacity={o.opacity} />;
     case "text": return (
       <text key={i} x={o.x} y={o.y} fontSize={o.size} fill={o.color} letterSpacing={o.ls || undefined} opacity={o.opacity}
         transform={o.rotate ? `rotate(${o.rotate} ${o.x} ${o.y})` : undefined} style={{ ...FACE[o.font], whiteSpace: "pre", fontVariantLigatures: "none", fontKerning: LIGA.test(o.text) ? "none" : "normal" }}>{o.text}</text>

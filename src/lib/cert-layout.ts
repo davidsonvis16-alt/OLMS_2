@@ -28,7 +28,7 @@ export type Op =
   | { k: "circle"; cx: number; cy: number; r: number; fill?: string; stroke?: string; sw?: number; opacity?: number }
   | { k: "path"; d: string; fill?: string; stroke?: string; sw?: number; opacity?: number }
   | { k: "text"; x: number; y: number; text: string; font: FontKey; size: number; color: string; ls?: number; rotate?: number; opacity?: number }
-  | { k: "image"; src: "logo" | "signature" | "qr"; x: number; y: number; w: number; h: number };
+  | { k: "image"; src: "logo" | "signature" | "qr"; x: number; y: number; w: number; h: number; opacity?: number };
 
 type Fonts = Record<FontKey, PDFFont>;
 const r2 = (n: number) => Math.round(n * 100) / 100;
@@ -67,6 +67,8 @@ export function layoutCertificate(d: CertInput, f: Fonts): Op[] {
   }
   // A clear field for the type to sit on.
   ops.push({ k: "rect", x: 40, y: 47, w: W - 80, h: 104, fill: C.paper, opacity: .78 });
+  // Watermark: the Aspire logo, large and faint, behind the name.
+  ops.push({ k: "image", src: "logo", x: r2(CX - (466 / 640) * 45), y: 59, w: r2((466 / 640) * 90), h: 90, opacity: .07 });
 
   // Frame: a strong rule, a hairline, and print-style corner ticks.
   ops.push({ k: "rect", x: 7, y: 7, w: W - 14, h: H - 14, stroke: C.navy, sw: .6 });

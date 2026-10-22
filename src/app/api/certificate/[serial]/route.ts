@@ -70,7 +70,7 @@ async function get(req: Request, { params }: { params: Promise<{ serial: string 
         break;
       case "image":
         if (o.src === "qr") page.drawSvgPath(qr.d, { x: o.x * K, y: PH - o.y * K, scale: (o.w * K) / qr.n, color: hex(C.ink) });
-        else page.drawImage(img[o.src], { x: o.x * K, y: PH - (o.y + o.h) * K, width: o.w * K, height: o.h * K });
+        else page.drawImage(img[o.src], { x: o.x * K, y: PH - (o.y + o.h) * K, width: o.w * K, height: o.h * K, opacity: o.opacity });
         break;
       case "text":
         if (o.ls) page.pushOperators(setCharacterSpacing(o.ls * K));

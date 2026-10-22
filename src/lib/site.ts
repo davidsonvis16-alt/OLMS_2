@@ -20,7 +20,7 @@ export const CATEGORIES = [
 const COURSE_PHOTOS: Record<string, string> = {
   "food-hygiene-safety-food-handlers": "plating",
   "personal-health-hygiene": "hands",
-  "haccp-principles": "thermometer",
+  "haccp-principles": "haccp",
   "food-allergen-awareness": "gloves",
   "fire-safety-fire-marshal": "flame",
   "occupational-safety-health": "prep",
