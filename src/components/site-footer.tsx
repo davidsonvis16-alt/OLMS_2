@@ -18,7 +18,8 @@ export function SiteFooter(_: { dark?: boolean }) {
           <div className="foot-col">
             <h4>Learn</h4>
             <ul>
-              <li><Link href="/courses">All courses</Link></li>
+              <li><Link href="/courses">Free courses</Link></li>
+              <li><Link href="/accredited">Accredited courses</Link></li>
               <li><Link href="/signup">Create an account</Link></li>
               <li><Link href="/login">Sign in</Link></li>
               <li><Link href="/verify">Verify a certificate</Link></li>

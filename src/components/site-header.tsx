@@ -4,7 +4,7 @@ import { SITE } from "@/lib/site";
 import { HeaderShell } from "./header-client";
 
 /** `stage` = the header sits on the dark homepage stage until the visitor scrolls past it. */
-export function SiteHeader({ current, stage }: { current?: "home" | "courses" | "verify" | "business" | "consultancy"; stage?: boolean }) {
+export function SiteHeader({ current, stage }: { current?: "home" | "courses" | "accredited" | "verify" | "business" | "consultancy"; stage?: boolean }) {
   const viewer = useViewer();
   const brand = (
     <Link className="brand" href="/" aria-label={`${SITE.name}, home`}>
@@ -17,7 +17,8 @@ export function SiteHeader({ current, stage }: { current?: "home" | "courses" | 
   const home = viewer?.role === "admin" ? "/admin" : viewer?.companyRole === "owner" ? "/company" : "/dashboard";
   return (
     <HeaderShell brand={brand} stage={stage}>
-      <Link href="/courses" {...cur("courses")}>Courses</Link>
+      <Link href="/courses" {...cur("courses")}>Free courses</Link>
+      <Link href="/accredited" {...cur("accredited")}>Accredited courses</Link>
       <Link href="/consultancy" {...cur("consultancy")}>Consultancy</Link>
       <Link href="/business" {...cur("business")}>For companies</Link>
       <Link href="/verify" {...cur("verify")}>Verify</Link>

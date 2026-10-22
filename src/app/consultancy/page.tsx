@@ -3,7 +3,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Icon } from "@/components/icons";
 import { EnquiryForm, Reveal } from "@/components/forms";
-import { CONSULTANCY, CONSULT_STEPS } from "@/lib/consultancy";
+import { CONSULTANCY, CONSULT_STEPS, FOOD_SAFETY } from "@/lib/consultancy";
 import { SITE, pageTitle, wa } from "@/lib/site";
 
 export const meta = () => [
@@ -49,6 +49,34 @@ export default function Consultancy() {
           </div>
         </section>
 
+        <section className="sec" id="food-safety-solutions" aria-labelledby="c-fs">
+          <div className="wrap">
+            <div className="band">
+              <div className="band-l">
+                <span className="nh-eyebrow">Food safety solutions</span>
+                <h2 className="h-l" id="c-fs">Food safety compliance made easy.</h2>
+                <p className="lede" style={{ marginTop: 18 }}>{FOOD_SAFETY.intro}</p>
+              </div>
+              <div className="band-r">
+                {FOOD_SAFETY.body.map((t) => <p key={t} className="lede" style={{ fontSize: 17, marginBottom: 16 }}>{t}</p>)}
+              </div>
+            </div>
+            <div className="nh-grid" style={{ marginTop: 40 }}>
+              {FOOD_SAFETY.services.map((c, i) => (
+                <div className="nh-cell" key={c.title}>
+                  <span className="nh-num">{String(i + 1).padStart(2, "0")}</span>
+                  <h3>{c.title}</h3>
+                  <p>{c.text}</p>
+                  <a className="nh-more" href="#enquire">Discuss this</a>
+                </div>
+              ))}
+            </div>
+            <div className="row" style={{ marginTop: 32 }}>
+              <Link className="btn btn--ink btn--lg" href="/accredited">Accredited food safety training <Icon name="arrow" /></Link>
+            </div>
+          </div>
+        </section>
+
         <section className="sec sec--night nh-how" aria-labelledby="c-how">
           <div className="wrap">
             <span className="nh-eyebrow">How it works</span>
@@ -70,7 +98,7 @@ export default function Consultancy() {
             <div className="band-r">
               <p className="lede">Every consultancy project can include our online courses: staff study on their phones, pass an assessment and earn a QR-verified certificate, and you see who is ready for inspection day.</p>
               <div className="row" style={{ marginTop: 24 }}>
-                <Link className="btn btn--ink btn--lg" href="/courses">See the courses <Icon name="arrow" /></Link>
+                <Link className="btn btn--ink btn--lg" href="/courses">See the free courses <Icon name="arrow" /></Link>
                 <Link className="btn btn--line btn--lg" href="/business">Company accounts</Link>
               </div>
             </div>
@@ -92,7 +120,7 @@ export default function Consultancy() {
             <div className="contact-form form-card">
               <h3>Send a consultancy enquiry</h3>
               <p>Fill this in, then send it by WhatsApp or email, whichever suits you.</p>
-              <EnquiryForm kind="consultancy" courses={CONSULTANCY.map((c) => c.title)} />
+              <EnquiryForm kind="consultancy" courses={[...CONSULTANCY.map((c) => c.title), ...FOOD_SAFETY.services.map((c) => c.title)]} />
             </div>
           </div>
         </section>

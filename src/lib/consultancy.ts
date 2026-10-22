@@ -32,3 +32,22 @@ export const CONSULT_STEPS = [
   ["Improve", "We help you put things right, with your team."],
   ["Train", "Your staff are trained and can earn Aspire certificates."],
 ] as const;
+
+/** Food safety solutions (marketed under Aspire consultancy). Edit here to change the consultancy page. */
+export const FOOD_SAFETY = {
+  intro: "Aspire is here to guide and train your organisation on the best food safety practices.",
+  body: [
+    "The reputation of a food business is heavily influenced by food safety. Good, safe procedures will ensure that you are doing everything possible to avoid a foodborne illness outbreak. Never overlook the importance of food safety; it's an investment you can't afford to overlook. The science of food safety identifies food handlers as a primary “source” of risk for any food processing establishment, despite the sanitary environment, the standardised design and the use of accurate control resources.",
+    "There is a dangerous gap between knowledge of food safety handling practices and their actual application at the workplace. Throughout its experience supporting chefs, food handlers and business owners, Aspire has identified consistency and follow-up as the two main drivers for an effective implementation of food safety standards. Aspire provides food hygiene training, inspection and consulting services.",
+  ],
+  services: [
+    {
+      title: "International Food Safety Management System (FSMS) consulting",
+      text: "For the fastest and most effective path to earning your international food safety management system certification, our expert consultants are here to help. We ensure you are fully prepared for your audit day.",
+    },
+    {
+      title: "Food safety maintenance and support",
+      text: "Achieving international food safety certification is just the beginning; maintaining proper practices is crucial to uphold your business standards. Aspire offers services to evaluate and maintain your Food Safety Management System, ensuring your operations remain compliant.",
+    },
+  ],
+} as const;
