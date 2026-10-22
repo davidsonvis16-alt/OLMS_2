@@ -70,7 +70,7 @@ export default function Home() {
 
         <section className="wrap nh-cards" aria-label="What we do">
           {[
-            ["/courses?c=food-safety", "/photos/gloves.jpg", "Food safety training"],
+            ["/courses?c=food-safety", "/photos/training-room.jpg", "Food safety training"],
             ["/courses?c=health-safety", "/photos/flame.jpg", "Health & safety"],
             ["/consultancy", "/photos/team.jpg", "Consultancy & audits"],
           ].map(([href, img, label]) => (
