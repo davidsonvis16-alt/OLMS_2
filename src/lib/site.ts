@@ -2,7 +2,7 @@ export const SITE = {
   name: "ASPIRE SAFETY & HYGIENE SOLUTIONS",
   short: "Aspire",
   tagline: "Value, Quality & Service",
-  email: "Aspiresafetystandards@gmail.com",
+  email: "info@aspiresafetyhygienesolutions.co.ke",
   phone: "+254 725 009 705",
   phoneHref: "tel:+254725009705",
   whatsapp: "254725009705",

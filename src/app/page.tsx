@@ -52,8 +52,8 @@ export default function Home() {
           <div className="nh-hero-pic" aria-hidden="true"><img src="/photos/prep.jpg" alt="" /></div>
           <div className="wrap nh-hero-in">
             <span className="nh-eyebrow">Food safety, hygiene &amp; health and safety training · Kenya</span>
-            <h1 id="hero-title" className="nh-title"><span className="sr-only">Safer people. Stronger industries.</span><span aria-hidden="true">Safer <span className="nowrap">pe<span className="lens lens--dial"><img src="/photos/thermometer.jpg" alt="" /></span>ple.</span><br />Stronger industries.</span></h1>
-            <p className="nh-lede"><b>{SITE.name}</b> trains food handlers, kitchen and service teams, supervisors and managers online and on site, and proves it with a certificate anyone can check. <span className="motto">Value, Quality &amp; Service.</span></p>
+            <h1 id="hero-title" className="nh-title"><span className="sr-only">Safe food, happy customers &amp; industry compliant.</span><span aria-hidden="true">Safe <span className="nowrap">f<span className="lens lens--dial"><img src="/photos/thermometer.jpg" alt="" /></span>od,</span><br />happy customers<br /><span className="nowrap">&amp; industry</span> compliant.</span></h1>
+            <p className="nh-lede"><b>{SITE.name}</b> trains food handlers, kitchen and service teams, supervisors and managers online and on site, and proves it with a certificate anyone can check. <span className="motto">We give you value, quality &amp; service.</span></p>
             <div className="row nh-actions">
               <Link className="btn btn--go btn--lg" href="/courses">Explore training</Link>
               <Link className="btn btn--ghost btn--lg" href="/consultancy">Book a consultation <Icon name="arrow" /></Link>
