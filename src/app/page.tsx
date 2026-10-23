@@ -167,10 +167,10 @@ export default function Home() {
         <section className="sec sec--bone" id="certificates" aria-labelledby="cert-title">
           <div className="wrap certshow">
             <div className="certshow-doc rv">
-              <span className="pin" style={{ right: "4%", top: "6%" }}>A</span>
-              <span className="pin" style={{ left: "21%", top: "45%" }}>B</span>
+              <span className="pin" style={{ left: "26%", bottom: "2%" }}>A</span>
+              <span className="pin" style={{ left: "17%", top: "47%" }}>B</span>
               <span className="pin" style={{ left: "5%", bottom: "16%" }}>C</span>
-              <span className="pin" style={{ right: "2.5%", bottom: "28%" }}>D</span>
+              <span className="pin" style={{ right: "1.5%", bottom: "18%" }}>D</span>
               <CertificateView model={sample} />
             </div>
             <div className="certshow-side">

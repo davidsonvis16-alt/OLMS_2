@@ -47,8 +47,8 @@ export function layoutCertificate(d: CertInput, f: Fonts): Op[] {
   };
   const fit = (t: string, font: FontKey, size: number, max: number, min: number) => { let s = size; while (width(t, font, s) > max && s > min) s -= .25; return s; };
 
-  // Paper and security pattern: horizontal waves, a rosette of circles behind the name, microtext.
-  ops.push({ k: "rect", x: 0, y: 0, w: W, h: H, fill: C.paper });
+  // Paper and a light security pattern (fine waves) under everything.
+  ops.push({ k: "rect", x: 0, y: 0, w: W, h: H, fill: "#ffffff" });
   let waves = "";
   for (let y = 14, i = 0; y < H - 10; y += 4.2, i++) {
     // Explicit quadratic segments (no T shorthand) so every renderer draws the same curve.
@@ -56,66 +56,81 @@ export function layoutCertificate(d: CertInput, f: Fonts): Op[] {
     waves += `M9 ${r2(y)}`;
     for (let x = 9, k = i % 2; x < W - 9 - .01; x += half, k++) waves += `Q${x + half / 2} ${r2(y + (k % 2 ? 2.2 : -2.2))} ${x + half} ${r2(y)}`;
   }
-  ops.push({ k: "path", d: waves, stroke: C.wave, sw: .12, opacity: .9 });
-  for (let i = 0; i < 36; i++) {
-    const a = (i / 36) * Math.PI * 2;
-    ops.push({ k: "circle", cx: r2(CX + Math.cos(a) * 12), cy: r2(104 + Math.sin(a) * 12), r: 30, stroke: C.waveG, sw: .14, opacity: .85 });
-  }
-  for (let i = 0; i < 24; i++) {
-    const a = (i / 24) * Math.PI * 2 + .13;
-    ops.push({ k: "circle", cx: r2(CX + Math.cos(a) * 20), cy: r2(104 + Math.sin(a) * 20), r: 46, stroke: C.wave, sw: .12, opacity: .6 });
-  }
-  // A clear field for the type to sit on.
-  ops.push({ k: "rect", x: 40, y: 47, w: W - 80, h: 104, fill: C.paper, opacity: .78 });
+  ops.push({ k: "path", d: waves, stroke: C.wave, sw: .12, opacity: .45 });
   // Watermark: the Aspire logo, large and faint, behind the name.
-  ops.push({ k: "image", src: "logo", x: r2(CX - (466 / 640) * 45), y: 59, w: r2((466 / 640) * 90), h: 90, opacity: .07 });
+  ops.push({ k: "image", src: "logo", x: r2(CX - (466 / 640) * 45), y: 70, w: r2((466 / 640) * 90), h: 90, opacity: .06 });
 
-  // Frame: a strong rule, a hairline, and print-style corner ticks.
-  ops.push({ k: "rect", x: 7, y: 7, w: W - 14, h: H - 14, stroke: C.navy, sw: .6 });
-  ops.push({ k: "rect", x: 9.2, y: 9.2, w: W - 18.4, h: H - 18.4, stroke: C.navy, sw: .18, opacity: .45 });
-  for (const [x, y, dx, dy] of [[4, 4, 1, 1], [W - 4, 4, -1, 1], [4, H - 4, 1, -1], [W - 4, H - 4, -1, -1]] as const) {
-    ops.push({ k: "line", x1: x, y1: y + dy * 5, x2: x, y2: y, stroke: C.navy, sw: .25 });
-    ops.push({ k: "line", x1: x, y1: y, x2: x + dx * 5, y2: y, stroke: C.navy, sw: .25 });
+  // Corners: navy triangles with a green band (top left and bottom right), as on the approved sample.
+  const tri = (pts: number[][], fill: string) => ops.push({ k: "path", d: `M${pts.map((p) => p.join(" ")).join("L")}Z`, fill });
+  tri([[0, 0], [100.5, 0], [0, 100.5], [0, 92.6], [92.6, 0]], C.green);
+  tri([[0, 0], [87, 0], [0, 87]], C.navy);
+  tri([[W, H], [W - 100.5, H], [W, H - 100.5], [W, H - 92.6], [W - 92.6, H]], C.green);
+  tri([[W, H], [W - 87, H], [W, H - 87]], C.navy);
+  // Frame: a navy rule and a fine inner line.
+  ops.push({ k: "rect", x: 5.8, y: 5.8, w: W - 11.6, h: H - 11.6, stroke: C.navy, sw: .55 });
+  ops.push({ k: "rect", x: 7.9, y: 7.9, w: W - 15.8, h: H - 15.8, stroke: C.line, sw: .25 });
+  // "CERTIFIED" along the top-left corner.
+  {
+    const label = "CERTIFIED", size = 4, ls = 2.2, w = width(label, "sans600", size, ls), k = Math.SQRT1_2;
+    const mx = 22, my = 22; // middle of the text, on the navy corner
+    ops.push({ k: "text", x: r2(mx - (w / 2) * k + 1.4 * k), y: r2(my + (w / 2) * k + 1.4 * k), text: label, font: "sans600", size, color: "#ffffff", ls, rotate: -45 });
   }
+  // Microtext along the top edge, clear of the corner.
   const micro = "ASPIRE SAFETY & HYGIENE SOLUTIONS · VALUE, QUALITY & SERVICE · ";
-  let m = micro; while (width(m + micro, "mono", 1.35, .12) < W - 26) m += micro;
-  text(m.trim(), CX, 12.6, "mono", 1.35, C.navy, { ls: .12, align: "middle", opacity: .55 });
+  let m = micro; while (width(m + micro, "mono", 1.35, .12) < 185) m += micro;
+  text(m.trim(), 190, 11.6, "mono", 1.35, C.navy, { ls: .12, align: "middle", opacity: .5 });
 
-  // Header
-  ops.push({ k: "image", src: "logo", x: 20, y: 17, w: r2((466 / 640) * 27), h: 27 });
-  text(SITE.name, 43, 28.5, "sans600", 4.5, C.blue, { ls: .14 });
-  text("Value, Quality & Service.", 43, 35.6, "serifI", 5, C.greenInk);
-  text("CERTIFICATE NO.", W - 20, 24, "mono", 2, C.mute, { ls: .32, align: "end" });
-  text(d.serial, W - 20, 30.2, "mono", 3.9, C.ink, { ls: .1, align: "end" });
+  // Badge: the logo inside a navy laurel.
+  {
+    const bx = CX, by = 41, box = 40, sc = box / 200;
+    const pt = (u: number, v: number) => `${r2(bx - box / 2 + u * sc)} ${r2(by - box / 2 + v * sc)}`;
+    const R = 84;
+    for (const side of [-1, 1]) {
+      const a0 = Math.PI / 2 + side * .32, a1 = Math.PI / 2 + side * 2.55;
+      let stem = "";
+      for (let i = 0; i <= 24; i++) { const a = a0 + (a1 - a0) * i / 24; stem += `${i ? "L" : "M"}${pt(100 + Math.cos(a) * R, 100 + Math.sin(a) * R)}`; }
+      ops.push({ k: "path", d: stem, stroke: C.navy, sw: .45 });
+      for (let i = 0; i < 8; i++) {
+        const a = a0 + (a1 - a0) * (i + .5) / 8, x = 100 + Math.cos(a) * R, y = 100 + Math.sin(a) * R;
+        const sk = 1 - i * .035;
+        for (const o of [-1, 1]) {
+          const t = ((a * 180) / Math.PI + (side > 0 ? 90 : -90) + 180 + o * 42) * Math.PI / 180, c = Math.cos(t), sn = Math.sin(t);
+          const tp = (lx: number, ly: number) => pt(x + (lx * c - ly * sn) * sk, y + (lx * sn + ly * c) * sk);
+          ops.push({ k: "path", d: `M${tp(0, 0)}C${tp(7, -6)} ${tp(7, -16)} ${tp(0, -24)}C${tp(-7, -16)} ${tp(-7, -6)} ${tp(0, 0)}Z`, fill: C.navy });
+        }
+      }
+    }
+    ops.push({ k: "image", src: "logo", x: r2(bx - (466 / 640) * 13.75), y: r2(by - 13.75), w: r2((466 / 640) * 27.5), h: 27.5 });
+  }
+  text(SITE.name, CX, 68.5, "sans600", fit(SITE.name, "sans600", 4.2, 150, 3), C.blue, { ls: .9, align: "middle" });
 
   // Body
-  text("AWARDED ON SUCCESSFUL COMPLETION", CX, 58, "mono", 2.3, C.mute, { ls: .95, align: "middle" });
-  text("Certificate of Achievement", CX, 72, "serif", fit("Certificate of Achievement", "serif", 13.5, 200, 9), C.navy, { align: "middle" });
-  text("This is to certify that", CX, 84.5, "serifI", 5.2, C.mute, { align: "middle" });
+  text("Certificate of Achievement", CX, 84, "serif", fit("Certificate of Achievement", "serif", 13.5, 200, 9), C.navy, { align: "middle" });
+  text("This is to certify that", CX, 94, "serifI", 5.2, C.mute, { align: "middle" });
   const ns = fit(d.fullName, "serifI", 15, 200, 7.5);
-  const nw = text(d.fullName, CX, 102, "serifI", ns, C.blue, { align: "middle" });
-  const rule = Math.min(220, Math.max(110, nw + 24));
-  ops.push({ k: "line", x1: r2(CX - rule / 2), y1: 106.2, x2: r2(CX + rule / 2), y2: 106.2, stroke: C.navy, sw: .2, opacity: .5 });
-  text(`ID / PASSPORT NO.  ${d.idNumber}`, CX, 113, "mono", 2.6, C.mute, { ls: .45, align: "middle" });
-  text("has successfully completed the course", CX, 124, "serifI", 5.2, C.mute, { align: "middle" });
-  text(d.course, CX, 136, "serif600", fit(d.course, "serif600", 8.6, 215, 5), C.navy, { align: "middle" });
+  const nw = text(d.fullName, CX, 109, "serifI", ns, C.blue, { align: "middle" });
+  const rule = Math.min(200, Math.max(110, nw + 10));
+  ops.push({ k: "line", x1: r2(CX - rule / 2), y1: 113.5, x2: r2(CX + rule / 2), y2: 113.5, stroke: C.green, sw: .6 });
+  text(`ID / PASSPORT NO.  ${d.idNumber}`, CX, 119.5, "mono", 2.6, C.mute, { ls: .45, align: "middle" });
+  text("has successfully completed the course", CX, 127.5, "serifI", 5.2, C.mute, { align: "middle" });
+  text(d.course, CX, 137.5, "serif600", fit(d.course, "serif600", 8.6, 200, 5), C.navy, { align: "middle" });
   if (d.modules.length) {
     const words = `Modules: ${d.modules.join("  ·  ")}`.split(" ");
     const lines: string[] = []; let cur = "";
-    for (const w of words) { const t = cur ? `${cur} ${w}` : w; if (width(t, "sans500", 2.9) > 196 && cur) { lines.push(cur); cur = w; } else cur = t; }
+    for (const w of words) { const t = cur ? `${cur} ${w}` : w; if (width(t, "sans500", 2.9) > 180 && cur) { lines.push(cur); cur = w; } else cur = t; }
     if (cur) lines.push(cur);
-    lines.slice(0, 3).forEach((l, i) => text(l, CX, 143.6 + i * 4.3, "sans500", 2.9, C.mute, { align: "middle" }));
+    lines.slice(0, 3).forEach((l, i) => text(l, CX, 144.2 + i * 4.1, "sans500", 2.9, C.mute, { align: "middle" }));
   }
 
   // Signature (bottom left)
-  ops.push({ k: "image", src: "signature", x: 22, y: 157, w: r2((486 / 161) * 17), h: 17 });
-  text("AUTHORISED SIGNATORY", 22, 180.4, "mono", 2, C.mute, { ls: .3 });
-  text(SITE.name, 22, 184.6, "sans500", 2.3, C.ink);
-  if (d.companyName) text(`Sponsored by ${d.companyName}`, 22, 189, "sans500", 2.3, C.mute);
+  ops.push({ k: "image", src: "signature", x: 24, y: 160, w: r2((486 / 161) * 17), h: 17 });
+  text("AUTHORISED SIGNATORY", 24, 183, "mono", 2, C.mute, { ls: .3 });
+  text(SITE.name, 24, 187.2, "sans500", 2.3, C.ink);
+  if (d.companyName) text(`Sponsored by ${d.companyName}`, 24, 191.4, "sans500", 2.3, C.mute);
 
   // Seal (bottom centre). HACCP courses also carry the gold "HACCP Certified" seal beside it.
   const haccp = /haccp/i.test(d.course);
-  const sx = haccp ? CX - 20 : CX, sy = 172;
+  const sx = haccp ? CX - 20 : CX, sy = 173;
   if (haccp) ops.push({ k: "image", src: "seal", x: r2(CX + 20 - (538 / 600) * 16), y: sy - 16, w: r2((538 / 600) * 32), h: 32 });
   let star = "";
   for (let i = 0; i < 72; i++) {
@@ -138,17 +153,13 @@ export function layoutCertificate(d: CertInput, f: Fonts): Op[] {
   text(`${d.score}%`, sx, sy + 3.2, "sans600", 6, C.green, { align: "middle" });
   text("PASSED", sx, sy + 6.6, "mono", 1.75, "#ffffff", { ls: .4, align: "middle" });
 
-  // Meta + QR (bottom right)
+  // Certificate details under the seal, QR code (bottom right)
   const date = new Date(d.issuedAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
-  text("FINAL MARK", 244, 165, "mono", 2, C.mute, { ls: .3, align: "end" });
-  text(`${d.score}%`, 244, 170.4, "mono", 3.6, C.ink, { align: "end" });
-  text("DATE OF ISSUE", 244, 178, "mono", 2, C.mute, { ls: .3, align: "end" });
-  text(date, 244, 183.4, "mono", 3.6, C.ink, { align: "end" });
-  ops.push({ k: "rect", x: 249, y: 158, w: 28, h: 28, fill: "#ffffff", stroke: C.line, sw: .2 });
-  ops.push({ k: "image", src: "qr", x: 251, y: 160, w: 24, h: 24 });
-  text("SCAN TO VERIFY", 263, 190, "mono", 1.6, C.mute, { ls: .3, align: "middle" });
-
-  text(`Verify at ${d.verifyUrl.replace(/^https?:\/\//, "")}`, CX, 197.4, "mono", 1.9, C.mute, { ls: .1, align: "middle" });
+  text(`CERTIFICATE NO. ${d.serial}  ·  FINAL MARK ${d.score}%  ·  ISSUED ${date.toUpperCase()}`, CX, 194.8, "mono", 2.2, C.ink, { ls: .25, align: "middle" });
+  text(`Verify at ${d.verifyUrl.replace(/^https?:\/\//, "")}`, CX, 199, "mono", 1.9, C.mute, { ls: .1, align: "middle" });
+  ops.push({ k: "rect", x: 246, y: 163, w: 26, h: 26, fill: "#ffffff", stroke: C.line, sw: .2 });
+  ops.push({ k: "image", src: "qr", x: 248, y: 165, w: 22, h: 22 });
+  text("SCAN TO VERIFY", 259, 193, "mono", 1.6, "#ffffff", { ls: .3, align: "middle" });
 
   if (d.stamp) {
     const label = "SAMPLE";
