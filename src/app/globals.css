@@ -1100,7 +1100,7 @@ body { background: #fbfaf6; }
 .nh-cell ul { margin: 14px 0 0; padding-left: 18px; color: var(--ink-2); font-size: 14.5px; line-height: 1.8; }
 .nh-more { display: inline-block; margin-top: 18px; font-size: 13.5px; font-weight: 700; color: var(--ink); text-decoration: none; border-bottom: 1px solid currentColor; }
 .nh-more:hover { color: var(--blue); }
-.nh-award { display: grid; grid-template-columns: 160px 1fr; gap: 24px; align-items: center; margin-top: 24px; padding: 20px; background: #fbfaf6; border: 1px solid var(--line-2); border-radius: var(--r); }
+.nh-award { display: grid; grid-template-columns: 260px 1fr; gap: 24px; align-items: center; margin-top: 24px; padding: 20px; background: #fbfaf6; border: 1px solid var(--line-2); border-radius: var(--r); }
 .nh-award img { width: 100%; height: auto; border-radius: 4px; }
 .nh-award h3 { font-family: var(--display); font-size: 22px; font-weight: 700; }
 .nh-award p { color: var(--mute); margin-top: 6px; }
@@ -1120,7 +1120,7 @@ body { background: #fbfaf6; }
   .nh-cell { border-right: 0 !important; border-bottom: 1px solid var(--line-2) !important; }
   .nh-cell:last-child { border-bottom: 0 !important; }
   .nh-stats { grid-template-columns: repeat(3, 1fr); width: 100%; }
-  .nh-award { grid-template-columns: 96px 1fr; }
+  .nh-award { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
   .nh-stats div { padding: 14px 12px; }

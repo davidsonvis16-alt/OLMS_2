@@ -238,11 +238,11 @@ export default function Home() {
               ))}
             </div>
             <aside className="nh-award">
-              <img src="/brand/certificate-gold.jpg" alt="Framed Aspire Food Hygiene Training Standards Gold award" loading="lazy" width={1164} height={1400} />
+              <img src="/brand/hygiene-certificate.jpg" alt="Aspire Annual Food Hygiene Certificate, compliant to public health" loading="lazy" width={1200} height={848} />
               <div>
-                <span className="nh-eyebrow">On the wall</span>
-                <h3>The Aspire Food Hygiene Training Standards award</h3>
-                <p>Businesses that train with Aspire can display the award for customers and inspectors.</p>
+                <span className="nh-eyebrow">Credentials and assurance</span>
+                <h3>A certificate of hygiene for your business</h3>
+                <p>The business will have a certificate of hygiene to prove compliance with public health regulations.</p>
               </div>
             </aside>
           </div>
