@@ -1,0 +1,132 @@
+/**
+ * Food safety & hygiene compliance tools (from the client's "Food Safety Hygiene Compliance Tools" document).
+ * Prices: set `price` (KES) on a tool to show it; leave it null to show "Price on request".
+ */
+export type Tool = { id: string; name: string; text: string; points: string[]; price: number | null };
+export type ToolGroup = { id: string; title: string; intro: string; tools: Tool[] };
+
+export const TOOLS_INTRO = {
+  title: "Food safety compliance made easy.",
+  lede: "Instruments and digital tools that help your team prove hygiene, temperature and water quality at every control point, ready for any audit or inspection.",
+  digital: {
+    title: "Your HACCP plan works 24/7. So does compliance and verification.",
+    text: "Complete digital food safety management without the burden of paper logbooks or missed temperature checks. From continuous wireless monitoring to daily digital HACCP routines, Aspire Safety & Hygiene Solutions gives you total kitchen control and instant audit-readiness across every site.",
+  },
+};
+
+export const TOOL_GROUPS: ToolGroup[] = [
+  {
+    id: "hygiene",
+    title: "Hygiene monitoring",
+    intro: "Check that surfaces, hands and air are really clean, with a reading you can record.",
+    tools: [
+      { id: "atp-2", name: "ATP-2 ATP Fluorescence Detector", price: null,
+        text: "Detect surface cleanliness in seconds. Measures surface cleanliness and total bacterial levels using ATP bioluminescence, giving a fast pass/fail reading at any HACCP control point.",
+        points: ["Results from 0 to 9999 RLU in 1 to 60 seconds", "Detection limit of ≤1.0 CFU/ml", "RLU or coliform screening modes", "Stores over 3000 results, transfer to PC via USB"] },
+      { id: "atp-1", name: "ATP-1 Portable ATP Hygiene Monitoring System", price: null,
+        text: "A powerful tool for implementing and managing your hygiene monitoring programme, with clear Pass, Caution or Fail results any user understands.",
+        points: ["Result in 10 seconds per test", "3.5\" colour screen, under 300 g", "10,000 results, 255 test plans and user IDs", "USB and Bluetooth; works with other brands' swabs"] },
+      { id: "fkc-1", name: "FKC-1 Air Bacteria Sampler", price: null,
+        text: "A microbial air sampler for checking airborne bacteria in kitchens, food production areas and clean rooms.",
+        points: ["Sampling flow rate of 100 L/min", "Sampling volume settable from 0.001 to 9.999 m³", "Uses standard Φ90 mm Petri dishes", "Runs 7 hours on a charge"] },
+    ],
+  },
+  {
+    id: "water",
+    title: "Water quality",
+    intro: "Test drinking water, sanitiser strength and pools quickly on site.",
+    tools: [
+      { id: "mw10", name: "MW10 Free Chlorine Tester", price: null,
+        text: "A compact, easy-to-use handheld photometer that measures free chlorine.",
+        points: ["Pocket-sized with a clear digital display", "Simple one-button operation"] },
+      { id: "amt22", name: "AMT22 Free & Total Chlorine Meter", price: null,
+        text: "A water quality meter for measuring free and total chlorine in drinking water, sanitising solutions and pools.",
+        points: ["Free and total chlorine", "For kitchens, pools and water treatment"] },
+      { id: "water-5in1", name: "5-in-1 Water Quality Meter", price: null,
+        text: "Measures pH, TDS, EC, temperature and salt at the same time, with real-time readings on a digital display.",
+        points: ["pH, TDS, EC, temperature and salt", "IP65 dustproof and waterproof", "For drinking water, pools, spas and labs", "One-year warranty"] },
+      { id: "yd300", name: "YD300 Portable Water Hardness Tester", price: null,
+        text: "A portable tester for measuring water hardness on site.",
+        points: ["Portable, battery powered", "Clear digital display"] },
+      { id: "df006", name: "DF006 Water Test Strips, 7 in 1", price: null,
+        text: "Test strips for drinking water, pools, spas and ponds, stored in a light-proof, sealed bottle.",
+        points: ["Hardness, bromine, free chlorine, pH, total alkalinity, total chlorine and cyanuric acid", "100 strips per bottle"] },
+      { id: "ph-paper", name: "pH Test Paper 0–14", price: null,
+        text: "Quick pH testing for water, pools, spas and food kitchens.",
+        points: ["pH range 0–14", "Fast colour readout"] },
+    ],
+  },
+  {
+    id: "temperature",
+    title: "Temperature control",
+    intro: "Accurate cooking, cooling and holding temperatures, the core of every HACCP plan.",
+    tools: [
+      { id: "ip68-probe", name: "IP68 HACCP Waterproof Digital Thermometer", price: null,
+        text: "A handheld HACCP thermometer with a food-grade stainless steel probe, for kitchen cooking or industry.",
+        points: ["Temperature alarm with settable limit", "Sealed waterproof probe on a 1.5 m cable", "Max/min memory, °C/°F", "Desk stand, wall mount and magnets"] },
+      { id: "instant-read", name: "Instant-Read Digital Food Thermometer", price: null,
+        text: "Ultra-fast readings in 3 seconds, with a bright backlit display for low light.",
+        points: ["-50°C to 300°C, ±1°C accuracy", "IP67 waterproof", "Food-grade 304 stainless steel probe", "Auto-off after 10 minutes"] },
+      { id: "dt-103", name: "DT-103 Waterproof Kitchen Digital Thermometer", price: null,
+        text: "A stainless steel probe thermometer for indoor and outdoor cooking, with a 3–4 second response.",
+        points: ["-20°C to 300°C, ±1°C accuracy", "Food-safe 304 stainless steel probe", "Magnet on the back", "CE, FCC and RoHS certified"] },
+      { id: "dt-139", name: "DT-139 Smart Wireless Meat Thermometer", price: null,
+        text: "A wireless probe thermometer with a rotating full-colour display and phone app, for grills, ovens and smokers.",
+        points: ["250 m (820 ft) wireless range", "Ultra-thin 4.2 mm probe with dual sensors", "±1°C accuracy, IP67 waterproof", "iOS and Android app"] },
+      { id: "infrared", name: "Industrial Non-Contact Infrared Thermometer", price: null,
+        text: "Measure food and surface temperatures without touching, for food processing.",
+        points: ["-50°C to 550°C", "500 ms response time", "Adjustable emissivity 0.1–1.0", "CE and RoHS certified"] },
+      { id: "timer", name: "Digital Countdown Timer", price: null,
+        text: "A magnetic stainless steel kitchen timer with a loud alarm, for food production and cooking.",
+        points: ["Counts up and down to 99 min 59 s", "Loud alarm and auto-off", "Magnetic back and built-in stand"] },
+    ],
+  },
+  {
+    id: "digital",
+    title: "Digital monitoring & records",
+    intro: "Continuous temperature records without paper logbooks.",
+    tools: [
+      { id: "th30", name: "Bluetag TH30 Wireless Temperature & Humidity Logger", price: null,
+        text: "A Bluetooth data logger with external probe for fridges, cold rooms and cold chain, with real-time and history in a phone app.",
+        points: ["Bluetooth 5.2, optional NFC", "IP67 waterproof", "Logging every 1 minute to 24 hours", "CE, FCC, FDA, RoHS and EN12830"] },
+      { id: "fresh-tag-1d", name: "Fresh Tag 1D Disposable Temperature Logger", price: null,
+        text: "A single-use logger with LCD display that creates an unmodifiable PDF report when plugged into a PC. Ideal for cold chain deliveries.",
+        points: ["Automatic PDF report via USB, no software", "IP67 waterproof", "Up to 180 days of logging", "CE, RoHS, EN12830 and FDA"] },
+    ],
+  },
+  {
+    id: "food-quality",
+    title: "Frying oil & food quality",
+    intro: "Know when to change frying oil, and check sugar, salt and moisture.",
+    tools: [
+      { id: "os280", name: "OS280 Cooking Oil TPM Tester", price: null,
+        text: "Fast, on-site measurement of total polar materials and oil temperature, so you change frying oil at the right time.",
+        points: ["Total polar materials (TPM) and temperature", "Fast reading on site"] },
+      { id: "oil-strips", name: "Cooking Oil Quality Test Strips", price: null,
+        text: "Simple strips for checking the quality of cooking and frying oil.",
+        points: ["30 strips per bottle", "Quick colour check"] },
+      { id: "refractometer-brix", name: "Handheld Refractometer (Brix & Salinity)", price: null,
+        text: "Measures sugar and salt concentration, for honey, juices, sauces and brines.",
+        points: ["0–32% Brix", "0–28% salinity"] },
+      { id: "amr300", name: "AMR300 Digital Refractometer", price: null,
+        text: "A digital refractometer for fast, accurate concentration readings.",
+        points: ["Digital display", "Compact and portable"] },
+      { id: "rcm-1000bt", name: "RCM-1000BT Coffee Refractometer", price: null,
+        text: "Measures coffee concentration (TDS) for consistent brewing.",
+        points: ["Digital readout", "Bluetooth connection"] },
+      { id: "gm006", name: "GM006 AMT155 Grain Moisture Tester", price: null,
+        text: "Checks the moisture content of grain to protect storage quality.",
+        points: ["Digital moisture reading", "Portable for stores and warehouses"] },
+    ],
+  },
+  {
+    id: "fire",
+    title: "Fire safety",
+    intro: "Find gas leaks before they become fires.",
+    tools: [
+      { id: "gas-detector", name: "JL269 Gas Leakage Detector", price: null,
+        text: "Quick response to combustible gas leaks, with a long flexible gooseneck to reach pipes and fittings.",
+        points: ["Detects natural gas and LPG", "Better than 50 ppm sensitivity", "30-level green/yellow/red indicator and alarm", "Rechargeable, over 8 hours use"] },
+    ],
+  },
+];

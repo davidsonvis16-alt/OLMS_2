@@ -56,6 +56,7 @@ export default function Consultancy() {
                 <span className="nh-eyebrow">Food safety solutions</span>
                 <h2 className="h-l" id="c-fs">Food safety compliance made easy.</h2>
                 <p className="lede" style={{ marginTop: 18 }}>{FOOD_SAFETY.intro}</p>
+                <img className="fs-award" src="/brand/platinum-award.jpg" alt="Aspire Platinum Award, Food Safety" loading="lazy" width={700} height={900} />
               </div>
               <div className="band-r">
                 {FOOD_SAFETY.body.map((t) => <p key={t} className="lede" style={{ fontSize: 17, marginBottom: 16 }}>{t}</p>)}
@@ -73,6 +74,7 @@ export default function Consultancy() {
             </div>
             <div className="row" style={{ marginTop: 32 }}>
               <Link className="btn btn--ink btn--lg" href="/accredited">Accredited food safety training <Icon name="arrow" /></Link>
+              <Link className="btn btn--line btn--lg" href="/tools">Compliance tools</Link>
             </div>
           </div>
         </section>

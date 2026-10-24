@@ -1278,3 +1278,17 @@ details.adv[open] > summary { margin-bottom: 16px; }
 @media (max-width: 760px) { .details-cert { grid-template-columns: 1fr; } }
 .claim-preview .cert-stage { transition: opacity .2s; }
 .claim-preview.is-updating .cert-stage { opacity: .75; }
+
+/* Compliance tools page */
+.tool-grid { list-style: none; margin: 36px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+.tool { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line-2); border-radius: var(--r); overflow: hidden; }
+.tool-pic { aspect-ratio: 1; background: #fff; border-bottom: 1px solid var(--line-2); }
+.tool-pic img { width: 100%; height: 100%; object-fit: contain; }
+.tool-body { padding: 18px 20px 6px; flex: 1; }
+.tool-body h3 { font-size: 18px; font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
+.tool-body p { color: var(--ink-2); font-size: 14.5px; margin-top: 8px; }
+.tool-body ul { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 5px; }
+.tool-body li { font-size: 13.5px; color: var(--mute); padding-left: 16px; position: relative; }
+.tool-body li::before { content: ""; position: absolute; left: 0; top: .62em; width: 8px; height: 2px; background: var(--green); }
+.tool-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 20px; border-top: 1px solid var(--line); font-size: 14px; }
+.fs-award { display: block; width: 100%; height: auto; margin-top: 28px; max-width: 280px; border-radius: var(--r); box-shadow: 0 24px 50px -28px rgba(13, 13, 36, .55); }

@@ -20,6 +20,7 @@ export function SiteFooter(_: { dark?: boolean }) {
             <ul>
               <li><Link href="/courses">Free courses</Link></li>
               <li><Link href="/accredited">Accredited courses</Link></li>
+              <li><Link href="/tools">Compliance tools</Link></li>
               <li><Link href="/signup">Create an account</Link></li>
               <li><Link href="/login">Sign in</Link></li>
               <li><Link href="/verify">Verify a certificate</Link></li>

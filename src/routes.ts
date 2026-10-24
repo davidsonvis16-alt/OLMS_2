@@ -6,6 +6,7 @@ export default [
   route("courses", "app/courses/page.tsx"),
   route("courses/:slug", "app/courses/[slug]/page.tsx"),
   route("accredited", "app/accredited/page.tsx"),
+  route("tools", "app/tools/page.tsx"),
   route("consultancy", "app/consultancy/page.tsx"),
   route("business", "app/business/page.tsx"),
   route("verify", "app/verify/page.tsx"),
