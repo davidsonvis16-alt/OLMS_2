@@ -1100,7 +1100,7 @@ body { background: #fbfaf6; }
 .nh-cell ul { margin: 14px 0 0; padding-left: 18px; color: var(--ink-2); font-size: 14.5px; line-height: 1.8; }
 .nh-more { display: inline-block; margin-top: 18px; font-size: 13.5px; font-weight: 700; color: var(--ink); text-decoration: none; border-bottom: 1px solid currentColor; }
 .nh-more:hover { color: var(--blue); }
-.nh-award { display: grid; grid-template-columns: 260px 1fr; gap: 24px; align-items: center; margin-top: 24px; padding: 20px; background: #fbfaf6; border: 1px solid var(--line-2); border-radius: var(--r); }
+.nh-award { display: grid; grid-template-columns: 440px 1fr; gap: 24px; align-items: center; margin-top: 24px; padding: 20px; background: #fbfaf6; border: 1px solid var(--line-2); border-radius: var(--r); }
 .nh-award img { width: 100%; height: auto; border-radius: 4px; }
 .nh-award h3 { font-family: var(--display); font-size: 22px; font-weight: 700; }
 .nh-award p { color: var(--mute); margin-top: 6px; }
@@ -1292,3 +1292,5 @@ details.adv[open] > summary { margin-bottom: 16px; }
 .tool-body li::before { content: ""; position: absolute; left: 0; top: .62em; width: 8px; height: 2px; background: var(--green); }
 .tool-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 20px; border-top: 1px solid var(--line); font-size: 14px; }
 .fs-award { display: block; width: 100%; height: auto; margin-top: 28px; max-width: 280px; border-radius: var(--r); box-shadow: 0 24px 50px -28px rgba(13, 13, 36, .55); }
+
+.nh-award-pics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }

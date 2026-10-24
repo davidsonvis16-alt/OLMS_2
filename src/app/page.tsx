@@ -238,7 +238,10 @@ export default function Home() {
               ))}
             </div>
             <aside className="nh-award">
-              <img src="/brand/hygiene-certificate.jpg" alt="Aspire Annual Food Hygiene Certificate, compliant to public health" loading="lazy" width={1200} height={848} />
+              <div className="nh-award-pics">
+                <img src="/brand/hygiene-certificate.jpg" alt="Aspire Annual Food Hygiene Certificate, compliant to public health" loading="lazy" width={1200} height={848} />
+                <img src="/brand/hygiene-certificate-2.jpg" alt="Aspire Certificate of Food Hygiene, compliant to public health" loading="lazy" width={1200} height={848} />
+              </div>
               <div>
                 <span className="nh-eyebrow">Credentials and assurance</span>
                 <h3>A certificate of hygiene for your business</h3>

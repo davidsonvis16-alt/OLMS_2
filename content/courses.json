@@ -2117,5 +2117,190 @@
     ]
    }
   ]
+ },
+ {
+  "slug": "coshh-awareness",
+  "deck": "COSHH_Powerpoint_NEW",
+  "title": "Introduction to COSHH",
+  "category": "health-safety",
+  "categories": [
+   "health-safety",
+   "hospitality"
+  ],
+  "summary": "Working safely with chemicals and other substances hazardous to health: the COSHH rules, who is responsible, safety data sheets, hazard symbols, PPE and first aid.",
+  "topics": [
+   "What COSHH is and who it applies to",
+   "Risk assessments and the hierarchy of control",
+   "Chemical safety, hazard symbols, PPE and first aid"
+  ],
+  "assignment": "Choose one cleaning chemical used in your workplace. Using its label or safety data sheet, describe its hazards, how it should be stored and handled, the PPE needed, and the first aid steps if someone is exposed.",
+  "modules": [
+   {
+    "title": "An introduction to COSHH",
+    "pages": [
+     1,
+     13
+    ],
+    "quiz": [
+     {
+      "prompt": "What does COSHH stand for?",
+      "options": [
+       "Contact of Substances Hazardous to Health",
+       "Combination of Substances Hazardous to Health",
+       "Control of Subjects Hazardous to Health",
+       "Control of Substances Hazardous to Health"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "When did the current COSHH Regulations come into force?",
+      "options": [
+       "21 January 2020",
+       "21 October 1999",
+       "21 November 2002",
+       "Only in 1988"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "What does COSHH cover?",
+      "options": [
+       "Chemicals and other substances hazardous to health",
+       "Fire incidents",
+       "Personal injury",
+       "Only home safety"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "What does COSHH NOT cover?",
+      "options": [
+       "Hazards solely due to radioactivity",
+       "Hazards of flammability",
+       "Explosion, temperature or pressure",
+       "All of the hazards listed in the other answers"
+      ],
+      "answer": [
+       3
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Who has duties under COSHH",
+    "pages": [
+     14,
+     25
+    ],
+    "quiz": [
+     {
+      "prompt": "Who is responsible for COSHH?",
+      "options": [
+       "Only employers",
+       "Only employees",
+       "Both employers and employees, working together",
+       "Only self-employed people"
+      ],
+      "answer": [
+       2
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "Do employees need COSHH training?",
+      "options": [
+       "Yes. Employees liable to be exposed need suitable and sufficient information, instruction and training",
+       "No, there is no need for instruction or training",
+       "Only if they don't care about controls and emergencies",
+       "Only if they are paid extra for it"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "What can happen if COSHH is breached?",
+      "options": [
+       "Prosecution and enforcement notices",
+       "Nothing, there are no fines",
+       "Company officers can never be prosecuted",
+       "Only a verbal warning"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "Chemicals & detergents safety",
+    "pages": [
+     26,
+     45
+    ],
+    "quiz": [
+     {
+      "prompt": "Which of the following is NOT part of chemical safety?",
+      "options": [
+       "Always treat chemicals casually to show familiarity and competence",
+       "Always wear protective equipment: eye protection, gloves and workwear",
+       "Always replace the closures on containers",
+       "Always store chemicals correctly"
+      ],
+      "answer": [
+       0
+      ],
+      "source": "deck"
+     }
+    ]
+   },
+   {
+    "title": "First aid & safety",
+    "pages": [
+     46,
+     57
+    ],
+    "quiz": [
+     {
+      "prompt": "What does PPE mean?",
+      "options": [
+       "Private Property Equipment",
+       "Personal Protective Equipment",
+       "Private Personal Equipment",
+       "Person Protect Equipment"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     },
+     {
+      "prompt": "If there is a chemical accident at work, what should you do?",
+      "options": [
+       "Shout and scream for help",
+       "Give the right first aid, such as rinsing with running water, and seek medical attention",
+       "Wipe off the chemical and report to the supervisor later",
+       "Ignore it and continue working"
+      ],
+      "answer": [
+       1
+      ],
+      "source": "deck"
+     }
+    ]
+   }
+  ]
  }
 ]

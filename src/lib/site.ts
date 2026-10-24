@@ -26,6 +26,7 @@ const COURSE_PHOTOS: Record<string, string> = {
   "occupational-safety-health": "ohs",
   "kitchen-hygiene-sanitation": "kitchen-cleaning",
   "integrated-pest-control": "pest-control",
+  "coshh-awareness": "coshh",
 };
 const CATEGORY_PHOTOS: Record<string, string> = { "food-safety": "plating", "health-safety": "prep", hospitality: "team" };
 
