@@ -18,7 +18,7 @@ export default function Tools() {
       <SiteHeader current="tools" />
       <main id="main">
         <section className="nh-hero nh-hero--short" aria-labelledby="t-title">
-          <div className="nh-hero-pic" aria-hidden="true"><img src="/photos/clean-kitchen.jpg" alt="" /></div>
+          <div className="nh-hero-pic" aria-hidden="true"><img src="/photos/inspection.jpg" alt="" /></div>
           <div className="wrap nh-hero-in">
             <span className="nh-eyebrow">Compliance tools · Kenya</span>
             <h1 id="t-title" className="nh-title" style={{ maxWidth: "16ch" }}>{TOOLS_INTRO.title}</h1>
