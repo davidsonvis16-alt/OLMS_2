@@ -17,11 +17,11 @@ export default function Consultancy() {
       <SiteHeader current="consultancy" />
       <main id="main">
         <section className="nh-hero nh-hero--short" aria-labelledby="c-title">
-          <div className="nh-hero-pic" aria-hidden="true"><img src="/photos/hero.jpg" alt="" /></div>
+          <div className="nh-hero-pic" aria-hidden="true"><img src="/photos/consultancy.jpg" alt="" /></div>
           <div className="wrap nh-hero-in">
             <span className="nh-eyebrow">Aspire consultancy · Kenya</span>
             <h1 id="c-title" className="nh-title" style={{ maxWidth: "14ch" }}>Expert help for your kitchen.</h1>
-            <p className="nh-lede">Aspire helps you plan and ready your kitchen, build food safety systems that pass audits and accreditation, improve day-to-day operations, and design food service for hospitals. <span className="motto">Value, Quality &amp; Service.</span></p>
+            <p className="nh-lede">Aspire helps you plan and ready your kitchen, build food safety systems that pass audits and accreditation, improve day-to-day operations, and design food service for hospitals. <span className="motto">We give you value, quality &amp; service.</span></p>
             <div className="row nh-actions">
               <a className="btn btn--go btn--lg" href="#enquire">Book a consultation</a>
               <a className="btn btn--ghost btn--lg" href={wa("Hello Aspire, I'd like to discuss a consultancy project.")} target="_blank" rel="noopener"><Icon name="whatsapp" />WhatsApp us</a>
