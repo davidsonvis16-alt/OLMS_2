@@ -1294,3 +1294,5 @@ details.adv[open] > summary { margin-bottom: 16px; }
 .fs-award { display: block; width: 100%; height: auto; margin-top: 28px; max-width: 280px; border-radius: var(--r); box-shadow: 0 24px 50px -28px rgba(13, 13, 36, .55); }
 
 .nh-award-pics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sec--photo { background-size: cover; background-position: center; }
+.sec--photo .lede, .sec--photo .h-l { color: #fff; }

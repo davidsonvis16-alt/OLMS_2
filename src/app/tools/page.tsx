@@ -31,11 +31,11 @@ export default function Tools() {
           <div className="wrap" style={{ paddingBottom: 48 }} />
         </section>
 
-        <section className="sec sec--night" aria-labelledby="t-digital">
+        <section className="sec sec--night sec--photo" aria-labelledby="t-intro" style={{ backgroundImage: "linear-gradient(rgba(11, 11, 31, .78), rgba(11, 11, 31, .78)), url(/photos/inspection.jpg)" }}>
           <div className="wrap band">
             <div className="band-l">
               <span className="nh-eyebrow">Aspire digital food safety solutions</span>
-              <h2 className="h-l" id="t-digital">{TOOLS_INTRO.digital.title}</h2>
+              <h2 className="h-l" id="t-intro">{TOOLS_INTRO.digital.title}</h2>
             </div>
             <div className="band-r"><p className="lede">{TOOLS_INTRO.digital.text}</p></div>
           </div>
