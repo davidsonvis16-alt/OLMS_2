@@ -53,6 +53,16 @@ describe("only allow-listed https video players can be embedded", () => {
     expect(safeVideoUrl("https://www.youtube-nocookie.com/embed/abc")).toBe("https://www.youtube-nocookie.com/embed/abc");
     expect(safeVideoUrl("https://iframe.mediadelivery.net/embed/1/2")).toBeTruthy();
   });
+  it("turns normal YouTube and Vimeo share links into embeds", () => {
+    const e = "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ";
+    expect(safeVideoUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ")).toBe(e);
+    expect(safeVideoUrl("https://youtu.be/dQw4w9WgXcQ?si=abc")).toBe(e);
+    expect(safeVideoUrl("https://m.youtube.com/watch?v=dQw4w9WgXcQ&t=3")).toBe(e);
+    expect(safeVideoUrl("https://www.youtube.com/shorts/dQw4w9WgXcQ")).toBe(e);
+    expect(safeVideoUrl("https://vimeo.com/123456")).toBe("https://player.vimeo.com/video/123456");
+    expect(safeVideoUrl("https://youtu.be/bad\"><script>")).toBeNull();
+    expect(safeVideoUrl("http://youtu.be/dQw4w9WgXcQ")).toBeNull();
+  });
 });
 
 describe("the Cloudflare Worker in front of every request", () => {
