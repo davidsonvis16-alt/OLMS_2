@@ -106,7 +106,9 @@ export function ModulePlayer({ course, module, slides, startAt, questions, compl
         <main id="main" className="player-main">
           {module.video && (
             <div className="video-wrap">
-              <iframe src={module.video} title={`${module.title} video`} loading="lazy" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups" referrerPolicy="strict-origin-when-cross-origin" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
+              {module.video.startsWith("/media/")
+                ? <video src={module.video} controls playsInline preload="metadata" controlsList="nodownload" title={`${module.title} video`} />
+                : <iframe src={module.video} title={`${module.title} video`} loading="lazy" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups" referrerPolicy="strict-origin-when-cross-origin" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />}
             </div>
           )}
           {slides.length === 0 ? (

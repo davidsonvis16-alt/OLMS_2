@@ -1,3 +1,4 @@
+import { VideoUploader } from "@/components/video-uploader";
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 import Link from "@/components/link";
 import { notFound } from "@/lib/server/http";
@@ -112,7 +113,7 @@ export default function EditCourse() {
       {/* MODULES */}
       <details className="form-card adv" id="modules">
         <summary><b>Modules and slide ranges</b><small>Which slides belong to each module · {modules.length} modules</small></summary>
-        <p>Each module shows a range of slides, then its knowledge check. Leave quiz slides out of the ranges; the quiz is interactive. Video: paste a Bunny Stream (or YouTube) embed URL.</p>
+        <p>Each module shows a range of slides, then its knowledge check. Leave quiz slides out of the ranges; the quiz is interactive. Video: upload it from your computer with the button under each module, or paste a YouTube link.</p>
         <div className="mod-rows">
           {[...modules, null].map((m, i) => (
             <form method="post" action="/do/saveModule" className={`mod-row${m ? "" : " mod-row--new"}`} key={m?.id ?? "new"}>
@@ -122,10 +123,11 @@ export default function EditCourse() {
               <input name="title" defaultValue={m?.title ?? ""} placeholder={m ? "" : "New module title"} aria-label="Module title" required={!m} />
               <label className="tiny">Slides<input name="page_from" type="number" min={1} defaultValue={m?.page_from ?? 1} />–<input name="page_to" type="number" min={1} defaultValue={m?.page_to ?? 1} /></label>
               <input name="extra_pages" defaultValue={m?.extra_pages?.join(", ") ?? ""} placeholder="extra slides e.g. 73" aria-label="Extra slides" className="w-sm" />
-              <input name="video_url" defaultValue={m?.video_url ?? ""} placeholder="Video embed URL (optional)" aria-label="Video URL" className="w-md" />
+              <input name="video_url" defaultValue={m?.video_url ?? ""} placeholder="YouTube link (optional)" aria-label="Video URL" className="w-md" />
               <button className="btn btn--sm btn--green">{m ? "Save" : "Add"}</button>
               {m && <button className="link-btn danger" formAction="/do/deleteModule" formNoValidate>Delete</button>}
               {i === 0 && null}
+              {m && <VideoUploader moduleId={m.id} current={m.video_url} />}
             </form>
           ))}
         </div>

@@ -73,7 +73,7 @@ export async function saveModule(f: FormData) {
     extra_pages: parsePages(str(f, "extra_pages")),
     video_url: safeVideoUrl(str(f, "video_url", 500)),
   };
-  if (str(f, "video_url") && !row.video_url) redirect(`/admin/courses/${courseId}?error=${encodeURIComponent("Video must be an https embed link from YouTube, Vimeo or Bunny Stream.")}#modules`);
+  if (str(f, "video_url") && !row.video_url) redirect(`/admin/courses/${courseId}?error=${encodeURIComponent("Video must be a YouTube or Vimeo link, or uploaded with the Upload video button.")}#modules`);
   if (row.page_to < row.page_from) row.page_to = row.page_from;
   const db = supabaseAdmin();
   if (id) await db.from("modules").update(row).eq("id", id).eq("course_id", courseId);

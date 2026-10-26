@@ -1,5 +1,7 @@
 /** Only https embeds from these players may be placed in an iframe. */
 const HOSTS = new Set(["www.youtube.com", "youtube.com", "www.youtube-nocookie.com", "player.vimeo.com", "iframe.mediadelivery.net"]);
+import { MEDIA_PATH } from "./video-key";
+
 const YT_ID = /^[A-Za-z0-9_-]{6,20}$/;
 
 /**
@@ -8,6 +10,7 @@ const YT_ID = /^[A-Za-z0-9_-]{6,20}$/;
  */
 export function safeVideoUrl(raw: unknown): string | null {
   if (typeof raw !== "string" || !raw.trim()) return null;
+  if (MEDIA_PATH.test(raw.trim())) return raw.trim(); // a video uploaded to the site's own storage
   try {
     const u = new URL(raw.trim());
     if (u.protocol !== "https:" || u.username || u.password) return null;

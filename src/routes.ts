@@ -43,6 +43,8 @@ export default [
   route("api/learn", "app/api/learn/route.ts"),
   route("api/certificate/:serial", "app/api/certificate/[serial]/route.ts"),
   route("api/admin/slides", "app/api/admin/slides/route.ts"),
+  route("api/admin/video", "app/api/admin/video/route.ts"),
+  route("media/*", "app/media/route.ts"),
   route("api/pay/callback", "app/api/pay/callback/route.ts"),
   route("api/pay/webhook", "app/api/pay/webhook/route.ts"),
   // Form posts and in-page saves (what Next.js called server actions): see app/form-actions.ts.

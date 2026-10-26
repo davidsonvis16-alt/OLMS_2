@@ -3,6 +3,7 @@
 // Runtime types generated with workerd@1.20261001.1 2026-09-01 nodejs_compat
 interface __BaseEnv_Env {
 	ASSETS: Fetcher;
+	VIDEOS: R2Bucket;
 	NEXT_PUBLIC_SUPABASE_URL: string;
 	NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
 	SUPABASE_SERVICE_ROLE_KEY: string;
