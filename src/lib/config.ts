@@ -4,7 +4,7 @@ export function supabaseConfigured() {
 }
 
 /** Admin accounts that can also study like a learner (My learning, courses, certificates). Add or remove emails here. */
-const ADMIN_LEARNERS = ["davidson.vis.16@gmail.com", "mathatimuchiri@gmail.com"];
+const ADMIN_LEARNERS = ["davidson.vis.16@gmail.com", "mathatimuchiri@gmail.com", "marggywambui72@gmail.com"];
 
 export function canLearn(profile: { role?: string | null; email?: string | null } | null | undefined) {
   if (!profile) return false;
