@@ -56,7 +56,6 @@ export default function Consultancy() {
                 <span className="nh-eyebrow">Food safety solutions</span>
                 <h2 className="h-l" id="c-fs">Food safety compliance made easy.</h2>
                 <p className="lede" style={{ marginTop: 18 }}>{FOOD_SAFETY.intro}</p>
-                <img className="fs-award" src="/brand/platinum-award.jpg" alt="Aspire Platinum Award, Food Safety" loading="lazy" width={700} height={900} />
               </div>
               <div className="band-r">
                 {FOOD_SAFETY.body.map((t) => <p key={t} className="lede" style={{ fontSize: 17, marginBottom: 16 }}>{t}</p>)}
@@ -71,6 +70,22 @@ export default function Consultancy() {
                   <a className="nh-more" href="#enquire">Discuss this</a>
                 </div>
               ))}
+            </div>
+            <div className="awards">
+              <div className="awards-head">
+                <span className="nh-eyebrow">Aspire food safety awards</span>
+                <h3>Three levels of certification</h3>
+                <p>After our food safety compliance audit, your business earns an award to display, based on its compliance score.</p>
+              </div>
+              <ul className="awards-list">
+                {[["excellence", "Excellence Award", "60–70% compliance"], ["gold", "Gold Award", "70–80% compliance"], ["platinum", "Platinum Award", "80% and above"]].map(([id, name, score]) => (
+                  <li key={id}>
+                    <img src={`/brand/award-${id}.jpg`} alt={`Aspire ${name}, Food Safety`} loading="lazy" width={600} height={771} />
+                    <b>{name}</b>
+                    <span>{score}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
             <div className="row" style={{ marginTop: 32 }}>
               <Link className="btn btn--ink btn--lg" href="/accredited">Accredited food safety training <Icon name="arrow" /></Link>

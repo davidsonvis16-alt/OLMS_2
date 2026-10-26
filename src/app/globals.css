@@ -1296,3 +1296,12 @@ details.adv[open] > summary { margin-bottom: 16px; }
 .nh-award-pics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .sec--photo { background-size: cover; background-position: center; }
 .sec--photo .lede, .sec--photo .h-l { color: #fff; }
+.awards { margin-top: 48px; padding-top: 40px; border-top: 1px solid var(--line-2); }
+.awards-head h3 { font-size: clamp(24px, 2.4vw, 34px); font-weight: 600; letter-spacing: -.03em; margin-top: 8px; }
+.awards-head p { color: var(--ink-2); margin-top: 10px; max-width: 60ch; }
+.awards-list { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.awards-list li { display: grid; gap: 4px; text-align: center; }
+.awards-list img { width: 100%; height: auto; border-radius: var(--r); box-shadow: 0 24px 50px -30px rgba(13, 13, 36, .6); margin-bottom: 12px; }
+.awards-list b { font-size: 18px; }
+.awards-list span { font: 500 12px/1.4 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--mute); }
+@media (max-width: 720px) { .awards-list { grid-template-columns: 1fr; max-width: 320px; margin-inline: auto; } }
