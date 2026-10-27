@@ -1,3 +1,4 @@
+import { videoBucket } from "@/lib/server/videos";
 import { VideoUploader } from "@/components/video-uploader";
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 import Link from "@/components/link";
@@ -30,11 +31,11 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   const questions = (qs ?? []) as Q[];
   const flagged = questions.filter((q) => q.review_note);
 
-  return { sp, c, modules, questions, flagged };
+  return { sp, c, modules, questions, flagged, uploads: !!videoBucket() };
 }
 
 export default function EditCourse() {
-  const { sp, c, modules, questions, flagged } = useLoaderData<typeof loader>();
+  const { sp, c, modules, questions, flagged, uploads } = useLoaderData<typeof loader>();
   return (
     <AppShell active="admin" wide>
       <PageHead eyebrow={c.published ? "Course · showing to learners" : "Course · hidden from learners"} title={c.title} />
@@ -113,7 +114,7 @@ export default function EditCourse() {
       {/* MODULES */}
       <details className="form-card adv" id="modules">
         <summary><b>Modules and slide ranges</b><small>Which slides belong to each module · {modules.length} modules</small></summary>
-        <p>Each module shows a range of slides, then its knowledge check. Leave quiz slides out of the ranges; the quiz is interactive. Video: upload it from your computer with the button under each module, or paste a YouTube link.</p>
+        <p>Each module shows a range of slides, then its knowledge check. Leave quiz slides out of the ranges; the quiz is interactive. Video: paste the lesson's YouTube link (set the video to Unlisted on YouTube).</p>
         <div className="mod-rows">
           {[...modules, null].map((m, i) => (
             <form method="post" action="/do/saveModule" className={`mod-row${m ? "" : " mod-row--new"}`} key={m?.id ?? "new"}>
@@ -127,7 +128,7 @@ export default function EditCourse() {
               <button className="btn btn--sm btn--green">{m ? "Save" : "Add"}</button>
               {m && <button className="link-btn danger" formAction="/do/deleteModule" formNoValidate>Delete</button>}
               {i === 0 && null}
-              {m && <VideoUploader moduleId={m.id} current={m.video_url} />}
+              {m && uploads && <VideoUploader moduleId={m.id} current={m.video_url} />}
             </form>
           ))}
         </div>

@@ -24,6 +24,8 @@ const POST = asRoute(action);
 const MOD = stableId("haccp-principles#1");
 const call = (op: string, body: unknown) => POST(new Request(`https://aspire.test/api/admin/video?op=${op}`, { method: "POST", body: JSON.stringify(body) }));
 const part = (q: Record<string, string>, bytes: Uint8Array) => POST(new Request(`https://aspire.test/api/admin/video?${new URLSearchParams({ op: "part", ...q })}`, { method: "POST", body: bytes }));
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const body = async (r: Promise<Response>): Promise<any> => (await r).json();
 const watch = (key: string) => asRoute(media, { "*": key })(new Request(`https://aspire.test/media/${key}`));
 
 describe("lesson video uploads", () => {
@@ -42,19 +44,19 @@ describe("lesson video uploads", () => {
     expect((await call("start", { module: stableId("nope"), size: 10, type: "video/mp4" })).status).toBe(404);
     expect((await part({ key: "../../secret", uploadId: "up-aaaaaaaa", n: "1" }, new Uint8Array(4))).status).toBe(400);
     const other = stableId("haccp-principles#2");
-    const s = await (await call("start", { module: other, size: 4, type: "video/mp4" })).json();
+    const s = await body(call("start", { module: other, size: 4, type: "video/mp4" }));
     expect((await call("done", { module: MOD, key: s.key, uploadId: s.uploadId, parts: [{ partNumber: 1, etag: "e1" }] })).status).toBe(400);
   });
 
   it("save an uploaded video on the lesson, and play it only to signed-in users", async () => {
     signIn(USERS.admin);
-    const s = await (await call("start", { module: MOD, size: 6, type: "video/mp4" })).json();
+    const s = await body(call("start", { module: MOD, size: 6, type: "video/mp4" }));
     expect(s.key).toMatch(new RegExp(`^videos/${MOD}/[a-z0-9]{16}\\.mp4$`));
-    const p1 = await (await part({ key: s.key, uploadId: s.uploadId, n: "1" }, new Uint8Array([1, 2, 3]))).json();
-    const p2 = await (await part({ key: s.key, uploadId: s.uploadId, n: "2" }, new Uint8Array([4, 5, 6]))).json();
+    const p1 = await body(part({ key: s.key, uploadId: s.uploadId, n: "1" }, new Uint8Array([1, 2, 3])));
+    const p2 = await body(part({ key: s.key, uploadId: s.uploadId, n: "2" }, new Uint8Array([4, 5, 6])));
     const done = await call("done", { module: MOD, key: s.key, uploadId: s.uploadId, parts: [p1, p2] });
     expect(done.status).toBe(200);
-    const row = fakeDb().modules.find((m: { id: string }) => m.id === MOD) as { video_url: string };
+    const row = (fakeDb().modules as unknown as { id: string; video_url: string }[]).find((m) => m.id === MOD)!;
     expect(row.video_url).toBe(`/media/${s.key}`);
     expect(safeVideoUrl(row.video_url)).toBe(row.video_url);
     expect([...r2.objects.get(s.key)!]).toEqual([1, 2, 3, 4, 5, 6]);
@@ -65,8 +67,8 @@ describe("lesson video uploads", () => {
 
     // Replacing the video deletes the old file.
     signIn(USERS.admin);
-    const s2 = await (await call("start", { module: MOD, size: 1, type: "video/mp4" })).json();
-    const q = await (await part({ key: s2.key, uploadId: s2.uploadId, n: "1" }, new Uint8Array([9]))).json();
+    const s2 = await body(call("start", { module: MOD, size: 1, type: "video/mp4" }));
+    const q = await body(part({ key: s2.key, uploadId: s2.uploadId, n: "1" }, new Uint8Array([9])));
     await call("done", { module: MOD, key: s2.key, uploadId: s2.uploadId, parts: [q] });
     expect(r2.objects.has(s.key)).toBe(false);
     expect(r2.objects.has(s2.key)).toBe(true);
