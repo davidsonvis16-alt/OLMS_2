@@ -209,3 +209,39 @@ describe("public certificate checks", () => {
     expect(data.allowed && data.c?.id_number).toMatch(/•/);
   });
 });
+
+describe("company history and deletion", () => {
+  const events = (id: string) => fakeDb().company_events.filter((e) => e.company_id === id);
+
+  it("records owner and admin changes in one shared history", async () => {
+    signIn(USERS.owner);
+    await redirectOf(() => removeMember(form({ user_id: USERS.member })));
+    signIn(USERS.admin);
+    await redirectOf(() => admin.adjustCompany(form({ id: COMPANY.hotel, seats: "7", paid_until: "2030-01-01" })));
+    const log = events(COMPANY.hotel);
+    expect(log.map((e) => e.kind)).toEqual(["member_removed", "adjusted"]);
+    expect(log[1].by_admin).toBe(true);
+    expect(String(log[1].detail)).toContain("seats 3 → 7");
+  });
+
+  it("only an admin can delete a company, and only after typing its name", async () => {
+    for (const u of [USERS.owner, USERS.member, USERS.learner]) {
+      signIn(u);
+      await redirectOf(() => admin.deleteCompany(form({ id: COMPANY.hotel, confirm: "Beach Hotel" })));
+    }
+    signIn(USERS.admin);
+    expect(await redirectOf(() => admin.deleteCompany(form({ id: COMPANY.hotel, confirm: "beach hotel" })))).toContain("error");
+    expect(fakeDb().companies.some((c) => c.id === COMPANY.hotel)).toBe(true);
+  });
+
+  it("deleting keeps the staff's own accounts and certificates, and the history", async () => {
+    const certsBefore = fakeDb().certificates.length;
+    signIn(USERS.admin);
+    expect(await redirectOf(() => admin.deleteCompany(form({ id: COMPANY.hotel, confirm: "Beach Hotel" })))).toContain("done");
+    expect(fakeDb().companies.some((c) => c.id === COMPANY.hotel)).toBe(false);
+    expect(profile(USERS.member).company_id).toBeNull();
+    expect(profile(USERS.owner).company_id).toBeNull();
+    expect(fakeDb().certificates.length).toBe(certsBefore);
+    expect(fakeDb().company_events.some((e) => e.kind === "deleted" && e.company_name === "Beach Hotel")).toBe(true);
+  });
+});

@@ -37,7 +37,7 @@ export default function CoursesPage() {
             <span className="micro">Catalogue · {courses.length} course{courses.length === 1 ? "" : "s"} · Free to learn</span>
             <h1 className="h-xl" id="courses-title"><span className="sr-only">Courses</span><span aria-hidden="true">C<span className="lens"><img src="/photos/plating.jpg" alt="" /></span>urses</span></h1>
             <div className="ptop-aside">
-              <p className="lede">Every course is free to study. Each one ends with a final assessment ({SITE.passMark}% to pass, unlimited retakes) and a numbered, QR-verified Aspire certificate.</p>
+              <p className="lede">Every course is free to study. Each one ends with a final assessment ({SITE.passMark}% to pass, unlimited retakes) and a numbered, QR-verified Aspire Safety Academy certificate.</p>
             </div>
           </div>
         </section>

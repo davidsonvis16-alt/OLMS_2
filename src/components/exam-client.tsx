@@ -14,7 +14,7 @@ export function ExamClient({ courseId, slug, questions, passMark, started }: { c
         onStart={() => setOpen(true)} onDone={(r) => { setOpen(false); setPassed("passed" in r && r.passed); }} />
       {passed && (
         <div className="next-card next-card--win">
-          <div><small>Assessment passed</small><b>Claim your Aspire certificate</b></div>
+          <div><small>Assessment passed</small><b>Claim your Aspire Safety Academy certificate</b></div>
           <Link className="cta" href={`/learn/${slug}/certificate`}><span>Claim certificate</span><i><Icon name="arrow" /></i></Link>
         </div>
       )}

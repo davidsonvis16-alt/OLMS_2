@@ -1,5 +1,6 @@
 export const SITE = {
   name: "ASPIRE SAFETY & HYGIENE SOLUTIONS",
+  academy: "ASPIRE SAFETY ACADEMY",
   short: "Aspire",
   tagline: "Value, Quality & Service",
   email: "info@aspiresafetyhygienesolutions.co.ke",

@@ -26,17 +26,17 @@ async function get(req: Request, { params }: { params: Promise<{ serial: string 
   if (!(await limit("pdf", user.id))) return new Response("Too many requests", { status: 429 });
   // Brand files come from the site's own files, never from a URL built out of request headers.
   const verifyUrl = `${SITE.url.replace(/\/$/, "")}/verify/${encodeURIComponent(c.serial)}`;
-  const [logo, sig, seal] = await Promise.all([assetBytes("/brand/logo-light.png"), assetBytes("/brand/signature.png"), assetBytes("/brand/haccp-seal.png")]);
+  const [logo, sig, seal, ghp] = await Promise.all([assetBytes("/brand/logo-light.png"), assetBytes("/brand/signature.png"), assetBytes("/brand/haccp-seal.png"), assetBytes("/brand/ghp-seal.png")]);
   const qr = qrShape(verifyUrl);
 
   const pdf = await PDFDocument.create();
-  pdf.setTitle(`Aspire certificate ${c.serial}`);
+  pdf.setTitle(`Aspire Safety Academy certificate ${c.serial}`);
   pdf.setAuthor(SITE.name);
   pdf.setSubject(c.course_title);
   const PW = PAGE.w * K, PH = PAGE.h * K;
   const page = pdf.addPage([PW, PH]);
   const fonts = await embedCertFonts(pdf);
-  const img = { logo: await pdf.embedPng(logo), signature: await pdf.embedPng(sig), seal: await pdf.embedPng(seal) };
+  const img = { logo: await pdf.embedPng(logo), signature: await pdf.embedPng(sig), seal: await pdf.embedPng(seal), ghp: await pdf.embedPng(ghp) };
 
   const ops = layoutCertificate({
     serial: c.serial, fullName: c.full_name, idNumber: c.id_number, course: c.course_title, modules: c.modules ?? [], score: c.score,

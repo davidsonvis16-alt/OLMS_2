@@ -1309,3 +1309,11 @@ details.adv[open] > summary { margin-bottom: 16px; }
 .vid-up { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 2px 0 14px 44px; font-size: 13.5px; color: var(--mute); }
 .vid-up progress { width: 220px; height: 8px; }
 .vid-up .ok { color: var(--green-ink); font-weight: 600; }
+
+/* Company account history (shared by the owner's page and Admin › Companies) */
+.history { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 0; }
+.history li { display: grid; grid-template-columns: 150px 1fr auto; gap: 12px; align-items: baseline; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.history time { color: var(--mute); font-size: 13px; white-space: nowrap; }
+@media (max-width: 640px) { .history li { grid-template-columns: 1fr; gap: 2px; } }
+.history-box summary { cursor: pointer; font-size: 13px; color: var(--mute); margin-top: 4px; }
+.history-box .history { min-width: 420px; }

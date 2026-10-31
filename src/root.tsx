@@ -20,7 +20,7 @@ export const links: LinksFunction = () => [
 
 export const meta: MetaFunction = () => [
   { title: `${SITE.name} | ${SITE.tagline}` },
-  { name: "description", content: "Online food safety, hygiene and workplace health & safety training for the hospitality and food industry. Learn free, pass the assessment and earn a verifiable Aspire certificate." },
+  { name: "description", content: "Online food safety, hygiene and workplace health & safety training for the hospitality and food industry. Learn free, pass the assessment and earn a verifiable Aspire Safety Academy certificate." },
   { property: "og:title", content: SITE.name },
   { property: "og:description", content: SITE.tagline },
   { property: "og:url", content: SITE.url },

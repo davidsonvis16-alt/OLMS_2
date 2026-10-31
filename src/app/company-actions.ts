@@ -5,6 +5,9 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { PAYMENTS_OFF_MESSAGE, initialize, newReference, paymentsAvailable, quote, type Method } from "@/lib/paystack";
 import { SITE, companyActive } from "@/lib/site";
 import { limit } from "@/lib/rate-limit";
+import { logCompany } from "@/lib/server/company-history";
+
+const who = (p: { full_name?: string | null; email?: string | null }) => p.full_name ? `${p.full_name} (${p.email})` : p.email ?? "someone";
 
 const back = (msg: string, path = "/company") => redirect(`${path}?error=${encodeURIComponent(msg)}`);
 
@@ -25,6 +28,7 @@ export async function createCompany(formData: FormData) {
   }).select("id").single();
   if (error || !co) back("Could not create the company account.");
   await db.from("profiles").update({ company_id: co!.id, company_role: "owner" }).eq("id", user.id);
+  await logCompany({ companyId: co!.id, companyName: name, actor: who(profile), kind: "created", detail: `Company account created by ${who(profile)}.` });
   redirect("/company?created=1");
 }
 
@@ -60,7 +64,12 @@ export async function removeMember(formData: FormData) {
   const { profile } = await requireUser("/company");
   if (profile.company_role !== "owner") back("Only the owner can remove staff.");
   const id = String(formData.get("user_id"));
-  await supabaseAdmin().from("profiles").update({ company_id: null, company_role: null }).eq("id", id).eq("company_id", profile.company_id!).eq("company_role", "member");
+  const db = supabaseAdmin();
+  const { data: gone } = await db.from("profiles").update({ company_id: null, company_role: null }).eq("id", id).eq("company_id", profile.company_id!).eq("company_role", "member").select("full_name,email").maybeSingle();
+  if (gone) {
+    const { data: co } = await db.from("companies").select("name").eq("id", profile.company_id!).maybeSingle();
+    await logCompany({ companyId: profile.company_id!, companyName: co?.name ?? "", actor: who(profile), kind: "member_removed", detail: `${who(gone)} was removed from the team by ${who(profile)}.` });
+  }
 }
 
 export async function joinCompany(formData: FormData) {
@@ -77,7 +86,8 @@ export async function joinCompany(formData: FormData) {
   if (!companyActive(co)) back(`${co!.name}'s account isn't active yet. Ask your manager to renew it.`, `/join/${code}`);
   const { count } = await db.from("profiles").select("id", { count: "exact", head: true }).eq("company_id", co!.id);
   if ((count ?? 0) >= co!.seats) back(`All of ${co!.name}'s seats are taken. Ask your manager to add more.`, `/join/${code}`);
-  await db.from("profiles").update({ company_id: co!.id, company_role: "member" }).eq("id", user.id).is("company_id", null);
+  const { data: joined } = await db.from("profiles").update({ company_id: co!.id, company_role: "member" }).eq("id", user.id).is("company_id", null).select("id").maybeSingle();
+  if (joined) await logCompany({ companyId: co!.id, companyName: co!.name, actor: who(profile), kind: "member_joined", detail: `${who(profile)} joined using the invite link (${(count ?? 0) + 1} of ${co!.seats} seats used).` });
   // Two people can join at the same moment; if that overfilled the seats, this join is undone (fail safe).
   const { count: after } = await db.from("profiles").select("id", { count: "exact", head: true }).eq("company_id", co!.id);
   if ((after ?? 0) > co!.seats) {

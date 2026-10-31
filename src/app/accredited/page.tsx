@@ -55,7 +55,7 @@ export default function Accredited() {
               <h2 className="h-l" id="a-free">Start with our free courses.</h2>
             </div>
             <div className="band-r">
-              <p className="lede">Staff can also study online for free on their phones, pass an assessment and earn a QR-verified Aspire certificate.</p>
+              <p className="lede">Staff can also study online for free on their phones, pass an assessment and earn a QR-verified Aspire Safety Academy certificate.</p>
               <div className="row" style={{ marginTop: 24 }}>
                 <Link className="btn btn--ink btn--lg" href="/courses">See the free courses <Icon name="arrow" /></Link>
               </div>

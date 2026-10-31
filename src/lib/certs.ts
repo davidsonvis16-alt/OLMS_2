@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { fmtDay, logCompany } from "@/lib/server/company-history";
 import { supabaseAdmin } from "./supabase";
 import { companyActive } from "./site";
 
@@ -69,7 +70,9 @@ export async function applyPayment(reference: string, verified: { status: string
       .eq("id", pay.id).neq("status", "success").select("id").maybeSingle();
     if (claimed && pay.purpose === "company_seats" && pay.company_id) {
       const until = new Date(); until.setFullYear(until.getFullYear() + 1);
-      await db.from("companies").update({ seats: pay.seats, paid_until: until.toISOString().slice(0, 10) }).eq("id", pay.company_id);
+      const { data: co } = await db.from("companies").update({ seats: pay.seats, paid_until: until.toISOString().slice(0, 10) }).eq("id", pay.company_id).select("name").maybeSingle();
+      await logCompany({ companyId: pay.company_id, companyName: co?.name ?? "", actor: "Online payment", kind: "seats_paid",
+        detail: `Paid ${pay.currency} ${Number(pay.amount).toLocaleString("en-KE")} by ${verified.channel || "online payment"} (ref ${reference}): ${pay.seats} seats until ${fmtDay(until.toISOString().slice(0, 10))}.` });
     }
   }
   if (pay.purpose === "certificate" && pay.user_id && pay.course_id) {

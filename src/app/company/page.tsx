@@ -4,6 +4,8 @@ import { CopyButton } from "@/components/copy-button";
 import { Icon } from "@/components/icons";
 import { requireUser } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
+import { CompanyHistory } from "@/components/company-history";
+import { companyHistory } from "@/lib/server/company-history";
 import { SITE, companyActive, usd, wa, pageTitle } from "@/lib/site";
 import { mpesaAvailable, paymentsAvailable } from "@/lib/paystack";
 import { seatPrice } from "@/app/company-actions";
@@ -34,7 +36,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const doneBy = new Map<string, number>(); for (const p of prog ?? []) if (ids.has(p.user_id) && p.completed_at) doneBy.set(p.user_id, (doneBy.get(p.user_id) ?? 0) + 1);
   const certBy = new Map<string, string[]>(); for (const c of certs ?? []) if (ids.has(c.user_id)) certBy.set(c.user_id, [...(certBy.get(c.user_id) ?? []), c.course_title]);
   const link = `${SITE.url.replace(/\/$/, "")}/join/${co!.join_code}`;
-  return { view: "owner" as const, notice, price, co: co!, active, staff: staff ?? [], doneBy, certBy, used: staff?.length ?? 0, link, mpesa: mpesaAvailable(), payable: paymentsAvailable() };
+  const history = await companyHistory(co!.id);
+  return { view: "owner" as const, notice, price, co: co!, active, staff: staff ?? [], doneBy, certBy, used: staff?.length ?? 0, link, mpesa: mpesaAvailable(), payable: paymentsAvailable(), history };
 }
 
 export default function CompanyPage() {
@@ -76,7 +79,7 @@ export default function CompanyPage() {
       </AppShell>
     );
   }
-  const { price, co, active, staff, doneBy, certBy, used, link, mpesa, payable } = d;
+  const { price, co, active, staff, doneBy, certBy, used, link, mpesa, payable, history } = d;
   return (
     <AppShell active="company" wide>
       <PageHead eyebrow="Company account" title={co!.name} />
@@ -134,6 +137,10 @@ export default function CompanyPage() {
           </tbody>
         </table>
       </div>
+
+      <h2 className="h3 section-title">Account history</h2>
+      <p className="muted small">Every change to your account: seats, payments, staff joining or leaving, and anything Aspire changes. Aspire sees this same list.</p>
+      <CompanyHistory events={history} />
     </AppShell>
   );
 }

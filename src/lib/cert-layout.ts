@@ -28,10 +28,22 @@ export type Op =
   | { k: "circle"; cx: number; cy: number; r: number; fill?: string; stroke?: string; sw?: number; opacity?: number }
   | { k: "path"; d: string; fill?: string; stroke?: string; sw?: number; opacity?: number }
   | { k: "text"; x: number; y: number; text: string; font: FontKey; size: number; color: string; ls?: number; rotate?: number; opacity?: number }
-  | { k: "image"; src: "logo" | "signature" | "qr" | "seal"; x: number; y: number; w: number; h: number; opacity?: number };
+  | { k: "image"; src: "logo" | "signature" | "qr" | "seal" | "ghp"; x: number; y: number; w: number; h: number; opacity?: number };
 
 type Fonts = Record<FontKey, PDFFont>;
 const r2 = (n: number) => Math.round(n * 100) / 100;
+
+/**
+ * What the certificate lists as covered. Normally the course's modules; a course taught as one module lists the
+ * sections of its syllabus instead, so the certificate shows what was actually studied.
+ */
+const SYLLABUS: [RegExp, string[]][] = [
+  [/personal health/i, ["Introduction to bacteria", "Benefits of hand washing at work", "Effective hand washing", "Food contamination & food poisoning", "Reporting illness"]],
+];
+export function coveredTopics(course: string, modules: string[]) {
+  if (modules.length > 1) return modules;
+  return SYLLABUS.find(([re]) => re.test(course))?.[1] ?? modules;
+}
 
 export function layoutCertificate(d: CertInput, f: Fonts): Op[] {
   const W = PAGE.w, H = PAGE.h, CX = W / 2;
@@ -102,7 +114,7 @@ export function layoutCertificate(d: CertInput, f: Fonts): Op[] {
     }
     ops.push({ k: "image", src: "logo", x: r2(bx - (466 / 640) * 13.75), y: r2(by - 13.75), w: r2((466 / 640) * 27.5), h: 27.5 });
   }
-  text(SITE.name, CX, 68.5, "sans600", fit(SITE.name, "sans600", 4.2, 150, 3), C.blue, { ls: .9, align: "middle" });
+  text(SITE.academy, CX, 68.5, "sans600", fit(SITE.academy, "sans600", 4.2, 150, 3), C.blue, { ls: .9, align: "middle" });
 
   // Body
   text("Certificate of Achievement", CX, 84, "serif", fit("Certificate of Achievement", "serif", 13.5, 200, 9), C.navy, { align: "middle" });
@@ -114,8 +126,9 @@ export function layoutCertificate(d: CertInput, f: Fonts): Op[] {
   text(`ID / PASSPORT NO.  ${d.idNumber}`, CX, 119.5, "mono", 2.6, C.mute, { ls: .45, align: "middle" });
   text("has successfully completed the course", CX, 127.5, "serifI", 5.2, C.mute, { align: "middle" });
   text(d.course, CX, 137.5, "serif600", fit(d.course, "serif600", 8.6, 200, 5), C.navy, { align: "middle" });
-  if (d.modules.length) {
-    const words = `Modules: ${d.modules.join("  ·  ")}`.split(" ");
+  const covered = coveredTopics(d.course, d.modules);
+  if (covered.length) {
+    const words = `Modules covered: ${covered.join("  ·  ")}`.split(" ");
     const lines: string[] = []; let cur = "";
     for (const w of words) { const t = cur ? `${cur} ${w}` : w; if (width(t, "sans500", 2.9) > 180 && cur) { lines.push(cur); cur = w; } else cur = t; }
     if (cur) lines.push(cur);
@@ -128,10 +141,13 @@ export function layoutCertificate(d: CertInput, f: Fonts): Op[] {
   text(SITE.name, 24, 187.2, "sans500", 2.3, C.ink);
   if (d.companyName) text(`Sponsored by ${d.companyName}`, 24, 191.4, "sans500", 2.3, C.mute);
 
-  // Seal (bottom centre). HACCP courses also carry the gold "HACCP Certified" seal beside it.
+  // Seal (bottom centre). HACCP courses also carry the gold "HACCP Certified" seal beside it; hygiene courses carry the
+  // Good Hygienic Practice (GHP) badge.
   const haccp = /haccp/i.test(d.course);
-  const sx = haccp ? CX - 20 : CX, sy = 173;
+  const ghp = !haccp && /hygiene/i.test(d.course);
+  const sx = haccp || ghp ? CX - 20 : CX, sy = 173;
   if (haccp) ops.push({ k: "image", src: "seal", x: r2(CX + 20 - (538 / 600) * 16), y: sy - 16, w: r2((538 / 600) * 32), h: 32 });
+  if (ghp) ops.push({ k: "image", src: "ghp", x: CX + 20 - 14, y: sy - 14, w: 28, h: 28 });
   let star = "";
   for (let i = 0; i < 72; i++) {
     const a = (i / 72) * Math.PI * 2, rr = i % 2 ? 15.2 : 16.4;

@@ -325,3 +325,20 @@ create table if not exists public.test_locks (
   primary key (user_id, course_id)
 );
 alter table public.test_locks enable row level security; -- no policies: only the server can read or change it
+
+-- ---------- Company account history ----------
+-- One shared log for each company account: the owner and Aspire admins read the same entries. Entries are only added
+-- (by the server); deleting a company keeps its history, with the company name, for the record.
+create table if not exists public.company_events (
+  id uuid primary key default gen_random_uuid(),
+  company_id uuid references public.companies(id) on delete set null,
+  company_name text not null,
+  at timestamptz not null default now(),
+  actor text not null,
+  by_admin boolean not null default false,
+  kind text not null,
+  detail text not null
+);
+create index if not exists company_events_company_at on public.company_events (company_id, at desc);
+alter table public.company_events enable row level security;
+-- No policies: only the server (service key) reads and writes this table.

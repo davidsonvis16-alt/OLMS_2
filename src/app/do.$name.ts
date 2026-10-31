@@ -36,6 +36,7 @@ const ACTIONS: Record<string, (f: FormData) => Promise<unknown>> = {
   setRevoked: admin.setRevoked,
   setRole: admin.setRole,
   adjustCompany: admin.adjustCompany,
+  deleteCompany: admin.deleteCompany,
   suspendUser: admin.suspendUser,
   restoreUser: admin.restoreUser,
   deleteUser: admin.deleteUser,

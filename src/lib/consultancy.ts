@@ -30,7 +30,7 @@ export const CONSULT_STEPS = [
   ["Talk to us", "Tell us about your business and what you need."],
   ["Visit", "We come to your premises and look at how things are done."],
   ["Improve", "We help you put things right, with your team."],
-  ["Train", "Your staff are trained and can earn Aspire certificates."],
+  ["Train", "Your staff are trained and can earn Aspire Safety Academy certificates."],
 ] as const;
 
 /** Food safety solutions (marketed under Aspire consultancy). Edit here to change the consultancy page. */

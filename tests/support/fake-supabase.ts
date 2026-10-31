@@ -17,6 +17,7 @@ const DEFAULTS: Record<string, () => Row> = {
   courses: () => ({ categories: [], topics: [], slide_count: 0, slides_version: 0, published: false, sort: 0, certificate_price_usd: null, assignment: null, summary: null, category: "food-safety", created_at: now() }),
   modules: () => ({ extra_pages: [], video_url: null, page_from: 1, page_to: 1 }),
   questions: () => ({ in_final: true, position: 0, review_note: null, source: "admin", module_id: null }),
+  company_events: () => ({ at: now(), by_admin: false }),
   profiles: () => ({ role: "learner", company_id: null, company_role: null, country: "Kenya", id_number: null, phone: null, suspended_at: null, created_at: now() }),
   companies: () => ({ seats: 0, paid_until: null, join_code: crypto.randomBytes(4).toString("hex").toUpperCase(), created_at: now() }),
   certificates: () => ({ revoked: false, issued_at: now(), modules: [], company_name: null, payment_id: null }),

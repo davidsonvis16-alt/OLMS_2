@@ -18,6 +18,6 @@ export function verifyUrl(serial: string) {
 export async function certificateModel(c: CertData): Promise<CertModel> {
   const url = verifyUrl(c.serial);
   const ops = layoutCertificate({ ...c, verifyUrl: url, stamp: c.sample ? "sample" : null }, await measuringFonts());
-  const label = `${c.sample ? "Sample " : ""}Aspire certificate of achievement: ${c.fullName}, ${c.course}, final mark ${c.score}%, certificate number ${c.serial}`;
+  const label = `${c.sample ? "Sample " : ""}Aspire Safety Academy certificate of achievement: ${c.fullName}, ${c.course}, final mark ${c.score}%, certificate number ${c.serial}`;
   return { ops, qr: qrShape(url), label };
 }

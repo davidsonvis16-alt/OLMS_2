@@ -3,6 +3,7 @@ import { redirect } from "@/lib/server/http";
 import { requireAdmin } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
 import { safeVideoUrl } from "@/lib/video";
+import { fmtDay, logCompany } from "@/lib/server/company-history";
 
 const str = (f: FormData, k: string, max = 2000) => String(f.get(k) ?? "").trim().slice(0, max);
 const lines = (f: FormData, k: string) => str(f, k, 20000).split("\n").map((x) => x.trim()).filter(Boolean);
@@ -143,9 +144,39 @@ export async function setRole(f: FormData) {
 }
 
 export async function adjustCompany(f: FormData) {
-  await requireAdmin();
-  const until = str(f, "paid_until");
-  await supabaseAdmin().from("companies").update({ seats: Math.max(0, Number(str(f, "seats")) || 0), paid_until: until || null }).eq("id", str(f, "id"));
+  const { profile } = await requireAdmin();
+  const until = str(f, "paid_until") || null;
+  const seats = Math.max(0, Number(str(f, "seats")) || 0);
+  const db = supabaseAdmin();
+  const { data: before } = await db.from("companies").select("id,name,seats,paid_until").eq("id", str(f, "id", 64)).maybeSingle();
+  if (!before) return;
+  await db.from("companies").update({ seats, paid_until: until }).eq("id", before.id);
+  const changes = [
+    before.seats !== seats && `seats ${before.seats} → ${seats}`,
+    (before.paid_until ?? null) !== until && `valid until ${fmtDay(before.paid_until)} → ${fmtDay(until)}`,
+  ].filter(Boolean);
+  if (changes.length) await logCompany({ companyId: before.id, companyName: before.name, actor: `Aspire (${profile.email})`, byAdmin: true, kind: "adjusted", detail: `Aspire changed ${changes.join(", ")}.` });
+}
+
+/**
+ * Deletes a company account. Its staff keep their own learner accounts, progress and certificates; they are simply
+ * no longer linked to the company. Payment records and the company's history stay for the accounts. Type the
+ * company name to confirm.
+ */
+export async function deleteCompany(f: FormData) {
+  const { profile } = await requireAdmin();
+  const back = (msg: string, ok = false) => redirect(`/admin/companies?${ok ? "done" : "error"}=${encodeURIComponent(msg)}`);
+  const id = str(f, "id", 64);
+  const db = supabaseAdmin();
+  const { data: co } = await db.from("companies").select("id,name").eq("id", id).maybeSingle();
+  if (!co) back("That company no longer exists.");
+  if (str(f, "confirm", 200) !== co!.name) back(`Type the company name exactly (${co!.name}) to delete it.`);
+  const { data: staff } = await db.from("profiles").update({ company_id: null, company_role: null }).eq("company_id", co!.id).select("id");
+  await logCompany({ companyId: co!.id, companyName: co!.name, actor: `Aspire (${profile.email})`, byAdmin: true, kind: "deleted",
+    detail: `Company account deleted by Aspire. ${staff?.length ?? 0} staff unlinked; their accounts and certificates are kept.` });
+  const { error } = await db.from("companies").delete().eq("id", co!.id);
+  if (error) back(`Couldn't delete: ${error.message}`);
+  back(`${co!.name} was deleted.`, true);
 }
 
 /**
